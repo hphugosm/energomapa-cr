@@ -35,6 +35,9 @@ test('municipality selection centers and zooms, retains regional outline and res
   const regionalOutline = cameraGroup.children[2].children[0].attrs.d;
   map.setContext({regionId:'region', selectedId:'municipality'}, {animate:false});
   const municipalCamera = camera();
+  map.update({values:new Map([['municipality',0.000184]]),unitLabel:'MW / domácnost',colorFor:()=> '#ffffff'});
+  assert.match(cameraGroup.children[1].children[0].attrs['aria-label'], /0,000184 MW \/ domácnost/);
+
   assert.ok(municipalCamera.z > regionalCamera.z);
   assert.ok(municipalCamera.z <= 40, 'tiny municipalities must respect the zoom cap');
   assert.equal(cameraGroup.children[2].children[0].attrs.d, regionalOutline);

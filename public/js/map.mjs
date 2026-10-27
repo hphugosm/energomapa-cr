@@ -1,3 +1,4 @@
+import {format} from './engine.mjs?v=0.4.0';
 /** Generic SVG choropleth; camera, projection and hatch treatment adapted from TT-Decin. */
 const NS = 'http://www.w3.org/2000/svg';
 const MAX_ZOOM = 40;
@@ -102,7 +103,7 @@ export function createEnergyMap(svg, {onSelect = () => {}, onHover = () => {}} =
       node.setAttribute('aria-pressed', String(code === context.selectedId));
       const name = state.names?.get(code) || record.name;
       const valueStatus = state.coverage?.get(code)?.valueStatus;
-      const formatted = valid ? `${new Intl.NumberFormat('cs-CZ', {maximumFractionDigits: 3}).format(value)} ${state.unitLabel}` : valueStatus === 'not_applicable' ? 'Nevztahuje se' : valueStatus === 'unavailable' ? 'Údaj není dostupný' : 'Chybějící údaj';
+      const formatted = valid ? `${format(value, 3)} ${state.unitLabel}` : valueStatus === 'not_applicable' ? 'Nevztahuje se' : valueStatus === 'unavailable' ? 'Údaj není dostupný' : 'Chybějící údaj';
       const status = coverage?.denominatorMissing ? ' · Chybí jmenovatel pro normalizaci' : valid && coverage?.partial ? ` · NEÚPLNÝ SOUČET (${coverage.coverage ?? '?'}/${coverage.expected ?? '?'} obcí)` : '';
       node.setAttribute('aria-label', `${name} (${code}) · ${state.year} · ${formatted}${status}`);
       node.querySelector('title').textContent = `${name} · ${formatted}${status}`;

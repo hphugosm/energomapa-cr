@@ -1,0 +1,2 @@
+# Preserve authoritative raw bytes, including provider line endings.
+data/raw/** -text -diff
