@@ -16,7 +16,7 @@ let state = {metric: null, normalization: 'absolute', mode: 'value', year: null,
 async function json(path) {
   if (cache.has(path)) return cache.get(path);
   if (pending.has(path)) return pending.get(path);
-  const promise = fetch(path).then(async response => {
+  const promise = fetch(path, {cache: 'no-cache'}).then(async response => {
     if (!response.ok) throw Error(`Soubor ${path} nelze načíst (${response.status}).`);
     const data = await response.json(); cache.set(path, data); return data;
   }).finally(() => pending.delete(path));
