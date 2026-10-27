@@ -6,6 +6,7 @@ import shapely
 from shapely.geometry import Polygon, MultiPolygon, mapping, shape
 from shapely.ops import unary_union
 from pyproj import Transformer
+from solar import build_solar
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 RAW=ROOT/'data/raw'; OUT=ROOT/'public/data'
 NS={'a':'http://inspire.ec.europa.eu/schemas/au/4.0','e':'http://www.locationframework.eu/schemas/AdministrativeUnits/1.0','g':'http://www.opengis.net/gml/3.2','n':'http://inspire.ec.europa.eu/schemas/gn/4.0','w':'http://www.opengis.net/wfs/2.0'}
@@ -106,19 +107,27 @@ def build():
     write(OUT/'territories.json',{'schemaVersion':1,'territories':territories})
     write(OUT/'geo/overview.geojson',{'type':'FeatureCollection','features':overview})
     write(OUT/'metrics/population.json',{'schemaVersion':1,'metricId':'population','status':'verified','values':{y:dict(sorted(v.items())) for y,v in sorted(pop.items())}})
-    build_manifest(pop)
+    solar_metric,solar_data,solar_audit=build_solar(territories,ROOT)
+    write(OUT/'metrics/solar_capacity.json',solar_data)
+    write(ROOT/'data/processed/solar_capacity.json',solar_data)
+    write(ROOT/'data/processed/solar-validation.json',solar_audit)
+    write(OUT/'solar-validation.json',solar_audit)
+    build_manifest(pop,solar_metric)
     report={'municipalities':len(codes),'regions':len(regions),'populationCoverage':{y:len(v) for y,v in pop.items()},'missingPopulation':[c for c,t in municipalities.items() if t['population'] is None],'geographyAsOf':geo_source.get('asOf',geo_source['retrievedAt'][:10]),'geometryToleranceMetres':100,'areaMethod':'Planar area of original full-resolution ČÚZK geometry in EPSG:5514; km²','publicBytes':sum(p.stat().st_size for p in OUT.rglob('*') if p.is_file())}
     write(ROOT/'data/processed/validation.json',report)
     print(json.dumps(report,ensure_ascii=False,indent=2))
 
 
-def build_manifest(pop):
+def build_manifest(pop,solar_metric):
     population_source=source_metadata('population')
     geo_source=source_metadata('geography')
     latest_year=max(map(int,pop))
     configs=[('population','Počet obyvatel','obyv.','context','electricity'),('households','Domácnosti','domácností','context','electricity'),('generation_capacity','Instalovaný výkon elektráren','MW','electricity','electricity'),('solar_capacity','Instalovaný výkon FVE','MW','electricity','solar'),('wind_capacity','Instalovaný výkon větru','MW','electricity','renewables'),('hydro_capacity','Instalovaný výkon vody','MW','electricity','renewables'),('battery_storage','Bateriová úložiště','MWh','storage','grid'),('heating_gas','Vytápění plynem','domácností','heat','heat'),('heating_electricity','Vytápění elektřinou','domácností','heat','electricity'),('district_heating','Dálkové teplo','domácností','heat','heat'),('ev_charging','Dobíjecí stanice','stanic','transport','grid'),('industrial_co2','Průmyslové emise CO₂','t CO₂/rok','emissions','co2'),('solar_potential','Solární potenciál','MWh/rok','electricity','solar')]
     metrics=[]
     for ident,name,unit,category,scale in configs:
+        if ident=='solar_capacity':
+            metrics.append(solar_metric)
+            continue
         status='verified' if ident=='population' else 'demo' if ident in ['solar_capacity','battery_storage','ev_charging'] else 'unavailable'
         years=list(map(int,sorted(pop))) if ident=='population' else ([2026] if ident=='ev_charging' else list(range(2022,2027))) if status=='demo' else []
         method='ČSÚ REGUAP, ukazatel 2406UAP891, stav k 31. prosinci. Území podle číselníku 1. 1. 2026; změny hranic a sčítání mohou narušit srovnatelnost.' if ident=='population' else 'Syntetické demonstrační hodnoty šesti měst; záměrná mezera roku 2024 v Děčíně. Nejde o měření ani produkční energetická data.' if status=='demo' else 'Datový adaptér připraven. Skutečný obecní dataset zatím není připojen; chybějící hodnoty se nedopočítávají.'
@@ -144,11 +153,15 @@ def build_manifest(pop):
     write(OUT/'manifest.json',manifest)
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--download',action='store_true');args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--download',action='store_true');p.add_argument('--download-solar',action='store_true');args=p.parse_args()
     if args.download:
         from download import download_geography,download_tables,refresh_source_metadata,pin_inputs
         download_geography(refresh=True)
         download_tables()
         refresh_source_metadata()
+    if args.download or args.download_solar:
+        from solar import download_solar
+        from download import pin_inputs
+        download_solar(ROOT)
         pin_inputs()
     build()

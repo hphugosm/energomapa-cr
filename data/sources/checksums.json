@@ -1,7 +1,6 @@
 {
   "data/raw/demo/battery_storage.json": "c7f158c56bb01695572b7fccb7d04a4e8b9e76172aa36547e0085a6c18cd97b1",
   "data/raw/demo/ev_charging.json": "3222358b200292fd85193fb13d15d2b674366ac34fa249ec8677f0be71c2b5b8",
-  "data/raw/demo/solar_capacity.json": "97807901e71c1823996378a2d49b05e04dca8d08e8cc0133704237563ee3f89f",
   "data/raw/geography/-490250_-1118125_-431000_-1081500.gml.gz": "5e0d8c0191e3cf31d2f4c4b16044b14b35d3f105ec8a2d699fbbfcfc3dff9114",
   "data/raw/geography/-490250_-1154750_-431000_-1118125.gml.gz": "a6d28ac9d3e52eed8bab3b55e8389d682860da0f32dffbea3206ab3fe27af554",
   "data/raw/geography/-490250_-1191375_-431000_-1154750.gml.gz": "e5d360a07c4c531b8524d58463bace519ae3edaccb8ed7e09a0db6a3d3540870",
@@ -79,5 +78,8 @@
   "data/raw/geography/-905000_-1154750_-845750_-1118125.gml.gz": "6e471c3658908a4c14656ced60f8418b2a6a964a49ede55413117289ae00bf7f",
   "data/raw/geography/-905000_-1228000_-786500_-1154750.gml.gz": "33dd704cd651a09b3f583a62d054b243f78077c4923f051a9e839e8b2e662d36",
   "data/raw/population_2018_2025.csv.gz": "d6c9da3c0f0db9ab5b9541086c975167dca4f1c61a3a6964f230dfbdc4ef2d42",
+  "data/raw/solar/UI_KATASTRALNI_UZEMI.zip": "922d059e158bc0d99a02da4376da7c45fb19d66eb77170a59bea14147bf1c240",
+  "data/raw/solar/tez-sk-11-2026-10-01.xml.gz": "4b7aed9516f8ef62e13652526f42f0bfa0d12aaea5e3427fd45506a58672548a",
+  "data/raw/solar/vzor-11-v5_1.zip": "99ed7858deebb8aebf22b9c73aed43f9fb05a6ce9067f652709153b12fc7bbbb",
   "data/raw/struktura_uzemi_cr.xlsx": "a91d794eb3d23de2cf9eab28d7356200fc11b65bba971ecfbc9aa3e6ca27dabf"
 }

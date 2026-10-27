@@ -12,8 +12,12 @@ Rozloha je výpočet plochy původního plného polygonu v EPSG:5514 dělený 1 
 
 ## Demo a nedostupná data
 
-`raw/demo/` obsahuje tři zcela syntetické fixture datasety pro šest skutečných obcí. Nemají původ ve skutečných energetických měřeních. Manifest i datové soubory je označují `status: demo`; mezera Děčína v roce 2024 ověřuje chování missing data. Ostatní energetické metriky mají `status: unavailable`, žádné hodnoty a žádný datový soubor. Chybějící data nikdy nejsou nula.
+`raw/demo/` obsahuje dva zcela syntetické fixture datasety pro šest skutečných obcí. Nemají původ ve skutečných energetických měřeních. Manifest i datové soubory je označují `status: demo`; mezera Děčína v roce 2024 ověřuje chování missing data. Ostatní energetické metriky mají `status: unavailable`, žádné hodnoty a žádný datový soubor. Chybějící data nikdy nejsou nula.
 
 Populační řada referenčního TT-Decin se záměrně nemíchá s REGUAP: reference používá stavy k 1. lednu, REGUAP k 31. prosinci. Metrika population tak má jednotné roční vymezení 2018–2025. Normalizace na obyvatele může používat populační řadu stejného roku; pro energetická demo data 2026 lze pouze výslovně označený poslední dostupný populační stav.
 
 `processed/validation.json` obsahuje počty území, pokrytí populace a velikost browserových payloadů. `public/data/manifest.json` je kontrakt metrik; hodnota metriky je vždy u obce, vyšší jednotky agreguje generický frontend. Za neúplné pokrytí se nepovažují jednotlivé dostupné hodnoty za úplný součet území.
+
+## Skutečné FVE
+
+FVE demo bylo nahrazeno snímkem ERÚ k 1. 10. 2026. Vstupy jsou v `raw/solar/`, zdrojová metadata v `sources/solar_capacity.json`, audit v `processed/solar-validation.json`. Postup a omezení jsou v [metodice](../docs/solar-methodology.md). Snapshot obsahuje pouze licencované, bezpečně přiřazené zdroje, nikoli celkový výkon všech FVE. Není z něj odvozována historie. Obce s nejistou alokací a nepodložené nuly zůstávají `null`.

@@ -1,0 +1,30 @@
+{
+  "source": {
+    "name": "Energetický regulační úřad · licencované FVE (TEZ)",
+    "url": "https://eru.gov.cz/datove-sady-technologickych-energetickych-zarizeni-ke-dni-01102026-vzor-2025",
+    "asOf": "2026-10-01",
+    "updatedAt": "2026-10-01",
+    "retrievedAt": "2026-10-27",
+    "geographicGranularity": "municipality",
+    "temporalGranularity": "snapshot",
+    "scopeNote": "Pouze licencované FVE bezpečně přiřazené obcím. Nejde o všechny FVE; součty krajů a ČR jsou neúplné. Nejednoznačné údaje zůstávají bez dat. Stav k 1. 10. 2026.",
+    "methodology": "Součet OutputElec v MW jednotlivých aktivních solárních zdrojů (SLE; při prázdném typu palivo O). Licence i verze musí být aktivní a platné ke dni snímku. Obce propojeny výhradně přes číselný kód katastru a číselník ČÚZK. Více katastrů téže obce se nezapočítá opakovaně; provozovny přes více obcí se nerozdělují odhadem. Dotčené obce a absence zdrojů mají null. Jediný snímek 2026; bez historické interpolace.",
+    "methodologyUrl": "https://github.com/hphugosm/energomapa-cr/blob/main/docs/solar-methodology.md",
+    "auditUrl": "https://hphugosm.github.io/energomapa-cr/data/solar-validation.json",
+    "limitations": [
+      "Registr licencí nezahrnuje všechny malé nelicencované a ostrovní instalace; údaj nelze zaměňovat za celkový instalovaný výkon FVE.",
+      "64 provozoven s výkonem 152,20803 MW nelze jednoznačně přiřadit jediné obci. Jejich výkon se nealokuje odhadem.",
+      "V obcích dotčených nejednoznačností nebo rozpornou klasifikací je vynecháno i dalších 267,95211 MW jednoznačně umístěných zdrojů. Publikovaný obecní součet je 3142,90455 MW, nikoli celkových 3563,06469 MW způsobilých řádků registru.",
+      "Dva řádky se vzájemně rozporným druhem zdroje a palivem (0,13936 MW) jsou vyloučeny a doloženy v auditu.",
+      "Jde o jediný stav k 1. 10. 2026; historický vývoj ani nepodložené nuly nejsou dopočítány. Číselník katastrů je aktuální ke stažení 27. 10. 2026."
+    ]
+  },
+  "rawSha256": {
+    "UI_KATASTRALNI_UZEMI.zip": "922d059e158bc0d99a02da4376da7c45fb19d66eb77170a59bea14147bf1c240",
+    "tez-sk-11-2026-10-01.xml.gz": "4b7aed9516f8ef62e13652526f42f0bfa0d12aaea5e3427fd45506a58672548a",
+    "vzor-11-v5_1.zip": "99ed7858deebb8aebf22b9c73aed43f9fb05a6ce9067f652709153b12fc7bbbb"
+  },
+  "capacityUnit": "MW",
+  "cadastreMappingUrl": "https://services.cuzk.gov.cz/sestavy/cis/UI_KATASTRALNI_UZEMI.zip",
+  "schemaUrl": "https://eru.gov.cz/sites/default/files/obsah/prilohy/vzor-11-v5_1.zip"
+}

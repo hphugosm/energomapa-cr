@@ -138,16 +138,18 @@ export class MetricEngine {
       // Reject mismatched numerator/denominator coverage instead of silently inventing a ratio.
       const data = this.cache.get(config.denominatorMetric)?.values?.[String(year)] || {};
       const ids = result.coveredIds;
-      if (!ids?.length || ids.some(code => !finite(data[code]) || data[code] <= 0)) return {...result, value: null, denominatorMissing: true};
+      if (!ids?.length || ids.some(code => !finite(data[code]) || data[code] < 0)) return {...result, value: null, denominatorMissing: true};
       denominator = ids.reduce((sum, code) => sum + data[code], 0);
     } else {
       const ids = result.coveredIds;
-      if (!ids?.length || ids.some(code => !finite(this.territories.get(code)?.[config.denominator]) || this.territories.get(code)[config.denominator] <= 0)) {
+      if (!ids?.length || ids.some(code => !finite(this.territories.get(code)?.[config.denominator]) || this.territories.get(code)[config.denominator] < 0)) {
         return {...result, value: null, denominatorMissing: true};
       }
       denominator = ids.reduce((sum, code) => sum + this.territories.get(code)[config.denominator], 0);
     }
-    return {...result, denominator, value: denominator > 0 ? result.value * (config.factor ?? 1) / denominator : null};
+    // Known zero components are valid in a ratio of sums; the total must be positive.
+    if (!(denominator > 0)) return {...result, denominator, value: null, denominatorMissing: true};
+    return {...result, denominator, value: result.value * (config.factor ?? 1) / denominator};
   }
 
   series(id, territoryId, normalization = 'absolute', mode = 'value') {

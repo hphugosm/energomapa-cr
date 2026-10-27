@@ -111,3 +111,29 @@ test('direct parent totals do not invent municipality coverage or normalization'
   assert.equal(e.value(id,'R',2020,'person').value,null);
   assert.equal(e.value(id,'R',2021,'absolute','yoy').value,null);
 });
+
+
+test('ratio of sums includes known zero denominators when the covered total is positive',async()=>{
+  const local=territories.map(t=>t.id==='A'?{...t,areaKm2:0}:t);
+  const {engine:e,id}=fixture({2020:{A:5,B:15}}, {territories:local,population:{2020:{A:0,B:100}}});
+  await e.prepare(id,'person');
+  assert.equal(e.value(id,'R',2020,'area').value,20/8);
+  const person=e.value(id,'R',2020,'person');
+  assert.equal(person.value,200); assert.equal(person.denominator,100);
+  assert.deepEqual(person.coveredIds,['A','B']);
+  assert.equal(e.value(id,'CZ',2020,'person').value,200);
+  assert.equal(e.value(id,'A',2020,'person').value,null);
+  assert.equal(e.value(id,'A',2020,'area').value,null);
+});
+test('all-zero, missing and negative components invalidate denominator sums',async()=>{
+  for(const components of [{A:0,B:0},{A:0},{A:0,B:-1}]){
+    const local=territories.map(t=>t.level==='municipality'?{...t,areaKm2:components[t.id]}:t);
+    const {engine:e,id}=fixture({2020:{A:5,B:15}}, {territories:local,population:{2020:components}});
+    await e.prepare(id,'person');
+    for(const normalization of ['area','person']){
+      const result=e.value(id,'R',2020,normalization);
+      assert.equal(result.value,null); assert.equal(result.denominatorMissing,true);
+      assert.deepEqual(result.coveredIds,['A','B']);
+    }
+  }
+});

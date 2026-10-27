@@ -275,6 +275,14 @@ function render({writeURL = true} = {}) {
   $('metric-value').textContent = format(result.value);
   $('metric-unit').textContent = engine.unit(state.metric, state.normalization);
   $('metric-status').textContent = statusNames[m.status] || m.status;
+  let scopeNote = $('metric-scope');
+  if (!scopeNote) {
+    scopeNote = document.createElement('p');
+    scopeNote.id = 'metric-scope'; scopeNote.className = 'metric-scope';
+    $('metric-status').after(scopeNote);
+  }
+  scopeNote.textContent = sourceOf(m).scopeNote || m.scopeNote || '';
+  scopeNote.hidden = !scopeNote.textContent;
   $('demo-banner').hidden = m.status !== 'demo';
   $('coverage-note').textContent = result.denominatorMissing ? 'Chybí odpovídající jmenovatel pro přepočet.'
     : !finite(result.value) ? state.mode === 'yoy' ? 'Pro změnu chybí srovnatelný předchozí rok.' : 'Pro toto území a rok nejsou dostupná měření.'
@@ -322,10 +330,14 @@ function showData() {
     ['Geografická granularita', escapeHTML(source.geographicGranularity || m.geography.join(', '))],
     ['Časová granularita', escapeHTML(source.temporalGranularity || (m.years.length > 1 ? 'Roční' : 'Jednorázový stav'))],
     ['Dostupné roky', escapeHTML(m.years.join(', ') || 'Zatím žádné')],
-    ['Metodika', escapeHTML(source.methodology || m.methodology || 'Zatím není připojen ověřený dataset.')]
+    ['Metodika', escapeHTML(source.methodology || m.methodology || 'Zatím není připojen ověřený dataset.')],
+    ...((source.scopeNote || m.scopeNote) ? [['Rozsah dat', escapeHTML(source.scopeNote || m.scopeNote)]] : []),
+    ...(source.methodologyUrl ? [['Podrobná metodika', safeLink('Metodika a kontrola dat', source.methodologyUrl)]] : []),
+    ...(source.auditUrl ? [['Audit dat', safeLink('Výsledky kontroly dat', source.auditUrl)]] : [])
   ];
-  $('data-content').innerHTML = `<h3>${escapeHTML(m.name)}</h3><p><strong>${escapeHTML(statusNames[m.status] || m.status)}</strong>${m.status === 'demo' ? ' — hodnoty byly záměrně vytvořeny pro demonstraci UI, nikoliv jako měření skutečných zařízení.' : ''}</p><dl>${metadata.map(([key, value]) => `<dt><strong>${key}</strong></dt><dd>${value}</dd>`).join('')}</dl>
-  <h3>Výpočty a chybějící data</h3><p>Chybějící údaj není nula. Součty obcí se agregují na kraj a ČR jen u sčitatelných metrik. Neúplný součet je označen počtem dostupných obcí. Normalizace používá jmenovatel pouze stejných obcí jako čitatel; chybějící či nulový jmenovatel vrací nedostupný údaj. Meziroční změna vyžaduje stejné obce a předchozí kalendářní rok.</p>
+  const limitations = [...new Set([...(Array.isArray(source.limitations) ? source.limitations : []), ...(Array.isArray(m.limitations) ? m.limitations : [])])];
+  $('data-content').innerHTML = `<h3>${escapeHTML(m.name)}</h3><p><strong>${escapeHTML(statusNames[m.status] || m.status)}</strong>${m.status === 'demo' ? ' — hodnoty byly záměrně vytvořeny pro demonstraci UI, nikoliv jako měření skutečných zařízení.' : ''}</p><dl>${metadata.map(([key, value]) => `<dt><strong>${key}</strong></dt><dd>${value}</dd>`).join('')}</dl>${limitations.length ? `<h3>Omezení dat</h3><ul>${limitations.map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul>` : ''}
+  <h3>Výpočty a chybějící data</h3><p>Chybějící údaj není nula. Součty obcí se agregují na kraj a ČR jen u sčitatelných metrik. Neúplný součet je označen počtem dostupných obcí. Normalizace používá jmenovatel pouze stejných obcí jako čitatel; chybějící či nulový celkový jmenovatel vrací nedostupný údaj. Meziroční změna vyžaduje stejné obce a předchozí kalendářní rok.</p>
   <p>Rozsah mapových barev je pevný přes všechny roky dané metriky, normalizace a úrovně. Obecní pohled používá společný rozsah pro všechny obce ČR. Meziroční změna má symetrickou škálu kolem nuly. Šrafování značí chybějící údaj; nulová hodnota používá nejsvětlejší barvu.</p>
   <p>Přepočet na 1 000 obyvatel používá referenční populační základ v territories.json (rok uveden v profilu). Není automaticky historickou mírou na populaci každého roku. Rozloha je odvozena z nezjednodušených hranic. Pro další poměry může manifest definovat zvláštní dataset jmenovatele.</p>
   <h3>Územní podklad</h3><p>${escapeHTML(geography.methodology || geography.source?.methodology || 'Skutečné hranice ČÚZK / RÚIAN, zjednodušené pro zobrazení na webu.')}</p><p>Současné územní vymezení se používá i pro historická data; nejde o rekonstrukci tehdejších hranic.</p><p>${safeLink(geography.source?.name || 'ČÚZK INSPIRE AU WFS', geography.source?.url || 'https://services.cuzk.gov.cz/wfs/inspire-au-wfs.asp')}</p>

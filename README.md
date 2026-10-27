@@ -4,7 +4,7 @@
 
 Statický energetický atlas ČR: mapa ČR → kraje → obce, časový detail, porovnání území a manifestem řízené metriky. Frontend nemá npm runtime závislosti, CDN, API klíče ani serverovou databázi. Python připravuje data, prohlížeč počítá zobrazené agregace.
 
-**Energetické hodnoty zatím nejsou produkční data.** Obyvatelstvo je skutečný zdroj ČSÚ, hranice skutečný ČÚZK/RÚIAN. FVE, baterie a dobíjení jsou výslovně syntetické demo šesti měst; ostatní nepřipojené metriky mají stav `unavailable`. Demo nevyjadřuje celkovou energetiku ČR. Chybějící data nejsou nuly.
+**FVE jsou skutečný, metodicky omezený snímek ERÚ k 1. 10. 2026.** Metrika „Licencované FVE – přiřazený výkon“ zahrnuje pouze licencované zdroje bezpečně přiřazené obcím; nejde o všechny FVE ani úplný krajský/celostátní výkon. Obsahuje 4 484 pozitivních obecních hodnot, ostatní jsou `null`. [Metodika a bilanční audit](docs/solar-methodology.md) vysvětlují vynechané zdroje. Obyvatelstvo pochází z ČSÚ, hranice z ČÚZK/RÚIAN. Baterie a dobíjení zůstávají označeným DEMO; ostatní nepřipojené metriky jsou `unavailable`. Chybějící data nejsou nuly.
 
 ## Lokální spuštění
 
@@ -16,6 +16,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 python pipeline/build.py
 npm test
+python -m unittest discover -s tests -p 'test_*.py'
 python pipeline/package.py
 python -m http.server 4173 --directory dist --bind 127.0.0.1
 ```
@@ -24,7 +25,7 @@ Otevřete `http://127.0.0.1:4173/`. `npm run serve` podává přímo pracovní `
 
 ## Data a reprodukovatelnost
 
-`data/raw/` obsahuje uložené vstupy: číselník území ČSÚ, obyvatelstvo 2018–2025, komprimované GML hranice a malé oddělené demo fixtures. `data/sources/` popisuje zdroje. Výchozí build je offline, deterministický a nemění raw vstupy. `python pipeline/build.py --download` výslovně obnoví hranice, číselník a populační výřez REGUAP a připne nové vstupní hashe. Budoucí změny formátu či pokrytí zdroje mohou vyžadovat úpravu adaptéru; kontroly takový build zastaví.
+`data/raw/` obsahuje uložené vstupy: číselník území ČSÚ, obyvatelstvo 2018–2025, komprimované GML hranice, ERÚ XML, katastrální číselník a oddělené demo fixtures. `data/sources/` popisuje zdroje. Výchozí build je offline, deterministický a nemění raw vstupy. `python pipeline/build.py --download-solar` obnoví pouze připnutý snímek FVE a katastrální číselník; `--download` obnoví všechny zdroje a připne nové vstupní hashe. Novější datum ERÚ vyžaduje vědomou změnu adaptéru a ověření metodiky; nejde o automatické přepnutí na libovolný další soubor. Budoucí změny formátu či pokrytí zdroje mohou vyžadovat úpravu adaptéru; kontroly takový build zastaví.
 
 `pipeline/build.py` čte XLSX/CSV/GML, propojuje údaje kódem obce, transformuje EPSG:5514 do EPSG:4326, společně zjednodušuje obecní hranice a vytváří menší GeoJSON po krajích. Rozloha pochází z plné geometrie v metrické projekci. Souhrn validace je v `data/processed/validation.json`. `pipeline/package.py` bezpečně nahradí pouze `dist/` kopií `public/`; symlinky odmítá. Raw data, reference, testy ani Python knihovny do webu nekopíruje.
 
@@ -36,7 +37,7 @@ Otevřete `http://127.0.0.1:4173/`. `npm run serve` podává přímo pracovní `
 - `public/data/territories.json`: hierarchie a jmenovatele obcí. GeoJSON obsahuje mapové polygony; podrobné obce se načítají po krajích.
 - `tests/engine.test.mjs`: Node native test runner, bez testovacích knihoven.
 
-Aditivní veličiny se sčítají z obcí; míry jsou poměry součtů. Neúplný součet zachovává počet pokrytých a očekávaných obcí. Normalizace používá jmenovatel jen pro stejné pokryté obce; nulový nebo chybějící jmenovatel vrací chybějící výsledek. Meziroční změna vyžaduje bezprostředně předchozí kalendářní rok a shodné pokrytí. Barevná doména používá všechny roky zvolené metriky. Přímý souhrnný údaj pro kraj/stát nedokládá obecní pokrytí: zůstává dostupný absolutně, bez domyšlené normalizace a změny.
+Aditivní veličiny se sčítají z obcí; míry jsou poměry součtů. Neúplný součet zachovává počet pokrytých a očekávaných obcí. Normalizace používá jmenovatel jen pro stejné pokryté obce; nulový celkový nebo chybějící jmenovatel vrací chybějící výsledek. Meziroční změna vyžaduje bezprostředně předchozí kalendářní rok a shodné pokrytí. Barevná doména používá všechny roky zvolené metriky. Přímý souhrnný údaj pro kraj/stát nedokládá obecní pokrytí: zůstává dostupný absolutně, bez domyšlené normalizace a změny.
 
 `per_capita` v základním manifestu používá územní populační baseline 2025, nikoli automaticky populaci každého historického roku. Pro časově odpovídající jmenovatel definujte normalizaci s `denominatorMetric: "population"`; engine ji načte a páruje stejný rok. Aktuální hranice nejsou historickou rekonstrukcí a srovnatelnost obyvatelstva mohou ovlivnit sčítání a změny území.
 

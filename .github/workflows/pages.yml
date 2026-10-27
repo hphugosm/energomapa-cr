@@ -26,6 +26,8 @@ jobs:
         run: python pipeline/build.py
       - name: Test data engine
         run: npm test
+      - name: Test source adapters
+        run: python -m unittest discover -s tests -p 'test_*.py'
       - name: Package static site
         run: python pipeline/package.py
       - uses: actions/upload-pages-artifact@v4
