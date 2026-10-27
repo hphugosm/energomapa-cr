@@ -46,4 +46,6 @@ Produkční data: 19,308,733 bajtů (18.41 MiB), načítaná lazy. Raw data se n
 - Kompletní offline build a kontrola opakovaného buildu: 90 identických datových výstupů.
 - Kontrola všech 72 kombinací ověřených metrik a normalizací přes skutečně exportované JSON prošla. Obě skutečné bodové vrstvy prošly generic loaderem i cache kontrolou.
 - Browser smoke: start, modelové období, lazy profil se všemi zdroji a omezeními, MWh bez dat, přepočet na domácnost, skutečné body v O datech a konzole bez chyb.
-- GitHub Pages workflow obsahuje datový build, Python/JS testy, determinismus, čisté statické balení a deployment. Výsledek veřejného nasazení je doplněn po pushi.
+- GitHub Pages workflow obsahuje datový build, Python/JS testy, determinismus, čisté statické balení a deployment. Veřejné nasazení commitu `6e90baa` úspěšně prošlo: [GitHub Actions 40481295815](https://github.com/hphugosm/energomapa-cr/actions/runs/40481295815). [Otevřít EnergoMapu](https://hphugosm.github.io/energomapa-cr/).
+
+Veřejný browser smoke na GitHub Pages ověřil PVGIS 1 075,51 kWh/kWp/rok za ČR, vyhledání Roudnice nad Labem (1 080,91), přiblížení obce, 22vrstvý profil se všemi poskytovateli a čistou konzoli.
