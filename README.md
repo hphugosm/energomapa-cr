@@ -1,4 +1,4 @@
-# EnergoMapa Česka 0.4.0
+# EnergoMapa Česka 0.5.0
 
 Statický energetický atlas ČR s navigací **ČR → kraj → obec**, vyhledáváním, časovým grafem, porovnáním území a kombinovaným Energy Profile. Rozložení mapy, pravého panelu a časové osy navazuje na TT-Decin. Metriky, zdroje, normalizace a bodové vrstvy řídí manifest; frontend nepotřebuje serverovou databázi, API klíče, CDN ani CSV upload.
 
@@ -21,6 +21,14 @@ Odkaz Pages je cílová adresa projektu; stav nasazení této verze dokládá a�
 Produkční katalog nepoužívá syntetická demo data. Nedostupná energetická kapacita úložišť v MWh zůstává výslovně `unavailable`. Chybějící záznamy nejsou nuly. Přesné počty metrik, pokrytí a velikosti výstupů jsou v generované validaci a [protokolu ověření](docs/verification.md).
 
 Energetický profil načítá ověřené vrstvy až po rozbalení. Každá karta zachovává vlastní datum nebo referenční období; profil používá poslední dostupný stav každé metriky a nepředstírá společný rok 2026. Snapshoty nepřehrává jako historii. Dobíjení a průmyslová zařízení mají samostatné volitelné bodové vrstvy; geometrie obcí se načítají po krajích.
+
+## Analytika 0.5.0
+
+Panel **Analýza území** přidává kombinované filtry, editovatelné vážené skóre lokalit, nejbližší zařízení, porovnání 2–3 území a export výsledků. Mapa zobrazuje zapnuté bodové vrstvy s clusteringem; výsledek analýzy umožňuje přejít na konkrétní obec. Odvozené poměry jsou deklarativní a počítají se z původních metrik bez nových datasetů. Načítají se pouze metriky a body skutečně zvolené funkce.
+
+Každé kritérium zachovává vlastní rok a normalizaci. Chybějící údaje nejsou nuly: filtr je vyřadí, scoring nabízí vyřazení či výpočet z dostupných vah. Úplnost skóre je podíl dostupných vah, nikoli statistická jistota. **Výsledek závisí na zvolených vahách a kritériích.** Presety jsou upravitelné ukázky, nikoli objektivní doporučení vhodnosti lokality. Nearest uvádí vzdušnou vzdálenost; silniční dojezd poskytuje oddělená funkce isochron.
+
+CSV i kopírovaný souhrn zachovávají kontext analýzy. Nové funkce používají původních 22 reálných metrik a dvě bodové vrstvy; nezvyšují původní pokrytí dat ani nezamlčují omezení zdrojů. [Vzorce a pravidla analytiky](docs/analytics.md) · [Report verze 0.5.0](docs/report-0.5.0.md)
 
 ## Lokální spuštění
 

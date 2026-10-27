@@ -8,6 +8,7 @@ from shapely.ops import unary_union
 from pyproj import Transformer
 from catalog import build_catalog, source_registry, normalizations, ALIASES, CATEGORIES
 from validation import validate_metrics, validate_points
+from isochrones import build_isochrones
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 RAW=ROOT/'data/raw'; OUT=ROOT/'public/data'
 NS={'a':'http://inspire.ec.europa.eu/schemas/au/4.0','e':'http://www.locationframework.eu/schemas/AdministrativeUnits/1.0','g':'http://www.opengis.net/gml/3.2','n':'http://inspire.ec.europa.eu/schemas/gn/4.0','w':'http://www.opengis.net/wfs/2.0'}
@@ -149,11 +150,12 @@ def build():
     source_data=source_registry(ROOT,metrics)
     write(ROOT/'data/sources/registry.json',source_data)
     write(OUT/'sources.json',source_data)
-    manifest={'schemaVersion':1,'version':'0.4.0','defaultMetric':'population','metricAliases':ALIASES,
+    isochrone_index=build_isochrones(ROOT)
+    manifest={'schemaVersion':1,'version':'0.5.0','defaultMetric':'population','metricAliases':ALIASES,
               'categories':CATEGORIES,'normalizations':normalizations(latest_year),
               'colorScales':{'electricity':['#eef3fc','#173da5'],'solar':['#fff4cb','#d98212'],'renewables':['#ecf7e9','#24763c'],'heat':['#fff0df','#bb5418'],'co2':['#fde9e7','#ab2929'],'grid':['#f1eafb','#6d42a5'],'storage':['#f1eafb','#6d42a5']},
               'metrics':metrics,'geography':{'overview':'geo/overview.geojson','municipalities':'geo/municipalities/{regionId}.geojson','source':geo_source},
-              'territories':'territories.json','points':point_metadata,'sources':'sources.json','validation':'validation.json','pointsSchema':'points/schema.json'}
+              'territories':'territories.json','points':point_metadata,'sources':'sources.json','validation':'validation.json','pointsSchema':'points/schema.json','isochrones':{'manifest':'isochrones/manifest.json','origins':len(isochrone_index['origins']),'minutes':isochrone_index['minutes']}}
     write(OUT/'points/schema.json',json.loads((ROOT/'data/sources/flat-point-layer.schema.json').read_text()))
     write(OUT/'territories.json',{'schemaVersion':1,'territories':territories})
     write(OUT/'geo/overview.geojson',{'type':'FeatureCollection','features':overview})

@@ -1,0 +1,44 @@
+{
+  "source": {
+    "name": "Valhalla · FOSSGIS e.V. · OpenStreetMap road network",
+    "url": "https://valhalla.github.io/valhalla/api/isochrone/api-reference/",
+    "retrievedAt": "2026-10-27",
+    "license": "OpenStreetMap © contributors, ODbL; Valhalla MIT",
+    "attribution": "© OpenStreetMap contributors · Valhalla / FOSSGIS e.V.",
+    "temporalGranularity": "snapshot",
+    "methodology": "Car travel-time network polygons from specified municipal centroid, snapped to road network; 15, 30 and 60 minutes. Not circles. Default costing with no requested live traffic or departure time."
+  },
+  "limitations": "14 precomputed city origins: 13 distinct regional seats (Prague serves two regions) plus Děčín. Polygons apply to the shown origin, never an arbitrary clicked municipality. Public demo rejects contours above 60 minutes; 120 minutes requires an explicitly configured own endpoint. Provider road-graph version is not returned, so exact offline reproduction uses pinned responses; fresh routing may change. Driving estimate is not navigation, live traffic or a guarantee of reachability.",
+  "rawSha256": {
+    "500496.json.gz": "7dc1ddfe9a54b696fcce56b69509a8cee9c89d5557f5ca58316a7f4526a96b5d",
+    "544256.json.gz": "d15bcdcbcdcb0610cbaa4b7b9e3882fe0c7611d31153b8e4c940c9bf1d1b7d6e",
+    "554782.json.gz": "380fde4ccfe1a204a83b2444b290ce083c597b518137f29463ee1b28dcfade4a",
+    "554791.json.gz": "bc6a420b37de8c19af30759b107a1888262e5cabc042e78e8817c08d58f536f8",
+    "554804.json.gz": "581ce54c01dc0d8e636ec436e3515845369eca6cb8f13b244a9a7b63f9d3e5dc",
+    "554821.json.gz": "2c49658fd29721405a78d986ecfb80ea10b5e21dcf2c3eb478c4d376ac46363c",
+    "554961.json.gz": "3d88f8a01341210b7059b2e300aa60a06ea52e079b9539cb26098faa5515f0a4",
+    "555134.json.gz": "8c9932236c570f0bc4c557818d7f78f31801686d44073b4e62747504df7b943a",
+    "562335.json.gz": "a02636269ccc63792f6948c7e73a108c92bf48a2e0370cc11851350c1edfb4b7",
+    "563889.json.gz": "99181bbc60bf2baa7f54e08ed5199ffbfe5786c6f95648f0f19af868a7af23d0",
+    "569810.json.gz": "4800142ed95a7dbbfc5a2265feb0a109ec6617fea57a4c4bd93c84c793d2ee80",
+    "582786.json.gz": "6bb074079d7de454b0de52a134566e64b87adb10550d80089612647ca1b89c80",
+    "585068.json.gz": "23a39756d5d454550d61ed726747d28a0352723f660107a46c7ead25972f4fc5",
+    "586846.json.gz": "1ad868419b93548621d12de49867d1679690da98160d89f2b1d30aed9a72f74e"
+  },
+  "expectedOriginCodes": [
+    "554782",
+    "582786",
+    "554821",
+    "554791",
+    "563889",
+    "500496",
+    "544256",
+    "569810",
+    "555134",
+    "554804",
+    "554961",
+    "585068",
+    "586846",
+    "562335"
+  ]
+}

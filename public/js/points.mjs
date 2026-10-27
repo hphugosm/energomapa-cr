@@ -19,7 +19,7 @@ export function validatePointLayer(data, layer, territories) {
       const municipality = territories.get(point.municipalityCode);
       if (municipality?.level !== 'municipality' || territories.get(point.regionCode)?.level !== 'region' || municipality.parentId !== point.regionCode) throw Error(`Neplatná obec nebo kraj bodu ${point.id}.`);
     }
-    return {...data, type: 'FeatureCollection', features: data.points.map(point => ({type: 'Feature', id: point.id, geometry: {type: 'Point', coordinates: [point.lon, point.lat]}, properties: {...point.properties, name: point.name, kind: point.type, municipalityId: point.municipalityCode, regionId: point.regionCode, source: point.properties.source || data.source || layer.source}}))};
+    return {...data, type: 'FeatureCollection', features: data.points.map(point => ({type: 'Feature', id: point.id, geometry: {type: 'Point', coordinates: [point.lon, point.lat]}, properties: {...point.properties, ...(point.year !== undefined ? {year: point.year} : {}), name: point.name, kind: point.type, municipalityId: point.municipalityCode, regionId: point.regionCode, source: point.properties.source || data.source || layer.source}}))};
   }
   if (!object(data) || data.type !== 'FeatureCollection' || !Array.isArray(data.features)) throw Error('Bodová vrstva musí být GeoJSON FeatureCollection.');
   const ids = new Set();

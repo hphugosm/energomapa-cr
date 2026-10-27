@@ -122,7 +122,7 @@ def compile_industry(rows, territories, locate, source):
                         'normalizations':['absolute','per_capita','per_km2'],'path':f'metrics/{ident}.json',
                         'status':'verified','source':dict(source),'aggregation':'sum','coverage':'partial','profile':True})
         datasets[ident] = {'schemaVersion':1,'metricId':ident,'status':'verified','values':vals}
-    return metrics,datasets,audit,{'industrial_facilities':{'id':'industrial_facilities','type':'industry','source':dict(source),'points':points}}
+    return metrics,datasets,audit,{'industrial_facilities':{'id':'industrial_facilities','name':'Průmyslové provozovny ohlašující CO₂','type':'industry','source':dict(source),'points':points}}
 
 def normalize_row(row):
     if 'countryName' not in row:

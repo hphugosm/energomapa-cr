@@ -1,16 +1,20 @@
-import {MetricEngine, calendarYears, finite, format} from './engine.mjs?v=0.4.0';
-import {createEnergyMap} from './map.mjs?v=0.4.0';
-import {renderTimeChart} from './chart.mjs?v=0.4.0';
-import {EnergyProfile} from './profile.mjs?v=0.4.0';
-import {PointLayerStore} from './points.mjs?v=0.4.0';
+import {MetricEngine, calendarYears, finite, format} from './engine.mjs?v=0.5.0';
+import {createEnergyMap} from './map.mjs?v=0.5.0';
+import {renderTimeChart} from './chart.mjs?v=0.5.0';
+import {EnergyProfile} from './profile.mjs?v=0.5.0';
+import {PointLayerStore} from './points.mjs?v=0.5.0';
+import {installDerivedMetrics} from './analysis/derived.mjs?v=0.5.0';
+import {AnalysisPanel} from './ui/analysis-panel.mjs?v=0.5.0';
+import {ComparePanel} from './ui/compare-panel.mjs?v=0.5.0';
+import {LayersPanel} from './ui/layers-panel.mjs?v=0.5.0';
 
 const $ = id => document.getElementById(id);
 const escapeHTML = text => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 const fold = text => String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 const statusNames = {verified: 'Zdrojová data', demo: 'DEMO · ilustrační data', unavailable: 'Data zatím nejsou připojena'};
-const categoryNames = {demography: 'Obyvatelstvo a domácnosti', context: 'Obyvatelstvo a domácnosti', electricity: 'Elektřina', renewables: 'Obnovitelné zdroje', solar: 'Solární energie', storage: 'Akumulace', heating: 'Teplo', heat: 'Teplo', mobility: 'Elektromobilita', transport: 'Elektromobilita', industry: 'Průmysl', emissions: 'Emise', potential: 'Potenciál', network: 'Síť'};
+const categoryNames = {demography: 'Obyvatelstvo a domácnosti', context: 'Obyvatelstvo a domácnosti', electricity: 'Elektřina', renewables: 'Obnovitelné zdroje', solar: 'Solární energie', storage: 'Akumulace', heating: 'Teplo', heat: 'Teplo', mobility: 'Elektromobilita', transport: 'Elektromobilita', industry: 'Průmysl', emissions: 'Emise', potential: 'Potenciál', network: 'Síť', derived: 'Odvozené ukazatele'};
 const cache = new Map(), pending = new Map();
-let manifest, engine, map, energyProfile, pointLayers, selectedGeometry = null, timer = null, metricRequest = 0, territoryRequest = 0, normalizationRequest = 0;
+let manifest, engine, map, energyProfile, pointLayers, analysisPanel, comparePanel, layersPanel, selectedGeometry = null, timer = null, metricRequest = 0, territoryRequest = 0, normalizationRequest = 0;
 let state = {metric: null, normalization: 'absolute', mode: 'value', year: null, selectedId: 'CZ', regionId: null, playing: false, speed: 1};
 
 async function json(path) {
@@ -171,6 +175,7 @@ async function selectTerritory(id, {writeURL = true} = {}) {
   selectedGeometry = existing || null;
   if (existing) map.setMunicipalities(regionId, existing);
   state.selectedId = id; state.regionId = regionId;
+  analysisPanel?.refreshOrigin();
   map.setContext({regionId, selectedId: id});
   $('town-search').value = t.level === 'municipality' ? t.name : '';
   $('search-results').hidden = true; $('town-search').setAttribute('aria-expanded', 'false');
@@ -259,7 +264,7 @@ function renderProfile(result) {
 
 function renderEnergyProfile() {
   const rows = energyProfile.rows(state.selectedId);
-  $('energy-profile-count').textContent = `${rows.length} ověřených vrstev`;
+  $('energy-profile-count').textContent = `${rows.length} zdrojových vrstev`;
   const grid = $('energy-profile-values'); grid.replaceChildren();
   if (!energyProfile.requested) return;
   let category = null;
@@ -339,7 +344,7 @@ function render({writeURL = true} = {}) {
   $('metric-label').textContent = `${state.mode === 'yoy' ? 'Meziroční změna · ' : ''}${m.name}`;
   $('metric-value').textContent = format(result.value);
   $('metric-unit').textContent = engine.unit(state.metric, state.normalization);
-  $('metric-status').textContent = result.valueStatus === 'not_applicable' ? 'Nevztahuje se na toto území' : result.valueStatus === 'unavailable' ? 'Údaj není dostupný' : statusNames[m.status] || m.status;
+  $('metric-status').textContent = m.derived && finite(result.value) ? 'Odvozená metrika' : result.valueStatus === 'not_applicable' ? 'Nevztahuje se na toto území' : result.valueStatus === 'unavailable' ? 'Údaj není dostupný' : statusNames[m.status] || m.status;
   let scopeNote = $('metric-scope');
   if (!scopeNote) {
     scopeNote = document.createElement('p');
@@ -353,6 +358,7 @@ function render({writeURL = true} = {}) {
     : !finite(result.value) ? state.mode === 'yoy' ? 'Pro změnu chybí srovnatelný předchozí rok.' : 'Pro toto území a rok nejsou dostupná měření.'
     : result.partial ? `NEÚPLNÝ SOUČET · ${format(result.coverage, 0)} z ${format(result.expected, 0)} obcí. Nejde o celkovou hodnotu území.`
     : result.coverage != null ? `Pokrytí: ${format(result.coverage, 0)} / ${format(result.expected, 0)} obcí.` : 'Přímá hodnota zdrojového území.';
+  if (result.componentYears) $('coverage-note').textContent += ' Složky: ' + Object.entries(result.componentYears).map(([id, year]) => `${engine.metric(id).name} ${year ?? 'bez dat'}`).join('; ') + '.';
   $('coverage-note').classList.toggle('warning', result.partial || result.denominatorMissing);
   const baseline = manifest.normalizations[state.normalization]?.denominator === 'population' ? ` Přepočet používá referenční populaci ${t.populationYear || 'uvedenou v územních datech'}.` : '';
   $('map-status').textContent = `${state.regionId ? 'Obce · jednotný rozsah pro celou ČR' : 'Kraje · kliknutím zobrazíte obce'} · ${m.status === 'demo' ? 'DEMO · ' : ''}${m.name}.${baseline}`;
@@ -424,6 +430,19 @@ function showData() {
 }
 
 function installEvents() {
+  $('analysis-open').addEventListener('click', () => {
+    const details = $('analysis-details'); details.open = !details.open;
+    if (details.open) details.scrollIntoView({behavior: 'smooth', block: 'start'});
+  });
+  $('compare-add').addEventListener('click', () => {
+    $('compare-details').open = true; comparePanel.addTerritory(state.selectedId);
+    $('compare-details').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  });
+  $('presentation-toggle').addEventListener('click', () => {
+    const active = document.body.classList.toggle('presentation-mode');
+    $('presentation-toggle').setAttribute('aria-pressed', String(active));
+    $('presentation-toggle').textContent = active ? 'Zpět do pracovního režimu' : 'Režim pro snímek';
+  });
   $('energy-profile-details').addEventListener('toggle', () => {
     if ($('energy-profile-details').open && !energyProfile.requested) loadEnergyProfile();
   });
@@ -455,6 +474,7 @@ function installEvents() {
   document.addEventListener('keydown', event => {
     if (event.key !== 'Escape' || document.querySelector('dialog[open]')) return;
     event.preventDefault();
+    map.setPickPoint(false);
     selectTerritory('CZ');
   });
   $('data-open').addEventListener('click', showData);
@@ -467,6 +487,7 @@ async function init() {
     manifest = await json('./data/manifest.json');
     const [territories, overview] = await Promise.all([json(`./data/${manifest.territories}`), json(`./data/${manifest.geography.overview}`)]);
     engine = new MetricEngine(manifest, territories, {fetchJSON: json, baseURL: './data/'});
+    installDerivedMetrics(engine);
     energyProfile = new EnergyProfile(engine);
     pointLayers = new PointLayerStore(manifest, territories, {fetchJSON: json, baseURL: './data/'});
     const query = new URLSearchParams(location.search);
@@ -476,7 +497,14 @@ async function init() {
     state.mode = query.get('mode') === 'yoy' && isTimeSeries() && metric().years.length > 1 ? 'yoy' : 'value';
     const years = availableYears(), year = Number(query.get('year'));
     state.year = years.includes(year) ? year : years.at(-1) ?? null;
-    map = createEnergyMap($('map'), {onSelect: selectFromMap});
+    map = createEnergyMap($('map'), {onSelect: selectFromMap,
+      onPointSelect: point => { $('layers-details').open = true; layersPanel?.showPoint(point); layersPanel?.detail.scrollIntoView({behavior:'smooth',block:'nearest'}); },
+      onMapPoint: (lat, lon) => { analysisPanel?.setOrigin(lat, lon); map.setPickPoint(false); }
+    });
+    layersPanel = new LayersPanel({container: $('layers-content'), store: pointLayers, map});
+    analysisPanel = new AnalysisPanel({container: $('analysis-content'), engine, pointStore: pointLayers, map,
+      onSelect: selectTerritory, getSelectedTerritory: territory, onStatus: text => { if (text === 'Souhrn zkopírován.') return; $('analysis-map-note').textContent = text; $('analysis-map-note').hidden = !text || text === 'Analýza vymazána.'; }, onScreenshot: () => $('presentation-toggle').click()});
+    comparePanel = new ComparePanel({container: $('compare-content'), engine, onSelect: selectTerritory});
     map.setOverview(overview); metricOptions();
     await engine.prepare(state.metric, state.normalization);
     installEvents();
