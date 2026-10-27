@@ -5,7 +5,7 @@ Posouzen byl [referenční snapshot TT-Decin](https://github.com/hphugosm/TT-Dec
 | Konkrétní vlastnost reference | Rozhodnutí v Energomapě | Důvod |
 | --- | --- | --- |
 | Statické ES moduly, místní JSON, provoz bez CDN a dlaždic | Zachovat tento architektonický princip, vytvořit samostatné `public/js/engine.mjs` a frontend | Malý přenos, offline po načtení, snadné GitHub Pages |
-| Výběr obce přepíná mapu a časový detail; druhý klik vrací kraj | Převzít propojení výběru a detailu; rozšířit hierarchii na ČR → kraj → obec | Energetická data nemají jen ústecký rozsah |
+| Výběr obce přepíná mapu a časový detail; návrat tlačítkem vrací kraj | Převzít propojení výběru a detailu; rozšířit hierarchii na ČR → kraj → obec | Energetická data nemají jen ústecký rozsah |
 | Obec × rok jako jednoznačný klíč; prázdná buňka není nula | V JSON použít rok → kód území → číslo/null | Kódy jsou stabilnější než názvy; chybějící údaj nesmí předstírat nulovou výrobu |
 | Krajská míra je poměr součtů, nikoli průměr obecních měr | Normalizovat součet hodnot společným jmenovatelem stejných pokrytých obcí | Zamezuje zkreslení malými obcemi a neúplným importem |
 | Časově pevné barevné rozsahy; meziroční změna = bezprostřední kalendářní rok | Engine počítá doménu přes všechny roky zvolené metriky a vyžaduje stejný seznam pokrytých obcí | Barvy a změny jsou v čase srovnatelné |

@@ -1,5 +1,7 @@
 """Explicit network refresh; normal builds never use network."""
 import concurrent.futures, gzip, hashlib, json, pathlib, urllib.parse, urllib.request, xml.etree.ElementTree as ET
+from datetime import datetime
+from zoneinfo import ZoneInfo
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 RAW=ROOT/'data/raw'
 BASE='https://services.cuzk.gov.cz/wfs/inspire-au-wfs.asp'
@@ -47,6 +49,28 @@ def download_tables():
     url='https://csu.gov.cz/docs/107516/3f36d27f-7eb1-b14c-0029-af89997bf192/struktura_uzemi_cr.xlsx?version=1.2'
     (RAW/'struktura_uzemi_cr.xlsx').write_bytes(urllib.request.urlopen(url,timeout=120).read())
 
+def refresh_source_metadata(now=None):
+    """Record the successful refresh, never the time of an offline build.
+
+    sha256 always hashes the archived gzip bytes (same convention as checksums.json).
+    The additional decompressed digest identifies the CSV independently of compression.
+    """
+    instant=now or datetime.now(ZoneInfo('Europe/Prague'))
+    if instant.tzinfo is None:
+        raise ValueError('Refresh time must be timezone-aware')
+    instant=instant.astimezone(ZoneInfo('Europe/Prague'))
+    for name in ('geography','population','territories'):
+        path=ROOT/f'data/sources/{name}.json'
+        source=json.loads(path.read_text())
+        source['retrievedAt']=instant.isoformat(timespec='seconds')
+        if name=='geography':source['asOf']=instant.date().isoformat()
+        if name=='population':
+            data=(RAW/'population_2018_2025.csv.gz').read_bytes()
+            source['sha256']=hashlib.sha256(data).hexdigest()
+            source['sha256Scope']='compressed raw file bytes'
+            source['sha256Decompressed']=hashlib.sha256(gzip.decompress(data)).hexdigest()
+        path.write_text(json.dumps(source,ensure_ascii=False,indent=2)+'\n')
+
 def pin_inputs():
     files={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(RAW.rglob('*')) if p.is_file()}
     (ROOT/'data/sources/checksums.json').write_text(json.dumps(files,indent=2,sort_keys=True)+'\n')
@@ -54,4 +78,5 @@ def pin_inputs():
 if __name__=='__main__':
     download_geography(refresh=True)
     download_tables()
+    refresh_source_metadata()
     pin_inputs()

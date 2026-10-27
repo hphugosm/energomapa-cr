@@ -23,6 +23,10 @@ Ověřeno přes lokální HTTP server v integrovaném prohlížeči:
 - Snapshot dobíjení ukazuje „Stav k 1. 10. 2026“ a vypíná slider, Play i meziroční změnu.
 - Nepřipojená větrná metrika ukazuje nedostupnost a šrafování bez vymyšlených hodnot.
 - Neúplné demo součty nesou pokrytí v detailu i popiscích mapy. Dialog O datech obsahuje metodiku a stav všech 13 metrik.
-- Rozložení pro notebook i mobil; pravý panel při nedostatku výšky samostatně scrolluje.
+- Rozložení pro notebook 1280 × 720 i mobil 390 × 844; mobil nemá vodorovné přetékání. Pravý panel při nedostatku výšky samostatně scrolluje.
 
 Statický balíček obsahuje pouze `public/`, bez Python runtime, raw podkladů, pracovního klonu, CDN a tajných klíčů. Všechny aplikační cesty jsou relativní pro GitHub Pages pod `/energomapa-cr/`.
+
+## Veřejné nasazení
+
+[GitHub Pages](https://hphugosm.github.io/energomapa-cr/) ověřeny v prohlížeči: ČR načetla 14 krajů a skutečný populační součet, hledání Roudnice stáhlo 354 obecních hranic Ústeckého kraje a přepnutí na FVE demo zobrazilo 3,5 MW. Konzole bez chyb a varování. [První Actions run](https://github.com/hphugosm/energomapa-cr/actions/runs/40468287939) provedl datový build, testy, balení i deployment úspěšně.

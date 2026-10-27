@@ -13,6 +13,9 @@ NS={'a':'http://inspire.ec.europa.eu/schemas/au/4.0','e':'http://www.locationfra
 def write(path,obj):
     path.parent.mkdir(parents=True,exist_ok=True)
     path.write_text(json.dumps(obj,ensure_ascii=False,separators=(',',':'),allow_nan=False)+'\n')
+def source_metadata(name):
+    return json.loads((ROOT/f'data/sources/{name}.json').read_text())
+
 def rounded(value):
     if isinstance(value,(tuple,list)):return [rounded(x) for x in value]
     if isinstance(value,float):return round(value,7)
@@ -43,8 +46,12 @@ def build():
     assert set(checksums)=={str(p.relative_to(ROOT)) for p in RAW.rglob('*') if p.is_file()}, 'Unpinned or missing raw input'
     for path,digest in checksums.items():
         assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==digest,f'Input checksum mismatch: {path}'
-    records=[r for r in openpyxl.load_workbook(RAW/'struktura_uzemi_cr.xlsx',read_only=True,data_only=True)['1.1.2026'].values][2:]
-    municipalities={str(r[0]):{'id':str(r[0]),'code':str(r[0]),'name':r[1],'level':'municipality','parentId':r[9],'regionId':r[9],'population':None,'populationYear':2025,'areaKm2':None,'status':r[2]} for r in records}
+    geo_source=source_metadata('geography')
+    population_source=source_metadata('population')
+    territory_source=source_metadata('territories')
+    assert population_source['sha256']==hashlib.sha256((RAW/'population_2018_2025.csv.gz').read_bytes()).hexdigest(), 'Population source digest is stale'
+    records=[r for r in openpyxl.load_workbook(RAW/'struktura_uzemi_cr.xlsx',read_only=True,data_only=True)[territory_source['sheet']].values][2:]
+    municipalities={str(r[0]):{'id':str(r[0]),'code':str(r[0]),'name':r[1],'level':'municipality','parentId':r[9],'regionId':r[9],'population':None,'populationYear':None,'areaKm2':None,'status':r[2]} for r in records}
     regions={r[9]:r[10] for r in records}
     pop={}; official_aggregates={}
     with gzip.open(RAW/'population_2018_2025.csv.gz','rt',encoding='utf8') as f:
@@ -58,13 +65,17 @@ def build():
             try:value=int(float(val))
             except ValueError:continue
             pop.setdefault(year,{})[code]=value
+    assert pop, 'No population years found'
+    latest_year=max(map(int,pop))
     for year,values in pop.items():
         assert set(values)==set(municipalities),f'Population coverage incomplete in {year}'
     for year,values in pop.items():
         assert sum(values.values())==official_aggregates[year]['CZ'], f'Country population sum mismatch {year}'
         for rid in regions:
             assert sum(v for code,v in values.items() if municipalities[code]['regionId']==rid)==official_aggregates[year][rid],f'Region population sum mismatch {year}/{rid}'
-    for code,t in municipalities.items():t['population']=pop.get('2025',{}).get(code)
+    for code,t in municipalities.items():
+        t['population']=pop[str(latest_year)][code]
+        t['populationYear']=latest_year
     geoms=geometries()
     assert set(municipalities)<=set(geoms),f'Missing geometry: {set(municipalities)-set(geoms)}'
     for code,t in municipalities.items():t['areaKm2']=round(geoms[code].area/1e6,5)
@@ -83,7 +94,7 @@ def build():
     country=unary_union(list(reg_geoms.values()))
     def summary(code,name,level,g):
         members=[t for t in municipalities.values() if level=='country' or t['regionId']==code]
-        return {'id':code,'code':code,'name':name,'level':level,'parentId':None if level=='country' else 'CZ','regionId':None if level=='country' else code,'population':sum(t['population'] for t in members) if all(t['population'] is not None for t in members) else None,'populationYear':2025,'areaKm2':round(sum(t['areaKm2'] for t in members),5)}
+        return {'id':code,'code':code,'name':name,'level':level,'parentId':None if level=='country' else 'CZ','regionId':None if level=='country' else code,'population':sum(t['population'] for t in members) if all(t['population'] is not None for t in members) else None,'populationYear':latest_year,'areaKm2':round(sum(t['areaKm2'] for t in members),5)}
     territories.append(summary('CZ','Česká republika','country',country));overview.append(feature('CZ','Česká republika',country.simplify(250,preserve_topology=True)))
     for rid,name in sorted(regions.items()):
         territories.append(summary(rid,name,'region',reg_geoms[rid]));overview.append(feature(rid,name,reg_simple[rid]))
@@ -96,12 +107,15 @@ def build():
     write(OUT/'geo/overview.geojson',{'type':'FeatureCollection','features':overview})
     write(OUT/'metrics/population.json',{'schemaVersion':1,'metricId':'population','status':'verified','values':{y:dict(sorted(v.items())) for y,v in sorted(pop.items())}})
     build_manifest(pop)
-    report={'municipalities':len(codes),'regions':len(regions),'populationCoverage':{y:len(v) for y,v in pop.items()},'missingPopulation':[c for c,t in municipalities.items() if t['population'] is None],'geographyAsOf':'2026-10-27','geometryToleranceMetres':100,'areaMethod':'Planar area of original full-resolution ČÚZK geometry in EPSG:5514; km²','publicBytes':sum(p.stat().st_size for p in OUT.rglob('*') if p.is_file())}
+    report={'municipalities':len(codes),'regions':len(regions),'populationCoverage':{y:len(v) for y,v in pop.items()},'missingPopulation':[c for c,t in municipalities.items() if t['population'] is None],'geographyAsOf':geo_source.get('asOf',geo_source['retrievedAt'][:10]),'geometryToleranceMetres':100,'areaMethod':'Planar area of original full-resolution ČÚZK geometry in EPSG:5514; km²','publicBytes':sum(p.stat().st_size for p in OUT.rglob('*') if p.is_file())}
     write(ROOT/'data/processed/validation.json',report)
     print(json.dumps(report,ensure_ascii=False,indent=2))
 
 
 def build_manifest(pop):
+    population_source=source_metadata('population')
+    geo_source=source_metadata('geography')
+    latest_year=max(map(int,pop))
     configs=[('population','Počet obyvatel','obyv.','context','electricity'),('households','Domácnosti','domácností','context','electricity'),('generation_capacity','Instalovaný výkon elektráren','MW','electricity','electricity'),('solar_capacity','Instalovaný výkon FVE','MW','electricity','solar'),('wind_capacity','Instalovaný výkon větru','MW','electricity','renewables'),('hydro_capacity','Instalovaný výkon vody','MW','electricity','renewables'),('battery_storage','Bateriová úložiště','MWh','storage','grid'),('heating_gas','Vytápění plynem','domácností','heat','heat'),('heating_electricity','Vytápění elektřinou','domácností','heat','electricity'),('district_heating','Dálkové teplo','domácností','heat','heat'),('ev_charging','Dobíjecí stanice','stanic','transport','grid'),('industrial_co2','Průmyslové emise CO₂','t CO₂/rok','emissions','co2'),('solar_potential','Solární potenciál','MWh/rok','electricity','solar')]
     metrics=[]
     for ident,name,unit,category,scale in configs:
@@ -110,9 +124,9 @@ def build_manifest(pop):
         method='ČSÚ REGUAP, ukazatel 2406UAP891, stav k 31. prosinci. Území podle číselníku 1. 1. 2026; změny hranic a sčítání mohou narušit srovnatelnost.' if ident=='population' else 'Syntetické demonstrační hodnoty šesti měst; záměrná mezera roku 2024 v Děčíně. Nejde o měření ani produkční energetická data.' if status=='demo' else 'Datový adaptér připraven. Skutečný obecní dataset zatím není připojen; chybějící hodnoty se nedopočítávají.'
         m={'id':ident,'name':name,'unit':unit,'category':category,'geography':['country','region','municipality'],'years':years,'colorScale':scale,'normalizations':['absolute','per_km2'] if ident=='population' else ['absolute','per_capita','per_km2'],'path':f'metrics/{ident}.json' if status!='unavailable' else None,'status':status,'source':{'name':'Český statistický úřad · REGUAP' if ident=='population' else 'Demo fixture EnergoMapa' if status=='demo' else 'Nepřipojeno','url':'https://csu.gov.cz/statistika/csu_a_uzemne_analyticke_podklady' if ident=='population' else None,'updatedAt':'2026-10-27','geographicGranularity':'municipality','temporalGranularity':'annual' if years else 'unavailable','methodology':method},'aggregation':'sum','coverage':'full' if ident=='population' else 'partial' if status=='demo' else 'none'}
         if ident=='population':
-            m['source']['asOf']='2025-12-31'
+            m['source']['asOf']=f'{latest_year}-12-31'
             m['source']['updatedAt']=None
-        m['source']['retrievedAt']='2026-10-27'
+        m['source']['retrievedAt']=population_source['retrievedAt'] if ident=='population' else '2026-10-27'
         if status=='unavailable':
             m['source']['updatedAt']=None
             m['source']['retrievedAt']=None
@@ -124,7 +138,7 @@ def build_manifest(pop):
             fixture=json.loads((RAW/f'demo/{ident}.json').read_text())
             fixture['values']={y:v for y,v in fixture['values'].items() if int(y) in years}
             write(OUT/f'metrics/{ident}.json',fixture)
-    manifest={'schemaVersion':1,'defaultMetric':'population','normalizations':{'absolute':{'label':'Absolutně','unitSuffix':''},'per_capita':{'label':'Na 1 000 obyvatel','denominator':'population','factor':1000,'unitSuffix':'/ 1 000 obyv.'},'per_km2':{'label':'Na km²','denominator':'areaKm2','factor':1,'unitSuffix':'/ km²'}},'colorScales':{'electricity':['#eef3fc','#173da5'],'solar':['#fff4cb','#d98212'],'renewables':['#ecf7e9','#24763c'],'heat':['#fff0df','#bb5418'],'co2':['#fde9e7','#ab2929'],'grid':['#f1eafb','#6d42a5']},'metrics':metrics,'geography':{'overview':'geo/overview.geojson','municipalities':'geo/municipalities/{regionId}.geojson','source':{'name':'ČÚZK · INSPIRE AU WFS / RÚIAN','url':'https://services.cuzk.gov.cz/wfs/inspire-au-wfs.asp','asOf':'2026-10-27','methodology':'Aktuální skutečné polygony; topologicky zjednodušeno na 100 m pro web. Kraje a stát odvozeny sjednocením obcí; rozloha z původní geometrie EPSG:5514.'}},'territories':'territories.json','points':[]}
+    manifest={'schemaVersion':1,'defaultMetric':'population','normalizations':{'absolute':{'label':'Absolutně','unitSuffix':''},'per_capita':{'label':'Na 1 000 obyvatel','denominator':'population','factor':1000,'unitSuffix':'/ 1 000 obyv.'},'per_km2':{'label':'Na km²','denominator':'areaKm2','factor':1,'unitSuffix':'/ km²'}},'colorScales':{'electricity':['#eef3fc','#173da5'],'solar':['#fff4cb','#d98212'],'renewables':['#ecf7e9','#24763c'],'heat':['#fff0df','#bb5418'],'co2':['#fde9e7','#ab2929'],'grid':['#f1eafb','#6d42a5']},'metrics':metrics,'geography':{'overview':'geo/overview.geojson','municipalities':'geo/municipalities/{regionId}.geojson','source':{'name':'ČÚZK · INSPIRE AU WFS / RÚIAN','url':'https://services.cuzk.gov.cz/wfs/inspire-au-wfs.asp','asOf':geo_source.get('asOf',geo_source['retrievedAt'][:10]),'retrievedAt':geo_source['retrievedAt'],'methodology':'Aktuální skutečné polygony; topologicky zjednodušeno na 100 m pro web. Kraje a stát odvozeny sjednocením obcí; rozloha z původní geometrie EPSG:5514.'}},'territories':'territories.json','points':[]}
     manifest['pointsSchema']='points/schema.json'
     write(OUT/'points/schema.json',json.loads((ROOT/'data/sources/point-layer.schema.json').read_text()))
     write(OUT/'manifest.json',manifest)
@@ -132,8 +146,9 @@ def build_manifest(pop):
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--download',action='store_true');args=p.parse_args()
     if args.download:
-        from download import download_geography,download_tables,pin_inputs
+        from download import download_geography,download_tables,refresh_source_metadata,pin_inputs
         download_geography(refresh=True)
         download_tables()
+        refresh_source_metadata()
         pin_inputs()
     build()

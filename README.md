@@ -1,5 +1,7 @@
 # EnergoMapa Česka
 
+[Otevřít aplikaci](https://hphugosm.github.io/energomapa-cr/) · [GitHub Actions](https://github.com/hphugosm/energomapa-cr/actions/workflows/pages.yml) · [Ověření MVP](docs/verification.md)
+
 Statický energetický atlas ČR: mapa ČR → kraje → obce, časový detail, porovnání území a manifestem řízené metriky. Frontend nemá npm runtime závislosti, CDN, API klíče ani serverovou databázi. Python připravuje data, prohlížeč počítá zobrazené agregace.
 
 **Energetické hodnoty zatím nejsou produkční data.** Obyvatelstvo je skutečný zdroj ČSÚ, hranice skutečný ČÚZK/RÚIAN. FVE, baterie a dobíjení jsou výslovně syntetické demo šesti měst; ostatní nepřipojené metriky mají stav `unavailable`. Demo nevyjadřuje celkovou energetiku ČR. Chybějící data nejsou nuly.
