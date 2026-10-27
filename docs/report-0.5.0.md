@@ -18,7 +18,7 @@ Funkční analytická verze nad 22 ověřenými zdrojovými metrikami; čtyři d
 | Export | Ověřeno | UTF-8 CSV, kopírovaný souhrn, prázdná chybějící hodnota |
 | Režim pro snímek mapy | Ověřeno | Čistý pohled pro ruční screenshot |
 | Isochrony | Ověřené statické MVP | 42 skutečných silničních polygonů pro 14 měst, 15/30/60 min; libovolný bod a 120 min přes vlastní volitelný Valhalla endpoint |
-| Regrese 0.4.0 a statické Pages | Lokálně ověřeno; čeká CI | Původní mapa, profil, čas a lazy loading zachovány |
+| Regrese 0.4.0 a statické Pages | Ověřeno v prohlížeči i CI | Původní mapa, profil, čas a lazy loading zachovány |
 
 ## Moduly
 
@@ -45,7 +45,9 @@ Funkční analytická verze nad 22 ověřenými zdrojovými metrikami; čtyři d
 | Deterministic build | 105 identických offline datových výstupů |
 | Browser smoke | Lokálně ověřeno: filtr 106 obcí, FVE preset 4 484 obcí, TOP clustery, detail bodu, ruční počátek, nulová nearest vzdálenost ke stejnému bodu, Praha/Brno/Ostrava s vlastními obdobími, CSV a kopírovaný souhrn, Děčín 30 min |
 | Produkční data | 20 362 680 B dat; 20 537 258 B celý web / 91 souborů; ZIP 5 250 467 B |
-| Commit | Pending – doplnit vytvořený commit |
-| Branch | `main` – potvrdit při vydání |
-| GitHub Pages deployment | Pending – potvrdit konkrétní publikovaný commit a běh Actions |
-| Deployment URL | https://hphugosm.github.io/energomapa-cr/ – cílová adresa, zatím zde není potvrzená publikace 0.5.0 |
+| Commit | `54f1da2` (implementace) |
+| Branch | `main` |
+| GitHub Pages deployment | Úspěšně nasazen commit `54f1da2`: [GitHub Actions 40485986739](https://github.com/hphugosm/energomapa-cr/actions/runs/40485986739) |
+| Deployment URL | [Otevřít EnergoMapu 0.5.0](https://hphugosm.github.io/energomapa-cr/) |
+
+Veřejný browser smoke po nasazení ověřil start na cestě `/energomapa-cr/`, FVE preset (4 484 obcí, Hrušky 74,98 bodu), klikatelné skupiny TOP lokalit, kombinovaný filtr (106 obcí) s explicitním modelovým obdobím a skutečný silniční polygon Děčína na 30 minut. Konzole neobsahovala chyby ani varování. CSV a kopírování porovnání Praha/Brno/Ostrava prošly lokálním browser testem. Snímky a protokoly jsou v lokálním `artifacts/verification-0.5.0/`.

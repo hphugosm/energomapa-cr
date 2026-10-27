@@ -71,3 +71,5 @@ Přidejte ověřený adaptér, připnutý vstup a zdrojová metadata; vraťte me
 ## GitHub Pages
 
 Projekt patří do kořene samostatného repozitáře; `.github/workflows/pages.yml` musí být v kořeni. V Settings → Pages zvolte GitHub Actions. Workflow na `main` provede instalaci Python závislostí, build, testy, balení a deployment do `github-pages`; pull request provádí kontrolu bez publikace. Relativní cesty podporují i `/nazev-repozitare/`. Publikaci mohou omezovat nastavení Actions/Pages a schválení prostředí. Lokální build sám žádné nasazení neprovádí.
+
+Ověření analytické verze, stav isochron a omezení: [report EnergoMapa 0.5.0](docs/report-0.5.0.md). Zdrojové pokrytí původních metrik zůstává v [reportu 0.4.0](docs/report-0.4.0.md).
