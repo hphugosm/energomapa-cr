@@ -1,0 +1,7 @@
+reference/
+__pycache__/
+.venv/
+node_modules/
+dist/
+artifacts/
+.DS_Store

@@ -1,0 +1,14 @@
+{
+  "name": "energomapa-cz",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Statický manifestem řízený energetický atlas České republiky",
+  "scripts": {
+    "data": "python3 pipeline/build.py",
+    "test": "node --test tests/*.test.mjs",
+    "build": "python3 pipeline/build.py && python3 pipeline/package.py",
+    "serve": "python3 -m http.server 4173 --directory public --bind 127.0.0.1"
+  },
+  "engines": {"node": ">=20"}
+}

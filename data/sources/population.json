@@ -1,0 +1,9 @@
+{
+  "name": "ČSÚ REGUAP: populační výřez",
+  "url": "https://data.csu.gov.cz/opendata/sady/REGUAP/distribuce/csv",
+  "retrievedAt": "2026-10-27",
+  "method": "Nezměněné řádky CSV s IndicatorType=2406UAP891, převzaté z prvního souvislého bloku oficiálního CSV. Gzip pro archivaci. Výřez obsahuje i agregované územní jednotky; build vybírá obce podle číselníku.",
+  "sha256": "d6c9da3c0f0db9ab5b9541086c975167dca4f1c61a3a6964f230dfbdc4ef2d42",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://csu.gov.cz/podminky_pro_vyuzivani_a_dalsi_zverejnovani_statistickych_udaju_csu"
+}

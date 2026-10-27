@@ -1,0 +1,8 @@
+{
+  "name": "ČSÚ Struktura území České republiky",
+  "url": "https://csu.gov.cz/docs/107516/3f36d27f-7eb1-b14c-0029-af89997bf192/struktura_uzemi_cr.xlsx?version=1.2",
+  "retrievedAt": "2026-10-27",
+  "sheet": "1.1.2026",
+  "methodology": "Unmodified original XLSX; six-digit municipality code, name, status and NUTS3 region. Four military territories included for complete geographic coverage.",
+  "license": "CC BY 4.0"
+}

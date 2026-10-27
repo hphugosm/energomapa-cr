@@ -1,0 +1,12 @@
+{
+  "name": "ČÚZK INSPIRE Administrative Units (RÚIAN)",
+  "url": "https://services.cuzk.gov.cz/wfs/inspire-au-wfs.asp",
+  "documentation": "https://services.cuzk.gov.cz/doc/inspire-au-download.pdf",
+  "retrievedAt": "2026-10-27",
+  "sourceCrs": "EPSG:5514",
+  "outputCrs": "EPSG:4326",
+  "query": {"service":"WFS","version":"2.0.0","request":"GetFeature","storedquery_id":"GetUnitByNationalLevel","NAT_LEVEL":"Obec"},
+  "tileParameters": "XMIN,YMIN,XMAX,YMAX; encoded in each gzip filename in that order",
+  "methodology": "Full original GML responses. Truncated parent responses are ignored; recursive complete tiles are joined and deduplicated by nationalCode. Country and regions derived by union of authoritative current municipal polygons, region membership from ČSÚ structure 1 January 2026. Area computed before simplification in source projected CRS.",
+  "licenseUrl": "https://www.cuzk.cz/Predpisy/Podminky-poskytovani-prostor-dat-a-sitovych-sluzeb.aspx"
+}
