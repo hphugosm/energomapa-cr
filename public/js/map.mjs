@@ -101,7 +101,8 @@ export function createEnergyMap(svg, {onSelect = () => {}, onHover = () => {}} =
       node.classList.toggle('context-region', neighbor);
       node.setAttribute('aria-pressed', String(code === context.selectedId));
       const name = state.names?.get(code) || record.name;
-      const formatted = valid ? `${new Intl.NumberFormat('cs-CZ', {maximumFractionDigits: 3}).format(value)} ${state.unitLabel}` : 'Data nejsou dostupná';
+      const valueStatus = state.coverage?.get(code)?.valueStatus;
+      const formatted = valid ? `${new Intl.NumberFormat('cs-CZ', {maximumFractionDigits: 3}).format(value)} ${state.unitLabel}` : valueStatus === 'not_applicable' ? 'Nevztahuje se' : valueStatus === 'unavailable' ? 'Údaj není dostupný' : 'Chybějící údaj';
       const status = coverage?.denominatorMissing ? ' · Chybí jmenovatel pro normalizaci' : valid && coverage?.partial ? ` · NEÚPLNÝ SOUČET (${coverage.coverage ?? '?'}/${coverage.expected ?? '?'} obcí)` : '';
       node.setAttribute('aria-label', `${name} (${code}) · ${state.year} · ${formatted}${status}`);
       node.querySelector('title').textContent = `${name} · ${formatted}${status}`;

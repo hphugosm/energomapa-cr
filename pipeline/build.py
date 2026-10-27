@@ -6,7 +6,8 @@ import shapely
 from shapely.geometry import Polygon, MultiPolygon, mapping, shape
 from shapely.ops import unary_union
 from pyproj import Transformer
-from solar import build_solar
+from catalog import build_catalog, source_registry, normalizations, ALIASES, CATEGORIES
+from validation import validate_metrics, validate_points
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 RAW=ROOT/'data/raw'; OUT=ROOT/'public/data'
 NS={'a':'http://inspire.ec.europa.eu/schemas/au/4.0','e':'http://www.locationframework.eu/schemas/AdministrativeUnits/1.0','g':'http://www.opengis.net/gml/3.2','n':'http://inspire.ec.europa.eu/schemas/gn/4.0','w':'http://www.opengis.net/wfs/2.0'}
@@ -79,7 +80,12 @@ def build():
         t['populationYear']=latest_year
     geoms=geometries()
     assert set(municipalities)<=set(geoms),f'Missing geometry: {set(municipalities)-set(geoms)}'
-    for code,t in municipalities.items():t['areaKm2']=round(geoms[code].area/1e6,5)
+    centroid_project=Transformer.from_crs(5514,4326,always_xy=True).transform
+    for code,t in municipalities.items():
+        t['areaKm2']=round(geoms[code].area/1e6,5)
+        lon,lat=centroid_project(geoms[code].centroid.x,geoms[code].centroid.y)
+        t['centroid']={'lon':round(lon,7),'lat':round(lat,7)}
+        t['municipalityCode']=code; t['regionCode']=t['regionId']
     # A single coverage operation keeps adjacent municipal edges identical.
     codes=sorted(municipalities)
     assert shapely.coverage_is_valid([geoms[c] for c in codes]), 'Original geography has overlapping edges'
@@ -104,56 +110,63 @@ def build():
         write(OUT/f'geo/municipalities/{rid}.geojson',{'type':'FeatureCollection','features':features})
     territories.extend(municipalities[c] for c in codes)
     assert all(shape(f['geometry']).is_valid for f in overview), 'Invalid overview GeoJSON'
+    metrics,datasets,audits,layers=build_catalog(territories,ROOT,geoms,pop)
+    household_values=datasets['households']['values']['2021']
+    for t in territories:
+        t['regionCode']=t.get('regionId')
+        members=[t['id']] if t['level']=='municipality' else [c for c,m in municipalities.items() if t['level']=='country' or m['regionId']==t['id']]
+        values=[household_values.get(c) for c in members]
+        t['households']=sum(v for v in values if v is not None) if any(v is not None for v in values) else None
+        t['householdsYear']=2021
+        t['householdsCoverage']={'available':sum(v is not None for v in values),'expected':len(values)}
+        if t['level']!='municipality':
+            g=country if t['level']=='country' else reg_geoms[t['id']]
+            lon,lat=project(g.centroid.x,g.centroid.y)
+            t['centroid']={'lon':round(lon,7),'lat':round(lat,7)}
+    baseline_path=ROOT/'data/sources/coverage-baseline.json'
+    baseline=json.loads(baseline_path.read_text()) if baseline_path.exists() else {}
+    reports=validate_metrics(metrics,datasets,territories,baseline)
+    validate_points(layers,territories)
+    for ident,data in datasets.items():
+        write(OUT/f'metrics/{ident}.json',data)
+        write(ROOT/f'data/processed/{ident}.json',data)
+    # Remove retired demo/placeholder output files from production only.
+    for path in (OUT/'metrics').glob('*.json'):
+        if path.stem not in datasets:path.unlink()
+    for ident,audit in audits.items():
+        name='solar' if ident=='solar_capacity' else ident
+        write(OUT/f'{name}-validation.json',audit)
+        write(ROOT/f'data/processed/{name}-validation.json',audit)
+    point_metadata=[]
+    for layer in layers:
+        ident=layer['id']; source=layer['source']
+        # Repeated provenance remains on the layer, not on every point.
+        points=layer['points']
+        for point in points:
+            point.pop('source',None)
+        write(OUT/f'points/{ident}.json',{'schemaVersion':1,'layerId':ident,'source':source,'points':points})
+        point_metadata.append({'id':ident,'name':layer.get('name',ident.replace('_',' ')),'type':layer['type'],'path':f'points/{ident}.json','source':source,'count':len(points)})
+    source_data=source_registry(ROOT,metrics)
+    write(ROOT/'data/sources/registry.json',source_data)
+    write(OUT/'sources.json',source_data)
+    manifest={'schemaVersion':1,'version':'0.4.0','defaultMetric':'population','metricAliases':ALIASES,
+              'categories':CATEGORIES,'normalizations':normalizations(latest_year),
+              'colorScales':{'electricity':['#eef3fc','#173da5'],'solar':['#fff4cb','#d98212'],'renewables':['#ecf7e9','#24763c'],'heat':['#fff0df','#bb5418'],'co2':['#fde9e7','#ab2929'],'grid':['#f1eafb','#6d42a5'],'storage':['#f1eafb','#6d42a5']},
+              'metrics':metrics,'geography':{'overview':'geo/overview.geojson','municipalities':'geo/municipalities/{regionId}.geojson','source':geo_source},
+              'territories':'territories.json','points':point_metadata,'sources':'sources.json','validation':'validation.json','pointsSchema':'points/schema.json'}
+    write(OUT/'points/schema.json',json.loads((ROOT/'data/sources/flat-point-layer.schema.json').read_text()))
     write(OUT/'territories.json',{'schemaVersion':1,'territories':territories})
     write(OUT/'geo/overview.geojson',{'type':'FeatureCollection','features':overview})
-    write(OUT/'metrics/population.json',{'schemaVersion':1,'metricId':'population','status':'verified','values':{y:dict(sorted(v.items())) for y,v in sorted(pop.items())}})
-    solar_metric,solar_data,solar_audit=build_solar(territories,ROOT)
-    write(OUT/'metrics/solar_capacity.json',solar_data)
-    write(ROOT/'data/processed/solar_capacity.json',solar_data)
-    write(ROOT/'data/processed/solar-validation.json',solar_audit)
-    write(OUT/'solar-validation.json',solar_audit)
-    build_manifest(pop,solar_metric)
-    report={'municipalities':len(codes),'regions':len(regions),'populationCoverage':{y:len(v) for y,v in pop.items()},'missingPopulation':[c for c,t in municipalities.items() if t['population'] is None],'geographyAsOf':geo_source.get('asOf',geo_source['retrievedAt'][:10]),'geometryToleranceMetres':100,'areaMethod':'Planar area of original full-resolution ČÚZK geometry in EPSG:5514; km²','publicBytes':sum(p.stat().st_size for p in OUT.rglob('*') if p.is_file())}
-    write(ROOT/'data/processed/validation.json',report)
-    print(json.dumps(report,ensure_ascii=False,indent=2))
-
-
-def build_manifest(pop,solar_metric):
-    population_source=source_metadata('population')
-    geo_source=source_metadata('geography')
-    latest_year=max(map(int,pop))
-    configs=[('population','Počet obyvatel','obyv.','context','electricity'),('households','Domácnosti','domácností','context','electricity'),('generation_capacity','Instalovaný výkon elektráren','MW','electricity','electricity'),('solar_capacity','Instalovaný výkon FVE','MW','electricity','solar'),('wind_capacity','Instalovaný výkon větru','MW','electricity','renewables'),('hydro_capacity','Instalovaný výkon vody','MW','electricity','renewables'),('battery_storage','Bateriová úložiště','MWh','storage','grid'),('heating_gas','Vytápění plynem','domácností','heat','heat'),('heating_electricity','Vytápění elektřinou','domácností','heat','electricity'),('district_heating','Dálkové teplo','domácností','heat','heat'),('ev_charging','Dobíjecí stanice','stanic','transport','grid'),('industrial_co2','Průmyslové emise CO₂','t CO₂/rok','emissions','co2'),('solar_potential','Solární potenciál','MWh/rok','electricity','solar')]
-    metrics=[]
-    for ident,name,unit,category,scale in configs:
-        if ident=='solar_capacity':
-            metrics.append(solar_metric)
-            continue
-        status='verified' if ident=='population' else 'demo' if ident in ['solar_capacity','battery_storage','ev_charging'] else 'unavailable'
-        years=list(map(int,sorted(pop))) if ident=='population' else ([2026] if ident=='ev_charging' else list(range(2022,2027))) if status=='demo' else []
-        method='ČSÚ REGUAP, ukazatel 2406UAP891, stav k 31. prosinci. Území podle číselníku 1. 1. 2026; změny hranic a sčítání mohou narušit srovnatelnost.' if ident=='population' else 'Syntetické demonstrační hodnoty šesti měst; záměrná mezera roku 2024 v Děčíně. Nejde o měření ani produkční energetická data.' if status=='demo' else 'Datový adaptér připraven. Skutečný obecní dataset zatím není připojen; chybějící hodnoty se nedopočítávají.'
-        m={'id':ident,'name':name,'unit':unit,'category':category,'geography':['country','region','municipality'],'years':years,'colorScale':scale,'normalizations':['absolute','per_km2'] if ident=='population' else ['absolute','per_capita','per_km2'],'path':f'metrics/{ident}.json' if status!='unavailable' else None,'status':status,'source':{'name':'Český statistický úřad · REGUAP' if ident=='population' else 'Demo fixture EnergoMapa' if status=='demo' else 'Nepřipojeno','url':'https://csu.gov.cz/statistika/csu_a_uzemne_analyticke_podklady' if ident=='population' else None,'updatedAt':'2026-10-27','geographicGranularity':'municipality','temporalGranularity':'annual' if years else 'unavailable','methodology':method},'aggregation':'sum','coverage':'full' if ident=='population' else 'partial' if status=='demo' else 'none'}
-        if ident=='population':
-            m['source']['asOf']=f'{latest_year}-12-31'
-            m['source']['updatedAt']=None
-        m['source']['retrievedAt']=population_source['retrievedAt'] if ident=='population' else '2026-10-27'
-        if status=='unavailable':
-            m['source']['updatedAt']=None
-            m['source']['retrievedAt']=None
-        if ident=='ev_charging':
-            m['source']['asOf']='2026-10-01'
-            m['source']['temporalGranularity']='snapshot'
-        metrics.append(m)
-        if status=='demo':
-            fixture=json.loads((RAW/f'demo/{ident}.json').read_text())
-            fixture['values']={y:v for y,v in fixture['values'].items() if int(y) in years}
-            write(OUT/f'metrics/{ident}.json',fixture)
-    manifest={'schemaVersion':1,'defaultMetric':'population','normalizations':{'absolute':{'label':'Absolutně','unitSuffix':''},'per_capita':{'label':'Na 1 000 obyvatel','denominator':'population','factor':1000,'unitSuffix':'/ 1 000 obyv.'},'per_km2':{'label':'Na km²','denominator':'areaKm2','factor':1,'unitSuffix':'/ km²'}},'colorScales':{'electricity':['#eef3fc','#173da5'],'solar':['#fff4cb','#d98212'],'renewables':['#ecf7e9','#24763c'],'heat':['#fff0df','#bb5418'],'co2':['#fde9e7','#ab2929'],'grid':['#f1eafb','#6d42a5']},'metrics':metrics,'geography':{'overview':'geo/overview.geojson','municipalities':'geo/municipalities/{regionId}.geojson','source':{'name':'ČÚZK · INSPIRE AU WFS / RÚIAN','url':'https://services.cuzk.gov.cz/wfs/inspire-au-wfs.asp','asOf':geo_source.get('asOf',geo_source['retrievedAt'][:10]),'retrievedAt':geo_source['retrievedAt'],'methodology':'Aktuální skutečné polygony; topologicky zjednodušeno na 100 m pro web. Kraje a stát odvozeny sjednocením obcí; rozloha z původní geometrie EPSG:5514.'}},'territories':'territories.json','points':[]}
-    manifest['pointsSchema']='points/schema.json'
-    write(OUT/'points/schema.json',json.loads((ROOT/'data/sources/point-layer.schema.json').read_text()))
     write(OUT/'manifest.json',manifest)
+    report={'municipalities':len(codes),'regions':len(regions),'geographyAsOf':geo_source.get('asOf',geo_source['retrievedAt'][:10]),
+            'geometryToleranceMetres':100,'metricCount':len(metrics),'realMetricCount':len(datasets),'pointLayers':len(layers),'metrics':reports}
+    write(OUT/'validation.json',report)
+    report['publicBytes']=sum(p.stat().st_size for p in OUT.rglob('*') if p.is_file())
+    write(ROOT/'data/processed/validation.json',report)
+    print(json.dumps({k:v for k,v in report.items() if k!='metrics'},ensure_ascii=False,indent=2))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--download',action='store_true');p.add_argument('--download-solar',action='store_true');args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--download',action='store_true');p.add_argument('--download-solar',action='store_true');p.add_argument('--download-heating',action='store_true');p.add_argument('--download-family',choices=['storage','charging','industry','households','pvgis']);args=p.parse_args()
     if args.download:
         from download import download_geography,download_tables,refresh_source_metadata,pin_inputs
         download_geography(refresh=True)
@@ -163,5 +176,19 @@ if __name__=='__main__':
         from solar import download_solar
         from download import pin_inputs
         download_solar(ROOT)
+    if args.download or args.download_heating:
+        from census import download_census
+        download_census(ROOT)
+    families=['storage','charging','industry','households','pvgis'] if args.download else [args.download_family] if args.download_family else []
+    for family in families:
+        import importlib
+        module=importlib.import_module('potential' if family=='pvgis' else family)
+        fn=getattr(module,'download_potential' if family=='pvgis' else 'download_'+family)
+        if family=='pvgis':
+            existing=json.loads((OUT/'territories.json').read_text())['territories']
+            fn(existing,ROOT,workers=16,rate=10)
+        else:fn(ROOT)
+    if args.download or args.download_solar or args.download_heating or args.download_family:
+        from download import pin_inputs
         pin_inputs()
     build()

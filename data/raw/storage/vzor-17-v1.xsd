@@ -1,0 +1,107 @@
+﻿<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Licence">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="LicTable" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="LicId">
+                <xs:simpleType>
+                  <xs:restriction base="xs:integer">
+                    <xs:pattern value="[0-9]{9}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="LicVersion" type="xs:integer"/>
+              <xs:element name="ProcesStatus" type="xs:string"/>
+              <xs:element name="LicValidFrom" type="xs:date"/>
+              <xs:element name="LicValidTo" type="xs:date"/>
+              <xs:element name="VersionStatusDes" type="xs:string"/>
+              <xs:element name="VersionValidFrom" type="xs:date"/>
+              <xs:element name="VersionValidTo" type="xs:date"/>
+              <xs:element name="TEZGroup">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="StorageElec" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="StorageElecId">
+                            <xs:simpleType>
+                              <xs:restriction base="xs:string">
+                                <xs:pattern value="[0-9]{5}_T[0-9]{2}"/>
+                              </xs:restriction>
+                            </xs:simpleType>
+                          </xs:element>
+                          <xs:element name="StorageElecVersion" type="xs:integer"/>
+                          <xs:element name="Name" type="xs:string"/>
+                          <xs:element name="DateBegin" type="xs:date"/>
+                          <xs:element name="DateChange" type="xs:date"/>
+                          <xs:element name="DateEnd" type="xs:date"/>
+                          <xs:element name="ChangeType" minOccurs="0">
+                            <xs:simpleType>
+                              <xs:restriction base="xs:string">
+                                <xs:enumeration value=""/>
+                                <xs:enumeration value="Nová"/>
+                                <xs:enumeration value="Rušená"/>
+                                <xs:enumeration value="Se změnou údajů"/>
+                                <xs:enumeration value="Sloučená"/>
+                              </xs:restriction>
+                            </xs:simpleType>
+                          </xs:element>
+                          <xs:element name="City" type="xs:string"/>
+                          <xs:element name="ZipCode" type="xs:string"/>
+                          <xs:element name="County" type="xs:string"/>
+                          <xs:element name="State" type="xs:string"/>
+                          <xs:element name="TechnicalData">
+                              <xs:complexType>
+                                  <xs:sequence>
+                                     <xs:element name="NoOfResources" type="xs:integer"/>
+                                     <xs:element name="OutputSum" type="xs:decimal"/>
+                                  </xs:sequence>
+                              </xs:complexType>
+                          </xs:element><!-- TechnicalData -->
+                          <xs:element name="StorageElecDeviceGroup" maxOccurs="unbounded">
+                          <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="StorageElecDevice" maxOccurs="unbounded" minOccurs="1">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="OutputElec" type="xs:decimal"/>
+                                      <xs:element name="VoltageNominal" type="xs:decimal"/>
+                                      <xs:element name="CurrentElecCharge" type="xs:decimal"/>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>   <!-- StorageElecDevice -->
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>     <!-- StorageElecDeviceGroup -->
+                          <xs:element name="TEZCadasterGroup" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="TEZCadaster" maxOccurs="unbounded" minOccurs="0">
+                                   <xs:complexType>
+                                      <xs:sequence>
+                                         <xs:element name="CadasterId" type="xs:string"/>
+                                         <xs:element name="CadasterName" type="xs:string"/>
+                                         <xs:element name="CadasterNote" type="xs:string"/>
+                                         <xs:element name="CadasterCity" type="xs:string"/>
+                                         <xs:element name="CadasterCounty" type="xs:string"/>
+                                      </xs:sequence>
+                                   </xs:complexType>
+                                 </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element><!-- TEZCadasterGroup -->
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element> <!-- StorageElec -->
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element> <!-- TEZGroup -->
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element> <!-- LicTable -->
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element> <!-- Licence -->
+</xs:schema>

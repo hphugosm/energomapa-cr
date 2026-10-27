@@ -1,7 +1,11 @@
 /** Generic metric engine. No energy metric IDs or geography-specific calculations. */
 export const finite = value => typeof value === 'number' && Number.isFinite(value);
-export const format = (value, digits = 2) => finite(value)
-  ? new Intl.NumberFormat('cs-CZ', {maximumFractionDigits: digits}).format(value) : '—';
+export function format(value, digits = 2) {
+  if (!finite(value)) return '—';
+  const options = digits > 0 && value !== 0 && Math.abs(value) < 10 ** -digits
+    ? {maximumSignificantDigits: 3} : {maximumFractionDigits: digits};
+  return new Intl.NumberFormat('cs-CZ', options).format(value);
+}
 
 export function calendarYears(years = []) {
   if (!years.length) return [];
@@ -15,6 +19,8 @@ export function validateManifest(manifest) {
   for (const metric of manifest.metrics) {
     if (!metric.id || ids.has(metric.id)) throw Error('Manifest obsahuje neplatné nebo duplicitní ID metriky.');
     ids.add(metric.id);
+    if (metric.timeType !== undefined && !['timeseries', 'snapshot', 'static'].includes(metric.timeType)) throw Error(`Neplatný typ času: ${metric.id}`);
+    if (metric.aggregation !== undefined && !['sum', 'area_weighted_mean'].includes(metric.aggregation)) throw Error(`Neplatná agregace: ${metric.id}`);
     if (!Array.isArray(metric.years) || !Array.isArray(metric.normalizations) || !metric.normalizations.length || !Array.isArray(metric.geography)) throw Error(`Neúplná metadata: ${metric.id}`);
     if (metric.status !== 'unavailable' && !metric.path) throw Error(`Chybí cesta k datům: ${metric.id}`);
     if (metric.years.some(y => !Number.isInteger(y)) || new Set(metric.years).size !== metric.years.length) throw Error(`Neplatné roky: ${metric.id}`);
@@ -78,6 +84,12 @@ export class MetricEngine {
           if (value !== null && !finite(value)) throw Error(`Neplatná hodnota ${id}/${code}/${year}.`);
         }
       }
+      for (const [year, statuses] of Object.entries(data.statuses || {})) {
+        if (!metric.years.includes(Number(year))) throw Error(`Neplatný rok stavu: ${id}/${year}`);
+        for (const [code, status] of Object.entries(statuses)) {
+          if (!this.territories.has(code) || !['missing', 'not_applicable', 'unavailable'].includes(status) || finite(data.values[year]?.[code])) throw Error(`Neplatný stav hodnoty: ${id}/${code}/${year}`);
+        }
+      }
       this.cache.set(id, data);
       this.domainCache.clear();
       return data;
@@ -98,22 +110,27 @@ export class MetricEngine {
     const territory = this.territories.get(territoryId);
     const expectedIds = this.leaves.get(territoryId) || [];
     const expected = territory?.level === 'municipality' ? 1 : expectedIds.length;
-    const unavailable = {value: null, rawValue: null, coverage: 0, expected, partial: false, coveredIds: []};
+    const unavailable = {value: null, rawValue: null, coverage: 0, expected, partial: false, coveredIds: [], valueStatus: data?.statuses?.[String(year)]?.[territoryId] || (metric.status === 'unavailable' ? 'unavailable' : 'missing')};
     if (!data || !territory || !metric.geography.includes(territory.level)) return unavailable;
     const values = data.values[String(year)] || {};
+    const explicitStatus = data.statuses?.[String(year)]?.[territoryId];
+    if (explicitStatus) return {...unavailable, valueStatus: explicitStatus};
     const direct = values[territoryId];
     if (finite(direct)) return {value: direct, rawValue: direct,
       coverage: territory.level === 'municipality' ? 1 : null, expected, partial: false,
-      coveredIds: territory.level === 'municipality' ? [territoryId] : null, direct: true};
+      coveredIds: territory.level === 'municipality' ? [territoryId] : null, direct: true, valueStatus: 'available'};
     if (territory.level === 'municipality') return unavailable;
     // Only additive metrics are summed. Ratios/potentials must declare an aggregation rule.
     const rule = metric.aggregation || 'sum';
-    if (rule !== 'sum') return unavailable;
-    const coveredIds = expectedIds.filter(code => finite(values[code]));
-    if (!coveredIds.length) return unavailable;
-    const value = coveredIds.reduce((sum, code) => sum + values[code], 0);
+    const coveredIds = expectedIds.filter(code => finite(values[code]) && (rule !== 'area_weighted_mean' || (finite(this.territories.get(code)?.areaKm2) && this.territories.get(code).areaKm2 > 0)));
+    if (!coveredIds.length) {
+      const statuses = expectedIds.map(code => data.statuses?.[String(year)]?.[code] || 'missing');
+      return {...unavailable, valueStatus: statuses.length && statuses.every(status => status === statuses[0]) ? statuses[0] : 'missing'};
+    }
+    const weight = rule === 'area_weighted_mean' ? coveredIds.reduce((sum, code) => sum + this.territories.get(code).areaKm2, 0) : 1;
+    const value = coveredIds.reduce((sum, code) => sum + values[code] * (rule === 'area_weighted_mean' ? this.territories.get(code).areaKm2 : 1), 0) / weight;
     return {value, rawValue: value, coverage: coveredIds.length, expected,
-      partial: coveredIds.length < expected, coveredIds};
+      partial: coveredIds.length < expected, coveredIds, valueStatus: 'available'};
   }
 
   value(id, territoryId, year, normalization = 'absolute', mode = 'value') {
@@ -136,7 +153,7 @@ export class MetricEngine {
     let denominator;
     if (config.denominatorMetric) {
       // Reject mismatched numerator/denominator coverage instead of silently inventing a ratio.
-      const data = this.cache.get(config.denominatorMetric)?.values?.[String(year)] || {};
+      const data = this.cache.get(config.denominatorMetric)?.values?.[String(config.denominatorYear ?? year)] || {};
       const ids = result.coveredIds;
       if (!ids?.length || ids.some(code => !finite(data[code]) || data[code] < 0)) return {...result, value: null, denominatorMissing: true};
       denominator = ids.reduce((sum, code) => sum + data[code], 0);
@@ -159,12 +176,14 @@ export class MetricEngine {
   domain(id, ids, normalization = 'absolute', mode = 'value') {
     const key = `${id}|${normalization}|${mode}|${ids.join(',')}`;
     if (this.domainCache.has(key)) return this.domainCache.get(key);
-    let min = 0, max = 0, count = 0;
+    const intensity = this.metric(id).aggregation === 'area_weighted_mean' && mode !== 'yoy';
+    let min = intensity ? Infinity : 0, max = intensity ? -Infinity : 0, count = 0;
     for (const year of this.metric(id).years) for (const code of ids) {
       const value = this.value(id, code, year, normalization, mode).value;
       if (!finite(value)) continue;
       min = Math.min(min, value); max = Math.max(max, value); count++;
     }
+    if (!count) { min = 0; max = 1; }
     const signed = mode === 'yoy' || min < 0;
     if (signed) {max = Math.max(Math.abs(min), Math.abs(max), 1e-9); min = -max;}
     else if (!max) max = 1;

@@ -1,0 +1,43 @@
+{
+  "source": {
+    "name": "EEA · E-PRTR v16, ohlášené úniky CO₂ do ovzduší",
+    "url": "https://sdi.eea.europa.eu/catalogue/srv/api/records/657ac3cb-affa-4295-a4a9-27b4f539adab",
+    "updatedAt": "2026-02-20",
+    "retrievedAt": "2026-10-27",
+    "geographicGranularity": "facility",
+    "temporalGranularity": "annual",
+    "timeType": "timeseries",
+    "scopeNote": "Ohlášené průmyslové úniky CO₂ celkem včetně biomasy do ovzduší podle E-PRTR, nikoli veškeré emise ČR ani EU ETS. Česká data ve v16 obsahují pouze roky 2007–2022; 2023–2024 nejsou pro Česko v této tabulce k dispozici. Počet znamená provozovny ohlašující tento CO₂.",
+    "methodology": "Přesný výběr Pollutant=Carbon dioxide (CO2) a TargetRelease=AIR z úplné české části F1_4. Releases jsou kg/rok; dělení 1000 dává tuny/rok. Kategorie CO2 excluding biomass se nepřičítá. Jediná provozovna v roce je jeden INSPIRE identifikátor. Původní souřadnice se propojí s nezjednodušenými polygony obcí; chybějící nebo nejednoznačné přiřazení se nevymýšlí. Absence hlášení znamená null, nikoli nulu.",
+    "methodologyUrl": "https://github.com/hphugosm/energomapa-cr/blob/main/docs/industry-methodology.md",
+    "auditUrl": "https://hphugosm.github.io/energomapa-cr/data/industry-validation.json",
+    "limitations": [
+      "E-PRTR má prahové hodnoty a pokrývá vybrané velké provozovny; nejde o úplný průmyslový emisní inventář.",
+      "Celkové CO₂ zahrnuje biomasu, nelze jej zaměňovat s CO₂ bez biomasy ani ověřenými emisemi EU ETS.",
+      "Novější roky 2023–2024 deklarované pro celoevropské vydání nejsou v české části tabulky F1_4 přítomny. Žádné nové roky nejsou dopočítány.",
+      "Historické provozovny jsou přiřazeny k aktuální geometrii obcí, nikoli k historickým správním hranicím.",
+      "Souřadnice reprezentují bod provozovny; nejde o její plošný rozsah. Součty publikují pouze bezpečně umístěná hlášení."
+    ],
+    "completeness": "partial",
+    "latestAvailableYear": 2022,
+    "missingSourceYears": [
+      2023,
+      2024
+    ],
+    "license": "CC BY 4.0"
+  },
+  "rawSha256": {
+    "F1_4_Air_Releases_Facilities_CZ.csv.gz": "8fec0c5d7697e4f97bf4036934077cca6b799542ab230b518f94704a4fb1ce63",
+    "metadata.xml": "c3b9c5b24f4dfe279f735923865da7134b953c5a87785716ef4cccc11294c1c3",
+    "EEA_Industrial_Reporting_Metadata_v16.pdf": "c0a4324a5576f44ec71a5f5d22ec8bc1e52f6ab9ea666359f74d7c4a850cb9c4"
+  },
+  "download": {
+    "archiveUrl": "https://sdi.eea.europa.eu/datashare/public.php/webdav/eea_t_ied-eprtr_p_2007-2024_v16_r00/User%20friendly%20.csv%20files.zip",
+    "publicWebdavUser": "sptXqwkQr5g7Bp5",
+    "archiveSha256": "d0e0c1c14f7173ee19f283025ae1d5718b74b082512b8f7148ecf82d4a334a6b",
+    "archiveBytes": 147626010,
+    "member": "F1_4_Air_Releases_Facilities.csv",
+    "filter": "countryName == 'Czechia'",
+    "rawSubsetRows": 13445
+  }
+}

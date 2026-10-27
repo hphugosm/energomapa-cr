@@ -1,0 +1,24 @@
+{
+  "rawFile": "sldb2021_byty_energie.csv.gz",
+  "rawSha256": "6d6cb6820e4ea8971e5028d28980d519de20cbe1c86bc3ad0c1f98f2b0a33e12",
+  "uncompressedSha256": "e25d20614ee3a19f80b9d8dc16d5ef6b3f87b45591ba475b8555b4134b136b51",
+  "downloadUrl": "https://csu.gov.cz/docs/107508/cf59a324-f403-7444-58c3-7b26bdbf01ec/sldb2021_byty_energie.csv?version=1.0",
+  "source": {
+    "name": "ČSÚ · Sčítání 2021 – obydlené byty podle hlavního zdroje energie k vytápění",
+    "url": "https://csu.gov.cz/produkty/vysledky-scitani-2021-otevrena-data",
+    "asOf": "2021-03-26",
+    "updatedAt": "2022-10-26",
+    "retrievedAt": "2026-10-27",
+    "geographicGranularity": "municipality",
+    "temporalGranularity": "snapshot",
+    "scopeNote": "Obydlené byty podle hlavního zdroje vytápění k 26. 3. 2021. Počty bytů, nikoli spotřeba energie ani počet domácností. Bez historické interpolace.",
+    "methodology": "Ukazatel 2607, číselník energie 3063; přímé propojení číselných kódů obcí. Součty používají dostupné obce v současné geometrii. Území bez zdrojového kódu má null. Nuly pouze zveřejněné nebo při doloženém nulovém celkovém počtu bytů.",
+    "methodologyUrl": "https://github.com/hphugosm/energomapa-cr/blob/main/docs/heating-methodology.md",
+    "limitations": [
+      "Stav k 26. 3. 2021; nejde o současný stav ani měření spotřeby.",
+      "Z kotelny mimo dům nerozlišuje palivo použité ve zdroji tepla.",
+      "Vojenské újezdy Libavá (503941), Boletice (545422) a Hradiště (555177) nemají ve zdroji údaje a zůstávají null. Územní vymezení se nepřevádí odhadem.",
+      "Počet bytů není počet hospodařících domácností. Přepočet na obyvatele se nenabízí kvůli odlišnému roku populace."
+    ]
+  }
+}

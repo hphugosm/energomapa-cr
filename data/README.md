@@ -1,23 +1,60 @@
-# Data a reprodukce
+# Data EnergoMapy 0.4.0
 
-`python -m pip install -r requirements.txt` a `python pipeline/build.py` spouští plně offline deterministický build z připnutých vstupů. SHA-256 každého souboru v `raw/` je v `sources/checksums.json`; neshoda build zastaví. `python pipeline/build.py --download` je explicitní síťové obnovení dat, které aktualizuje i kontrolní součty. Živá služba může v budoucnu vracet jiný stav: pro reprodukci verze používejte přibalené vstupy, nikoli nový download.
+Běžný `python pipeline/build.py` je offline deterministický build z připnutých vstupů. SHA-256 v `sources/checksums.json` a metadata jednotlivých adaptérů chrání proti nepozorované změně zdroje. Neshoda nebo nevalidní schéma zastaví build. `processed/` a `../public/data/` jsou generované výstupy, nikoli místa pro ruční opravy dat.
 
-## Skutečná data
+## Rodiny vstupů
 
-- `raw/geography/*.gml.gz`: nezměněné odpovědi oficiálního ČÚZK INSPIRE AU WFS, gzip komprese, staženo 27. 10. 2026. Stored query `GetUnitByNationalLevel`, `NAT_LEVEL=Obec`, parametry XMIN/YMIN/XMAX/YMAX v EPSG:5514. Dlaždice nad limit 250 prvků se rekurzivně rozdělují; do buildu vstupují pouze úplné odpovědi, obce se deduplikují podle `nationalCode`. Geometrie nezastupují historické hranice. Zdroj: https://services.cuzk.gov.cz/wfs/inspire-au-wfs.asp . Podmínky: https://www.cuzk.cz/Predpisy/Podminky-poskytovani-prostor-dat-a-sitovych-sluzeb.aspx . Licenci ČSÚ nelze automaticky vztáhnout na hranice ČÚZK.
-- `raw/struktura_uzemi_cr.xlsx`: oficiální ČSÚ číselník 1. 1. 2026; šestimistný kód, název, status a kraj NUTS3. Obsahuje i čtyři vojenské újezdy; proto mapa pokrývá celé území. https://csu.gov.cz/statistika/csu_a_uzemne_analyticke_podklady .
-- `raw/population_2018_2025.csv.gz`: nezměněný řádkový výřez populačního ukazatele `2406UAP891` z oficiálního otevřeného CSV REGUAP. Zachovává rok i zdrojovou hodnotu. Jde o stav **k 31. prosinci**. Build z číselníku vybere pouze obce; agregáty obsažené ve zdroji nezapočítává podruhé. https://data.csu.gov.cz/opendata/sady/REGUAP/distribuce/csv . ČSÚ: CC BY 4.0, odvozený normalizovaný výstup je upravenými daty. Metodická nespojitost: sčítání 2021 a zahrnutí dočasné ochrany od roku 2022.
+| Umístění raw | Zdroj | Význam a omezení |
+|---|---|---|
+| `struktura_uzemi_cr.xlsx` | ČSÚ, 1. 1. 2026 | Přesné kódy obcí, krajů a vojenských újezdů |
+| `geography/` | ČÚZK INSPIRE AU WFS | Současné hranice; nejsou rekonstrukcí historických hranic |
+| `population_2018_2025.csv.gz` | ČSÚ REGUAP, ukazatel `2406UAP891` | Stav populace k 31. prosinci, výřez zdrojového CSV s uchovanými řádky |
+| `solar/` | ERÚ TEZ sk. 11, 1. 10. 2026 a ČÚZK | Aktivní licencované zdroje, přesné katastry, dílčí přiřazené výkony |
+| `storage/` | ERÚ TEZ sk. 17, 1. 10. 2026 | Výkon a počet provozoven; bez MWh a bez souřadnic |
+| `census/` | ČSÚ Sčítání 2021 | Obydlené byty a způsoby vytápění; nejde o domácnosti či spotřebu |
+| `households/` | ČSÚ Sčítání 2021 | Hospodařící domácnosti pro samostatnou metriku a referenční normalizaci |
+| `charging/` | MPO, evidence veřejného dobíjení | Zdrojové stanice, dobíjecí body a skutečné souřadnice |
+| `industry/` | EEA E-PRTR v16 | Česká hlášení zařízení 2007–2022, celkové CO₂ včetně biomasy |
+| `pvgis/` | JRC PVGIS 5.3 / SARAH3 | Původní odpovědi modelu pro centroid každé obce, reference 2005–2023 |
+| `demo/` | Syntetické fixtures | Pouze testovací/reference materiál; neaktivní v produkčním katalogu |
 
-Rozloha je výpočet plochy původního plného polygonu v EPSG:5514 dělený 1 000 000; není vydávána za statistickou rozlohu katastru ČSÚ. Kraje a ČR jsou sjednocením současných obecních polygonů. Obecní geometrie pro web se zjednodušují společně pomocí `shapely.coverage_simplify`, tolerance 100 m, pak transformují do EPSG:4326 a zaokrouhlí na sedm desetinných míst. Přesnost katastrální mapy není cílem. Web načte obce až po výběru kraje.
+Přesná URL, datum stažení, časové vymezení a omezení jsou v rodinných souborech `sources/*.json`. Generovaný `sources/registry.json` je centrální seznam poskytovatelů a vazeb metrik; web načítá jeho kopii `public/data/sources.json`. Podmínky ČSÚ, ČÚZK, ERÚ, MPO, EEA a JRC se posuzují samostatně; licence jednoho poskytovatele se nepřenáší na ostatní.
 
-## Demo a nedostupná data
+## Území a souřadnice
 
-`raw/demo/` obsahuje dva zcela syntetické fixture datasety pro šest skutečných obcí. Nemají původ ve skutečných energetických měřeních. Manifest i datové soubory je označují `status: demo`; mezera Děčína v roce 2024 ověřuje chování missing data. Ostatní energetické metriky mají `status: unavailable`, žádné hodnoty a žádný datový soubor. Chybějící data nikdy nejsou nula.
+Obce se propojují výhradně ověřenými kódy nebo zdokumentovaným prostorovým přiřazením; shoda názvu sama nestačí. ERÚ používá kódy katastrálních území a číselník ČÚZK. Nejednoznačné lokality se nerozdělují odhadem. Rozloha vzniká z plného polygonu v EPSG:5514 a není vydávána za statistickou rozlohu ČSÚ. Společné zjednodušení polygonů používá toleranci 100 m a transformaci do EPSG:4326; obce se pro web dělí po krajích.
 
-Populační řada referenčního TT-Decin se záměrně nemíchá s REGUAP: reference používá stavy k 1. lednu, REGUAP k 31. prosinci. Metrika population tak má jednotné roční vymezení 2018–2025. Normalizace na obyvatele může používat populační řadu stejného roku; pro energetická demo data 2026 lze pouze výslovně označený poslední dostupný populační stav.
+`territories[].centroid` má podobu `{lat, lon}` a slouží pro model PVGIS nebo navigaci. Není souřadnicí elektrárny či baterie. Body zařízení smějí vycházet pouze z ověřených zdrojových souřadnic. Úložiště bez souřadnic zůstávají v auditu jako pojmenované záznamy, nevytvářejí body na středu obce.
 
-`processed/validation.json` obsahuje počty území, pokrytí populace a velikost browserových payloadů. `public/data/manifest.json` je kontrakt metrik; hodnota metriky je vždy u obce, vyšší jednotky agreguje generický frontend. Za neúplné pokrytí se nepovažují jednotlivé dostupné hodnoty za úplný součet území.
+## Čas, nuly a pokrytí
 
-## Skutečné FVE
+- `timeseries` je skutečná časová řada, `snapshot` jediný stav, `static` modelový referenční výsledek. PVGIS klíč 2023 označuje konec reference 2005–2023, nikoli měřenou výrobu roku 2023.
+- Číselná nula je pouze ověřená zdrojová nula. Absence zařízení v neúplném registru je `null`; nelze z ní tvrdit nulovou hodnotu obce.
+- `values` obsahuje čísla nebo `null`; volitelné `statuses` rozlišuje `missing`, `not_applicable` a `unavailable`. Dostupné číslo má ve výsledku enginu `valueStatus: available`.
+- Součty vyšších území zachovávají dostupné/čekané obce a příznak neúplnosti. Modelové intenzity se agregují průměrem váženým rozlohou.
+- Populační normalizace explicitně používá rok 2025; domácnosti rok 2021. Nepředstírá shodu roku jmenovatele s výkony 2026.
 
-FVE demo bylo nahrazeno snímkem ERÚ k 1. 10. 2026. Vstupy jsou v `raw/solar/`, zdrojová metadata v `sources/solar_capacity.json`, audit v `processed/solar-validation.json`. Postup a omezení jsou v [metodice](../docs/solar-methodology.md). Snapshot obsahuje pouze licencované, bezpečně přiřazené zdroje, nikoli celkový výkon všech FVE. Není z něj odvozována historie. Obce s nejistou alokací a nepodložené nuly zůstávají `null`.
+## Zdrojové zvláštnosti
+
+ERÚ vykazuje pouze licencovanou přiřazenou část výkonu. Aktivní licence, verze a provozovny i opakované technické identifikátory se kontrolují; dílčí krajský součet není úplná inventura kraje. Skupina 17 uvádí MW, kV a A; proud nepřevádíme na MWh a typ technologie baterie není znám. `battery_storage_capacity_mwh` je nedostupná katalogová položka bez datasetu.
+
+MPO workbook obsahuje 3 790 zdrojových záznamů stanic, zatímco titulní souhrn uvádí 3 783. Adaptér rozdíl otevřeně zaznamenává; metrika vychází z konkrétních evidenčních řádků, nezaměňuje stanice, dobíjecí body a konektory. E-PRTR pokrývá hlášené průmyslové provozy a prahová hlášení, nikoli všechny emise území; Vybraná veličina celkové CO₂ zahrnuje biomasu a nesmí být vydávána za samotné fosilní CO₂. Počet provozů se vztahuje k příslušnému roku, nikoli současné aktivitě všech bodů historické vrstvy.
+
+PVGIS je model 1 kWp krystalického křemíku, volně stojící panely, 14 % systémových ztrát, jižní orientace, optimální sklon a horizont terénu. Nezjišťuje plochu střech, překážky budov, připojení ani celkový realizovatelný výkon obce.
+
+## Obnova a kontrola
+
+```sh
+python pipeline/build.py                       # bez sítě
+python pipeline/build.py --download-solar      # rodina ERÚ výroby
+python pipeline/build.py --download-heating    # Sčítání – byty a vytápění
+python pipeline/build.py --download-family storage
+python pipeline/build.py --download-family charging
+python pipeline/build.py --download-family industry
+python pipeline/build.py --download-family households
+python pipeline/build.py --download-family pvgis
+```
+
+Obnova je výslovná údržba a může přepsat raw vstupy či připnout nové hashe. Některé adaptéry záměrně odmítají změněný originál do metodické revize. `--download` obnovuje všechny rodiny; pro cílenou obnovu volte jednotlivé přepínače. Novější datum ERÚ vyžaduje vědomou změnu adaptéru. Pro reprodukci již vydané verze se nestahuje nový živý zdroj.
+
+Kontroly zahrnují konečnost a nezápornost čísel, povolené kódy, roky, schémata, součty a pokrytí proti baseline. Rodinné audity jsou v `processed/*-validation.json` a publikovaných datech. `processed/validation.json` obsahuje celkovou validaci a velikost produkčních dat; `public/data/validation.json` zveřejňuje pokrytí. Před vydáním spusťte Python i JS testy, opakovaný build s porovnáním hashů a browser smoke test. Výsledek konkrétního vydání patří do [protokolu ověření](../docs/verification.md).

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {MetricEngine, calendarYears} from '../public/js/engine.mjs';
+import {MetricEngine, calendarYears, format} from '../public/js/engine.mjs';
 
 const territories = [
   {id:'CZ', level:'country'}, {id:'R', parentId:'CZ', level:'region'},
@@ -136,4 +136,39 @@ test('all-zero, missing and negative components invalidate denominator sums',asy
       assert.deepEqual(result.coveredIds,['A','B']);
     }
   }
+});
+
+test('area weighted intensities use valid positive area and retain observed domain', async () => {
+  const {engine:e,id}=fixture({2020:{A:100,B:200,C:null}}, {metric:{aggregation:'area_weighted_mean'}});
+  await e.load(id);
+  assert.equal(e.value(id,'R',2020).value,180);
+  assert.equal(e.value(id,'CZ',2020).partial,true);
+  assert.deepEqual(e.domain(id,['A','B']),{min:100,max:200,signed:false,empty:false});
+  const invalid=fixture({2020:{A:100,B:200}}, {metric:{aggregation:'area_weighted_mean'},territories:territories.map(t=>t.id==='B'?{...t,areaKm2:0}:t)});
+  await invalid.engine.load(invalid.id);
+  assert.equal(invalid.engine.value(invalid.id,'R',2020).value,100);
+  assert.equal(invalid.engine.value(invalid.id,'R',2020).coverage,1);
+});
+test('explicit observation statuses preserve not applicable separately from missing and zero',async()=>{
+  const {engine:e,id}=fixture({}, {fetchJSON:async()=>({schemaVersion:1,metricId:'arbitrary-new-metric', values:{2020:{A:0,B:null}}, statuses:{2020:{B:'not_applicable',C:'unavailable'}}})});
+  await e.load(id);
+  assert.equal(e.value(id,'A',2020).valueStatus,'available');
+  assert.equal(e.value(id,'B',2020).valueStatus,'not_applicable');
+  assert.equal(e.value(id,'C',2020).valueStatus,'unavailable');
+  assert.equal(e.value(id,'A',2021).valueStatus,'missing');
+});
+test('generic normalization factors and explicit denominator census year',async()=>{
+  const {engine:e,id}=fixture({2023:{A:10}}, {population:{2020:{A:2}}});
+  e.manifest.normalizations.person.denominatorYear=2020;
+  await e.prepare(id,'person');
+  assert.equal(e.value(id,'A',2023,'person').value,5000);
+  e.manifest.normalizations.person.factor=1;
+  assert.equal(e.value(id,'A',2023,'person').value,5);
+});
+
+test('small positive normalized values do not round into a measured zero', () => {
+  assert.equal(format(0.000184), '0,000184');
+  assert.equal(format(-0.00000004567), '-0,0000000457');
+  assert.equal(format(0), '0');
+  assert.equal(format(null), '—');
 });

@@ -1,14 +1,30 @@
-# EnergoMapa Česka
+# EnergoMapa Česka 0.4.0
 
-[Otevřít aplikaci](https://hphugosm.github.io/energomapa-cr/) · [GitHub Actions](https://github.com/hphugosm/energomapa-cr/actions/workflows/pages.yml) · [Ověření MVP](docs/verification.md)
+Statický energetický atlas ČR s navigací **ČR → kraj → obec**, vyhledáváním, časovým grafem, porovnáním území a kombinovaným Energy Profile. Rozložení mapy, pravého panelu a časové osy navazuje na TT-Decin. Metriky, zdroje, normalizace a bodové vrstvy řídí manifest; frontend nepotřebuje serverovou databázi, API klíče, CDN ani CSV upload.
 
-Statický energetický atlas ČR: mapa ČR → kraje → obce, časový detail, porovnání území a manifestem řízené metriky. Frontend nemá npm runtime závislosti, CDN, API klíče ani serverovou databázi. Python připravuje data, prohlížeč počítá zobrazené agregace.
+[Repozitář](https://github.com/hphugosm/energomapa-cr) · [GitHub Pages](https://hphugosm.github.io/energomapa-cr/) · [Ověření a omezení](docs/verification.md) · [Datový model](docs/data-model.md)
 
-**FVE jsou skutečný, metodicky omezený snímek ERÚ k 1. 10. 2026.** Metrika „Licencované FVE – přiřazený výkon“ zahrnuje pouze licencované zdroje bezpečně přiřazené obcím; nejde o všechny FVE ani úplný krajský/celostátní výkon. Obsahuje 4 484 pozitivních obecních hodnot, ostatní jsou `null`. [Metodika a bilanční audit](docs/solar-methodology.md) vysvětlují vynechané zdroje. Obyvatelstvo pochází z ČSÚ, hranice z ČÚZK/RÚIAN. Baterie a dobíjení zůstávají označeným DEMO; ostatní nepřipojené metriky jsou `unavailable`. Chybějící data nejsou nuly.
+Odkaz Pages je cílová adresa projektu; stav nasazení této verze dokládá až příslušný GitHub Actions deployment.
+
+## Obsah MVP
+
+| Rodina | Zdroj a čas | Co znamená |
+|---|---|---|
+| Obyvatelstvo | ČSÚ REGUAP, 2018–2025 | Stav k 31. prosinci; sčítání a změny hranic omezují srovnatelnost |
+| Domácnosti, byty a vytápění | ČSÚ Sčítání 2021 | Hospodařící domácnosti a obydlené byty jsou různé jednotky; vytápění není spotřeba energie |
+| Výkon elektráren | ERÚ TEZ, 1. 10. 2026 | Licencovaný přiřazený výkon celkem, FVE, větru a vody bez PVE; dílčí součty |
+| Ukládání elektřiny | ERÚ TEZ sk. 17, 1. 10. 2026 | Výkon MW a počet provozoven; zdroj neuvádí MWh ani technologii baterie |
+| Veřejné dobíjení | MPO, připnutý snímek | Počet evidovaných stanic a dobíjecích bodů; není počet konektorů ani spotřeba |
+| Průmyslové CO₂ | EEA E-PRTR, 2007–2022 | Hlášené celkové CO₂ zařízení včetně biomasy; nejde o celkovou uhlíkovou stopu obce |
+| Solární model | JRC PVGIS 5.3 SARAH3, reference 2005–2023 | Výroba na 1 kWp, ozáření a optimální sklon; klimatický model centroidu, nikoli inventura střech |
+
+Produkční katalog nepoužívá syntetická demo data. Nedostupná energetická kapacita úložišť v MWh zůstává výslovně `unavailable`. Chybějící záznamy nejsou nuly. Přesné počty metrik, pokrytí a velikosti výstupů jsou v generované validaci a [protokolu ověření](docs/verification.md).
+
+Energetický profil načítá ověřené vrstvy až po rozbalení. Každá karta zachovává vlastní datum nebo referenční období; profil používá poslední dostupný stav každé metriky a nepředstírá společný rok 2026. Snapshoty nepřehrává jako historii. Dobíjení a průmyslová zařízení mají samostatné volitelné bodové vrstvy; geometrie obcí se načítají po krajích.
 
 ## Lokální spuštění
 
-Požadavky: Python 3.12, Node.js 22. Příkazy spouštějte z kořene tohoto samostatného projektu, kde leží `package.json`, `pipeline/` a `.github/`.
+Požadavky: Python 3.12 a Node.js 22. Příkazy spouštějte z kořene projektu s `pipeline/` a `package.json`.
 
 ```sh
 python3 -m venv .venv
@@ -21,42 +37,29 @@ python pipeline/package.py
 python -m http.server 4173 --directory dist --bind 127.0.0.1
 ```
 
-Otevřete `http://127.0.0.1:4173/`. `npm run serve` podává přímo pracovní `public/`. Neotvírejte `index.html` přes `file://`; ES moduly a JSON potřebují HTTP. Není nutné `npm install`. `npm run build` provede datový build a balení; testy spouštějte zvlášť před publikací.
+Otevřete `http://127.0.0.1:4173/`. `npm run serve` podává pracovní `public/`. Není nutné `npm install`; `file://` kvůli modulům a JSON nepoužívejte. `npm run build` provede datový build a balení; testy se spouštějí zvlášť.
+
+## Architektura
+
+- `pipeline/catalog.py` sjednocuje adaptéry, zdroje, kategorie, aliasy a normalizace. `pipeline/build.py` validuje data, generuje manifest a odstraňuje vyřazené metriky z produkčního výstupu.
+- `data/raw/` uchovává připnuté zdroje; `data/sources/` jejich metadata a SHA-256. `data/sources/registry.json` je generovaný centrální registr, publikovaný také jako `public/data/sources.json`.
+- `public/js/engine.mjs` poskytuje obecné agregace, časové řady a normalizace. Data stahuje až při použití a sdílí cache i souběžné požadavky.
+- `public/js/profile.mjs` používá metadata `profile`, `status` a `timeType`; `public/js/points.mjs` validuje a načítá volitelné bodové vrstvy.
+- `public/data/manifest.json` obsahuje katalog a cesty. `territories.json` popisuje hierarchii a jmenovatele; přehledová geometrie je oddělená od obecních geometrií po krajích.
+- `pipeline/package.py` balí pouze `public/` do `dist/`; raw data, testy a Python knihovny se na web nekopírují.
+
+Aditivní veličiny se sčítají jen z dostupných obcí a vracejí pokrytí. Solární modely používají průměr vážený rozlohou obcí, nikoli součet. Normalizace dělí jen jmenovateli stejných pokrytých obcí. `per_capita` znamená jednu osobu; `per_1000_capita` tisíc osob. Populační baseline 2025 a domácnosti ze Sčítání 2021 jsou v ovládání označené, i když čitatel pochází z roku 2026. Bezprostřední meziroční změna vyžaduje srovnatelné pokrytí.
 
 ## Data a reprodukovatelnost
 
-`data/raw/` obsahuje uložené vstupy: číselník území ČSÚ, obyvatelstvo 2018–2025, komprimované GML hranice, ERÚ XML, katastrální číselník a oddělené demo fixtures. `data/sources/` popisuje zdroje. Výchozí build je offline, deterministický a nemění raw vstupy. `python pipeline/build.py --download-solar` obnoví pouze připnutý snímek FVE a katastrální číselník; `--download` obnoví všechny zdroje a připne nové vstupní hashe. Novější datum ERÚ vyžaduje vědomou změnu adaptéru a ověření metodiky; nejde o automatické přepnutí na libovolný další soubor. Budoucí změny formátu či pokrytí zdroje mohou vyžadovat úpravu adaptéru; kontroly takový build zastaví.
+Výchozí build je offline a kontroluje připnuté SHA-256. Síťové stažení je výslovný údržbový krok, ne součást načtení webu. `--download-solar` a `--download-heating` obnovují příslušné rodiny; `--download-family storage|charging|industry|households|pvgis` volí další adaptér. `--download` obnovuje všechny rodiny; pro cílenou obnovu použijte příslušný přepínač. Obnova může změnit vstupy a kontrolní součty a vyžaduje kontrolu auditů a metodiky. Pro reprodukci existující verze používejte přibalené raw vstupy.
 
-`pipeline/build.py` čte XLSX/CSV/GML, propojuje údaje kódem obce, transformuje EPSG:5514 do EPSG:4326, společně zjednodušuje obecní hranice a vytváří menší GeoJSON po krajích. Rozloha pochází z plné geometrie v metrické projekci. Souhrn validace je v `data/processed/validation.json`. `pipeline/package.py` bezpečně nahradí pouze `dist/` kopií `public/`; symlinky odmítá. Raw data, reference, testy ani Python knihovny do webu nekopíruje.
+[Datová dokumentace](data/README.md) vysvětluje původ, stavy a kontrolní postup. Metodiky: [FVE](docs/solar-methodology.md), [výkon](docs/generation-methodology.md), [ukládání](docs/storage-methodology.md), [vytápění](docs/heating-methodology.md), [domácnosti](docs/households-methodology.md), [dobíjení](docs/charging-methodology.md), [průmysl](docs/industry-methodology.md), [PVGIS](docs/potential-methodology.md).
 
-## Architektura a výpočty
+## Přidání vrstvy
 
-- `public/js/engine.mjs`: obecný engine načítání, agregací, normalizací a barev; dataset se načte až při použití a potom zůstává v cache, souběžné požadavky sdílejí jedno načtení.
-- `public/js/app.mjs`: ovládání a vykreslování podle manifestu.
-- `public/data/manifest.json`: katalog metrik, jednotky, status, zdroj, roky, škály, normalizace a cesty.
-- `public/data/territories.json`: hierarchie a jmenovatele obcí. GeoJSON obsahuje mapové polygony; podrobné obce se načítají po krajích.
-- `tests/engine.test.mjs`: Node native test runner, bez testovacích knihoven.
+Přidejte ověřený adaptér, připnutý vstup a zdrojová metadata; vraťte metriku a dataset v jednotném kontraktu a zapojte je do katalogu. Doložte jednotku, datum, pokrytí, licence/podmínky užití a způsob územního přiřazení. Zvolte vhodnou agregaci a povolené normalizace. Engine ani UI nevyžadují větev pro konkrétní energetické ID. Generované JSON neupravujte ručně. Podrobnosti jsou v [datovém modelu](docs/data-model.md).
 
-Aditivní veličiny se sčítají z obcí; míry jsou poměry součtů. Neúplný součet zachovává počet pokrytých a očekávaných obcí. Normalizace používá jmenovatel jen pro stejné pokryté obce; nulový celkový nebo chybějící jmenovatel vrací chybějící výsledek. Meziroční změna vyžaduje bezprostředně předchozí kalendářní rok a shodné pokrytí. Barevná doména používá všechny roky zvolené metriky. Přímý souhrnný údaj pro kraj/stát nedokládá obecní pokrytí: zůstává dostupný absolutně, bez domyšlené normalizace a změny.
+## GitHub Pages
 
-`per_capita` v základním manifestu používá územní populační baseline 2025, nikoli automaticky populaci každého historického roku. Pro časově odpovídající jmenovatel definujte normalizaci s `denominatorMetric: "population"`; engine ji načte a páruje stejný rok. Aktuální hranice nejsou historickou rekonstrukcí a srovnatelnost obyvatelstva mohou ovlivnit sčítání a změny území.
-
-## Přidání metriky
-
-1. Vytvořte vlastní zdrojový adaptér v Python pipeline a doložte licenci, jednotku, časovou definici a územní pokrytí.
-2. Zapište JSON `{"schemaVersion":1,"metricId":"new_metric","values":{"2025":{"554782":12.5,"562335":null}}}` do `public/data/metrics/new_metric.json`. Klíče jsou kódy území, hodnoty konečná čísla nebo `null`; nepoužívejte NaN ani názvy místo kódů.
-3. Přidejte položku do `metrics` v manifestu: unikátní `id`, `name`, `unit`, `category`, `geography`, celočíselné `years`, `normalizations`, `colorScale`, `path`, `status`, `source` a `aggregation`. Dostupné stavy jsou `verified`, `demo`, `unavailable`; nedostupná metrika má prázdné roky a žádná předstíraná data.
-4. `normalizations` odkazují na globální definice; `absolute` zachovává původní jednotku. Jiná definice má `denominator` (pole území) nebo `denominatorMetric` (roční dataset), volitelný `factor` a `unitSuffix`. Škála odkazuje na pole minimálně dvou šestimístných HEX barev v `colorScales`.
-5. `geography` povoluje `country`, `region`, `municipality`. `aggregation: "sum"` je vhodná jen pro aditivní veličinu; potenciály, sazby či indexy vyžadují vlastní ověřenou metodiku, jinak se nesčítají. Spusťte build a testy.
-
-Engine nemá seznam energetických ID: novou validní metriku obslouží bez změny výpočtů nebo aplikačních větví. Generovaný manifest se při buildu obnovuje; trvalou novou metriku přidejte do katalogu `build_manifest()` v pipeline, nikoli jen ručně do výstupu. Globální manifest také obsahuje `schemaVersion`, `defaultMetric`, `geography`, `territories` a případné bodové vrstvy `points`. Pro zařízení je připraven samostatný lazy loader, JSON Schema a [datový kontrakt bodových vrstev](docs/point-layers.md); MVP žádná neověřená zařízení nevykresluje.
-
-## Nasazení GitHub Pages
-
-Obsah tohoto adresáře vložte do **kořene samostatného GitHub repozitáře**; `.github/workflows/pages.yml` musí být přímo v kořeni repozitáře. V Settings → Pages zvolte Source: GitHub Actions. Workflow na větvi `main` provede instalaci Python závislostí → datový build → Node testy → statické balení → upload → deployment do prostředí `github-pages`. Pull request provádí build a testy bez publikace. Cesty webu jsou relativní, tedy vhodné i pro `/nazev-repozitare/`.
-
-Workflow má jen `contents: read` při buildu; deployment navíc `pages: write` a `id-token: write`. Produkční deploymenty se navzájem nepřeruší. Nasazení vyžaduje povolené Actions/Pages a případná schválení prostředí nastavená vlastníkem. Tento projekt lokálně nic neposílá na vzdálený repozitář.
-
-Verze Actions byly ověřeny podle [oficiálního návodu Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [setup-node](https://github.com/actions/setup-node) a [setup-python](https://github.com/actions/setup-python). Posouzení referenčního projektu je v [docs/tt-decin-review.md](docs/tt-decin-review.md).
-
-Navigace mapy plynule přibližuje kraj a následně vybranou obec. Druhé kliknutí na vybranou obec nebo Escape vrátí celou ČR a zruší rozpracované načítání hranic. Escape v otevřeném dialogu nejprve zavře dialog. Výběr je zvýrazněn obrysem skutečného území; klávesnice používá obrys polygonu místo obdélníkového focus rámečku.
+Projekt patří do kořene samostatného repozitáře; `.github/workflows/pages.yml` musí být v kořeni. V Settings → Pages zvolte GitHub Actions. Workflow na `main` provede instalaci Python závislostí, build, testy, balení a deployment do `github-pages`; pull request provádí kontrolu bez publikace. Relativní cesty podporují i `/nazev-repozitare/`. Publikaci mohou omezovat nastavení Actions/Pages a schválení prostředí. Lokální build sám žádné nasazení neprovádí.

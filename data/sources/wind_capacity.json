@@ -1,0 +1,26 @@
+{
+  "source": {
+    "name": "Energetický regulační úřad · licencované větrné elektrárny",
+    "url": "https://eru.gov.cz/datove-sady-technologickych-energetickych-zarizeni-ke-dni-01102026-vzor-2025",
+    "asOf": "2026-10-01",
+    "updatedAt": "2026-10-01",
+    "retrievedAt": "2026-10-27",
+    "geographicGranularity": "municipality",
+    "temporalGranularity": "snapshot",
+    "scopeNote": "Pouze licencovaný, bezpečně přiřazený elektrický výkon. Nejde o výrobu ani úplný výkon území; součty krajů a ČR jsou neúplné. Stav k 1. 10. 2026.",
+    "methodology": "Typ jednotlivého zdroje VTE; při prázdném typu přesné palivo R. Rozporný typ/palivo se vyloučí. Součet OutputElec v MW při platné udělené licenci, aktivní verzi a platné provozovně. Přesné propojení katastru ČÚZK na obec; víceobecní a neznámé lokality se nerozdělují. Dotčené obce i absence mají null. Historie se neodhaduje.",
+    "methodologyUrl": "https://github.com/hphugosm/energomapa-cr/blob/main/docs/generation-methodology.md",
+    "auditUrl": "https://hphugosm.github.io/energomapa-cr/data/wind_capacity-validation.json",
+    "limitations": [
+      "Registr nezahrnuje všechny nelicencované instalace.",
+      "Kraje a ČR sčítají publikované obecní údaje; celkový evidovaný výkon a nepřiřazený výkon jsou samostatně v auditu.",
+      "Nejednoznačně umístěné provozovny a jejich dotčené obce se nezapočítají; žádná absence se nenahrazuje nulou.",
+      "Pouze jeden snímek bez odhadované historie."
+    ]
+  },
+  "inputMetadata": "solar_capacity.json",
+  "capacityUnit": "MW",
+  "schemaUrl": "https://eru.gov.cz/sites/default/files/obsah/prilohy/vzor-11-v5_1.zip",
+  "cadastreMappingUrl": "https://services.cuzk.gov.cz/sestavy/cis/UI_KATASTRALNI_UZEMI.zip",
+  "unitVerificationUrl": "https://licence.eru.gov.cz/detail.php?lic-id=110605085&sequence=1&total=1"
+}

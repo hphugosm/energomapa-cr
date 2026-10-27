@@ -43,3 +43,20 @@ test('unknown and duplicate manifest layer IDs fail clearly', async () => {
   await assert.rejects(store.load('unknown'), /Neznámá/);
   assert.throws(() => new PointLayerStore({points: [manifest.points[0], manifest.points[0]]}, territories), /duplicitní/);
 });
+
+const flatTerritories=[{id:'A',level:'municipality',parentId:'R'},{id:'R',level:'region'},{id:'S',level:'region'}];
+const flatManifest={points:[{id:'flat',name:'Flat layer',type:'arbitrary-new-type',path:'flat.json',source:manifest.points[0].source}]};
+const flatFixture=()=>({schemaVersion:1,layerId:'flat',points:[{id:'p',name:'Observed plant',type:'arbitrary-new-type',lat:50,lon:14,municipalityCode:'A',regionCode:'R',properties:{capacityMW:0,year:2026}}]});
+test('uniform flat points accept extensible types, preserve values and cache the UI adapter',async()=>{
+  let calls=0;const store=new PointLayerStore(flatManifest,flatTerritories,{fetchJSON:async()=>{calls++;return flatFixture();}});
+  const [a,b]=await Promise.all([store.load('flat'),store.load('flat')]);
+  assert.strictEqual(a,b); assert.equal(calls,1);
+  assert.equal(a.points[0].properties.capacityMW,0);
+  assert.deepEqual(a.features[0].geometry.coordinates,[14,50]);
+  assert.equal(a.features[0].properties.municipalityId,'A');
+});
+for(const [name,mutate] of [['mismatched region',d=>d.points[0].regionCode='S'],['missing coordinates',d=>d.points[0].lat=null],['duplicate flat ID',d=>d.points.push({...d.points[0]})]]) test(`flat contract rejects ${name}`,async()=>{
+  const data=flatFixture();mutate(data);
+  const store=new PointLayerStore(flatManifest,flatTerritories,{fetchJSON:async()=>data});
+  await assert.rejects(store.load('flat'));assert.equal(store.cache.size,0);
+});

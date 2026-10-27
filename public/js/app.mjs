@@ -1,14 +1,16 @@
-import {MetricEngine, calendarYears, finite, format} from './engine.mjs';
-import {createEnergyMap} from './map.mjs?v=0.2.1';
-import {renderTimeChart} from './chart.mjs';
+import {MetricEngine, calendarYears, finite, format} from './engine.mjs?v=0.4.0';
+import {createEnergyMap} from './map.mjs?v=0.4.0';
+import {renderTimeChart} from './chart.mjs?v=0.4.0';
+import {EnergyProfile} from './profile.mjs?v=0.4.0';
+import {PointLayerStore} from './points.mjs?v=0.4.0';
 
 const $ = id => document.getElementById(id);
 const escapeHTML = text => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 const fold = text => String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 const statusNames = {verified: 'Zdrojová data', demo: 'DEMO · ilustrační data', unavailable: 'Data zatím nejsou připojena'};
-const categoryNames = {demography: 'Obyvatelstvo a domácnosti', context: 'Obyvatelstvo a domácnosti', electricity: 'Elektřina', renewables: 'Obnovitelné zdroje', solar: 'Solární energie', storage: 'Akumulace', heating: 'Teplo', heat: 'Teplo', mobility: 'Elektromobilita', transport: 'Elektromobilita', emissions: 'Emise', potential: 'Potenciál', network: 'Síť'};
+const categoryNames = {demography: 'Obyvatelstvo a domácnosti', context: 'Obyvatelstvo a domácnosti', electricity: 'Elektřina', renewables: 'Obnovitelné zdroje', solar: 'Solární energie', storage: 'Akumulace', heating: 'Teplo', heat: 'Teplo', mobility: 'Elektromobilita', transport: 'Elektromobilita', industry: 'Průmysl', emissions: 'Emise', potential: 'Potenciál', network: 'Síť'};
 const cache = new Map(), pending = new Map();
-let manifest, engine, map, selectedGeometry = null, timer = null, metricRequest = 0, territoryRequest = 0, normalizationRequest = 0;
+let manifest, engine, map, energyProfile, pointLayers, selectedGeometry = null, timer = null, metricRequest = 0, territoryRequest = 0, normalizationRequest = 0;
 let state = {metric: null, normalization: 'absolute', mode: 'value', year: null, selectedId: 'CZ', regionId: null, playing: false, speed: 1};
 
 async function json(path) {
@@ -33,7 +35,8 @@ const color = () => {
   const colors = manifest.colorScales[metric().colorScale];
   return colors?.at(-1) || '#173da5';
 };
-const availableYears = () => calendarYears(metric().years);
+const isTimeSeries = () => (metric().timeType || (metric().years.length > 1 ? 'timeseries' : 'snapshot')) === 'timeseries';
+const availableYears = () => isTimeSeries() ? calendarYears(metric().years) : metric().years;
 const sourceOf = m => m.source || {};
 function dateLabel(value) {
   if (!value) return '';
@@ -43,6 +46,7 @@ function dateLabel(value) {
 function periodLabel() {
   const m = metric(), source = sourceOf(m);
   if (!m.years.length) return 'Časová řada není dostupná';
+  if (m.timeType === 'static') return `Model · ${m.referencePeriod || source.referencePeriod || 'referenční období'}`;
   if (m.years.length === 1 && (m.asOf || source.asOf)) return `Stav k ${dateLabel(m.asOf || source.asOf)}`;
   return `${m.years.length === 1 ? 'Stav za rok' : 'Rok'} ${state.year}`;
 }
@@ -55,7 +59,7 @@ function updateURL() {
 }
 function play(playing) {
   clearTimeout(timer); timer = null;
-  state.playing = Boolean(playing && metric().years.length > 1);
+  state.playing = Boolean(playing && isTimeSeries() && metric().years.length > 1);
   $('play').textContent = state.playing ? 'Ⅱ Pozastavit' : '▶ Přehrát';
   $('play').setAttribute('aria-label', state.playing ? 'Pozastavit časovou osu' : 'Přehrát časovou osu');
   if (state.playing) {
@@ -99,8 +103,8 @@ function syncControls() {
   $('normalization').replaceChildren(...m.normalizations.map(id => new Option(manifest.normalizations[id].label, id)));
   $('normalization').value = state.normalization;
   $('mode').value = state.mode;
-  $('mode').querySelector('[value="yoy"]').disabled = m.years.length < 2;
-  const single = years.length < 2;
+  $('mode').querySelector('[value="yoy"]').disabled = (!isTimeSeries() || m.years.length < 2);
+  const single = !isTimeSeries() || years.length < 2;
   $('year').min = years[0] ?? 0; $('year').max = years.at(-1) ?? 0;
   $('year').value = state.year ?? 0; $('year').disabled = single;
   $('play').disabled = single; $('speed').disabled = single;
@@ -128,7 +132,7 @@ async function selectMetric(id) {
     await engine.prepare(id, normalization);
     if (request !== metricRequest) return;
     state.metric = id; state.normalization = normalization;
-    if (m.years.length < 2) state.mode = 'value';
+    if ((!isTimeSeries() || m.years.length < 2)) state.mode = 'value';
     const years = calendarYears(m.years);
     state.year = years.includes(previous.year) ? previous.year : years.at(-1) ?? null;
     render();
@@ -238,6 +242,7 @@ function renderProfile(result) {
     profile.append(div); return div;
   };
   item('Obyvatelstvo · referenční základ', finite(t.population) ? `${format(t.population, 0)} obyv.` : 'Bez dat', t.populationYear ? `Stav ${t.populationYear}` : '');
+  item('Domácnosti · referenční základ', finite(t.households) ? `${format(t.households, 0)} domácností` : 'Bez dat', t.householdsYear ? `Sčítání ${t.householdsYear}` : '');
   item('Rozloha území', finite(t.areaKm2) ? `${format(t.areaKm2)} km²` : 'Bez dat', 'Z nezjednodušených hranic');
   for (const normalization of m.normalizations.filter(id => id !== 'absolute')) {
     const config = manifest.normalizations[normalization];
@@ -249,6 +254,54 @@ function renderProfile(result) {
     const value = engine.value(state.metric, state.selectedId, state.year, normalization, state.mode);
     item(config.label, `${format(value.value)} ${engine.unit(state.metric, normalization)}`, value.partial ? 'Jen obce s dostupnou hodnotou' : '');
   }
+  renderEnergyProfile();
+}
+
+function renderEnergyProfile() {
+  const rows = energyProfile.rows(state.selectedId);
+  $('energy-profile-count').textContent = `${rows.length} ověřených vrstev`;
+  const grid = $('energy-profile-values'); grid.replaceChildren();
+  if (!energyProfile.requested) return;
+  let category = null;
+  for (const row of rows) {
+    const nextCategory = engine.metric(row.id).category;
+    if (nextCategory !== category) {
+      const heading = document.createElement('h3'); heading.className = 'profile-category'; heading.textContent = categoryNames[nextCategory] || nextCategory; grid.append(heading); category = nextCategory;
+    }
+    const card = document.createElement('div'); card.className = 'profile-item energy-profile-value';
+    const label = document.createElement('span'), value = document.createElement('strong'), note = document.createElement('small');
+    label.textContent = row.name;
+    value.textContent = row.status === 'ready' ? `${format(row.result.value)} ${row.unit}` : row.status === 'error' ? 'Načtení se nezdařilo' : 'Načítání…';
+    const date = row.timeType === 'static' ? `Model · ${row.source.referencePeriod || engine.metric(row.id).referencePeriod || row.year}` : row.asOf ? `Stav k ${dateLabel(row.asOf)}` : `Rok ${row.year}`;
+    const coverage = row.result?.partial ? ` · neúplný součet (${format(row.result.coverage, 0)}/${format(row.result.expected, 0)} obcí)`
+      : row.status === 'ready' && !finite(row.result.value) ? ' · bez dat pro toto území' : '';
+    note.textContent = `${row.source.provider || row.source.name || 'Zdroj neuveden'} · ${date}${coverage}`;
+    card.classList.toggle('warning', Boolean(row.result?.partial || row.status === 'error'));
+    if (row.source.scopeNote) card.title = row.source.scopeNote;
+    card.append(label, value, note);
+    const limitations = row.source.limitations || [];
+    if (row.source.scopeNote || limitations.length) {
+      const details = document.createElement('details'), summary = document.createElement('summary'), text = document.createElement('p');
+      summary.textContent = 'Rozsah a omezení'; text.textContent = [row.source.scopeNote, ...limitations].filter(Boolean).join(' '); details.className = 'profile-limitations'; details.append(summary, text); card.append(details);
+    }
+    const action = document.createElement('button');
+    if (row.status === 'error') {
+      action.textContent = 'Zkusit znovu'; action.title = row.error;
+      action.addEventListener('click', loadEnergyProfile);
+    } else {
+      action.textContent = 'Zobrazit na mapě'; action.disabled = row.status !== 'ready';
+      action.setAttribute('aria-label', `Zobrazit na mapě: ${row.name}`);
+      action.addEventListener('click', () => selectMetric(row.id));
+    }
+    card.append(action); grid.append(card);
+  }
+}
+
+async function loadEnergyProfile() {
+  const pending = energyProfile.load();
+  renderEnergyProfile();
+  await pending;
+  renderEnergyProfile();
 }
 
 function renderSeries() {
@@ -256,7 +309,7 @@ function renderSeries() {
   const unit = engine.unit(state.metric, state.normalization, state.mode);
   renderTimeChart($('time-chart'), {series, year: state.year, color: color(), unit, label: `${m.name} · ${territory().name}`, onYear: setYear});
   $('chart-territory').textContent = territory().name;
-  $('chart-note').textContent = m.years.length === 1 ? `${periodLabel()}. Jediný stav; přehrávání je vypnuté.`
+  $('chart-note').textContent = m.timeType === 'static' ? `${periodLabel()}. Předpočítaný model, nikoli měřená časová řada. Agregace je průměr vážený rozlohou obcí.` : m.years.length === 1 ? `${periodLabel()}. Jediný stav; přehrávání je vypnuté.`
     : m.status === 'unavailable' ? 'Časová řada zatím není připojena.'
     : 'Každý bod je roční hodnota. Křížek znamená chybějící údaj; prázdný bod neúplné pokrytí. Kliknutím zvolíte rok. Osa Y má místní rozsah.';
   const details = $('series-table'); const open = details.open;
@@ -281,12 +334,12 @@ function render({writeURL = true} = {}) {
   const values = new Map([...coverage].map(([id, result]) => [id, result.value]));
   const names = new Map([...engine.territories.values()].map(t => [t.id, t.name]));
   map.update({values, coverage, colorFor: value => engine.color(state.metric, value, domain), year: state.year ?? '', unitLabel: engine.unit(state.metric, state.normalization, state.mode), names});
-  $('map-territory').textContent = t.name; $('map-year').textContent = state.year ?? 'Bez dat';
+  $('map-territory').textContent = t.name; $('map-year').textContent = m.timeType === 'static' ? m.referencePeriod || sourceOf(m).referencePeriod : state.year ?? 'Bez dat';
   $('territory-title').textContent = t.name; $('detail-label').textContent = periodLabel();
   $('metric-label').textContent = `${state.mode === 'yoy' ? 'Meziroční změna · ' : ''}${m.name}`;
   $('metric-value').textContent = format(result.value);
   $('metric-unit').textContent = engine.unit(state.metric, state.normalization);
-  $('metric-status').textContent = statusNames[m.status] || m.status;
+  $('metric-status').textContent = result.valueStatus === 'not_applicable' ? 'Nevztahuje se na toto území' : result.valueStatus === 'unavailable' ? 'Údaj není dostupný' : statusNames[m.status] || m.status;
   let scopeNote = $('metric-scope');
   if (!scopeNote) {
     scopeNote = document.createElement('p');
@@ -354,10 +407,26 @@ function showData() {
   <p>Přepočet na 1 000 obyvatel používá referenční populační základ v territories.json (rok uveden v profilu). Není automaticky historickou mírou na populaci každého roku. Rozloha je odvozena z nezjednodušených hranic. Pro další poměry může manifest definovat zvláštní dataset jmenovatele.</p>
   <h3>Územní podklad</h3><p>${escapeHTML(geography.methodology || geography.source?.methodology || 'Skutečné hranice ČÚZK / RÚIAN, zjednodušené pro zobrazení na webu.')}</p><p>Současné územní vymezení se používá i pro historická data; nejde o rekonstrukci tehdejších hranic.</p><p>${safeLink(geography.source?.name || 'ČÚZK INSPIRE AU WFS', geography.source?.url || 'https://services.cuzk.gov.cz/wfs/inspire-au-wfs.asp')}</p>
   <h3>Stav všech metrik</h3><table><thead><tr><th scope="col">Metrika</th><th scope="col">Stav</th></tr></thead><tbody>${manifest.metrics.map(item => `<tr><td>${escapeHTML(item.name)}</td><td>${escapeHTML(statusNames[item.status] || item.status)}</td></tr>`).join('')}</tbody></table><p>Aplikace je čistý statický web. Další dataset se načte až po výběru metriky a uchovává se v paměti prohlížeče. Bodové vrstvy mají samostatný manifest a načítají se odděleně.</p>`;
+  if (manifest.points?.length) {
+    const heading = document.createElement('h3'); heading.textContent = 'Bodové vrstvy'; $('data-content').append(heading);
+    for (const layer of manifest.points) {
+      const row = document.createElement('p'), button = document.createElement('button'), status = document.createElement('span');
+      button.textContent = `Načíst: ${layer.name || layer.id}`;
+      button.addEventListener('click', async () => {
+        button.disabled = true; status.textContent = ' Načítání…';
+        try {const data = await pointLayers.load(layer.id); status.textContent = ` ${format(data.points?.length ?? data.features.length, 0)} záznamů · ${layer.source.name}`;}
+        catch (error) {status.textContent = ` ${error.message}`; button.disabled = false;}
+      });
+      row.append(button, status); $('data-content').append(row);
+    }
+  }
   $('data-dialog').showModal();
 }
 
 function installEvents() {
+  $('energy-profile-details').addEventListener('toggle', () => {
+    if ($('energy-profile-details').open && !energyProfile.requested) loadEnergyProfile();
+  });
   $('metric').addEventListener('change', event => selectMetric(event.target.value));
   $('normalization').addEventListener('change', event => selectNormalization(event.target.value));
   $('mode').addEventListener('change', event => {play(false); state.mode = event.target.value; render();});
@@ -398,10 +467,13 @@ async function init() {
     manifest = await json('./data/manifest.json');
     const [territories, overview] = await Promise.all([json(`./data/${manifest.territories}`), json(`./data/${manifest.geography.overview}`)]);
     engine = new MetricEngine(manifest, territories, {fetchJSON: json, baseURL: './data/'});
+    energyProfile = new EnergyProfile(engine);
+    pointLayers = new PointLayerStore(manifest, territories, {fetchJSON: json, baseURL: './data/'});
     const query = new URLSearchParams(location.search);
-    state.metric = engine.metrics.has(query.get('metric')) ? query.get('metric') : manifest.defaultMetric;
+    const requestedMetric = manifest.metricAliases?.[query.get('metric')] || query.get('metric');
+    state.metric = engine.metrics.has(requestedMetric) ? requestedMetric : manifest.defaultMetric;
     state.normalization = metric().normalizations.includes(query.get('normalization')) ? query.get('normalization') : metric().normalizations.includes('absolute') ? 'absolute' : metric().normalizations[0];
-    state.mode = query.get('mode') === 'yoy' && metric().years.length > 1 ? 'yoy' : 'value';
+    state.mode = query.get('mode') === 'yoy' && isTimeSeries() && metric().years.length > 1 ? 'yoy' : 'value';
     const years = availableYears(), year = Number(query.get('year'));
     state.year = years.includes(year) ? year : years.at(-1) ?? null;
     map = createEnergyMap($('map'), {onSelect: selectFromMap});

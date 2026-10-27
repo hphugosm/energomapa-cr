@@ -1,0 +1,35 @@
+{
+  "source": {
+    "name": "ERÚ · licencované ukládání elektřiny (TEZ sk. 17)",
+    "url": "https://eru.gov.cz/datove-sady-technologickych-energetickych-zarizeni-ke-dni-01102026-vzor-2025",
+    "asOf": "2026-10-01",
+    "updatedAt": "2026-10-01",
+    "retrievedAt": "2026-10-27",
+    "geographicGranularity": "municipality",
+    "temporalGranularity": "snapshot",
+    "scopeNote": "Licencované ukládání elektřiny přiřazené obcím; ne všechny domácí baterie. Pouze dílčí součty. Technologie baterie není v XML rozlišena.",
+    "methodology": "Součet OutputElec jednotlivých zařízení v MW, kontrolovaný proti OutputSum; počet unikátních aktivních provozoven StorageElecId. Aktivní licence a verze, datum provozovny. Přesné kódy katastru ČÚZK; absence záznamu je null. MWh ani bodové souřadnice zdroj neobsahuje.",
+    "methodologyUrl": "https://github.com/hphugosm/energomapa-cr/blob/main/docs/storage-methodology.md",
+    "limitations": [
+      "Pouze licencované ukládání elektřiny sk. 17; nejde o inventuru všech baterií ani domácích instalací.",
+      "XML neobsahuje explicitní energetickou kapacitu v MWh ani typ technologie; identifikátory battery_storage zachovávají plánované API, názvy přesně vyjadřují rozsah zdroje.",
+      "XML neobsahuje zeměpisné souřadnice; mapové body nejsou vytvořeny z centroidů obcí.",
+      "Jediný snímek; chybějící obce jsou null a krajské/národní součty jsou dílčí."
+    ]
+  },
+  "rawSha256": {
+    "UI_KATASTRALNI_UZEMI.zip": "922d059e158bc0d99a02da4376da7c45fb19d66eb77170a59bea14147bf1c240",
+    "tez-sk-17-2026-10-01.xml.gz": "ad2a0806d06e7208429488e21fbf5a84dc07a0dfbf4cca83e54025195e26ebec",
+    "vzor-17-v1.xsd": "90647bbcf80ee3d060f924b2092be0c57cd7595874b2118da408c16f29fda29e",
+    "ukladani-elektriny-provozovny.doc": "0c2660ef6068317a88168efced8dc2aa2f6278221bba7d2b5c733ac4a2e25af1"
+  },
+  "downloads": {
+    "tez-sk-17-2026-10-01.xml.gz": "https://eru.gov.cz/sites/default/files/obsah/prilohy/tez-sk-17-2026-10-01.xml",
+    "vzor-17-v1.xsd": "https://code.gov.cz/energeticky-regulacni-urad/tezy/-/raw/main/vzor-17-v1.xsd",
+    "UI_KATASTRALNI_UZEMI.zip": "https://services.cuzk.gov.cz/sestavy/cis/UI_KATASTRALNI_UZEMI.zip",
+    "ukladani-elektriny-provozovny.doc": "https://eru.gov.cz/sites/default/files/obsah/prilohy/ukladani-elektriny-seznam-jednotlivych-provozoven.doc"
+  },
+  "powerUnit": "MW",
+  "energyCapacityUnit": null,
+  "unitVerification": "ERÚ form: section 10 total installed electrical power [MW], section 11 per-device electrical power [MW], nominal voltage [kV], charge/discharge current [A]. No MWh field."
+}

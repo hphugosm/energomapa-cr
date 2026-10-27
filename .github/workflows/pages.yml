@@ -28,6 +28,8 @@ jobs:
         run: npm test
       - name: Test source adapters
         run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Verify deterministic offline data
+        run: python pipeline/check_determinism.py
       - name: Package static site
         run: python pipeline/package.py
       - uses: actions/upload-pages-artifact@v4

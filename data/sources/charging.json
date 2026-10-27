@@ -1,0 +1,29 @@
+{
+  "rawFile": "mpo-2026-09-30.xlsx.gz",
+  "rawSha256": "a66451dcde4a30213ea099ac35b50907fb161e1416ee56eaef8868d4ce3b910e",
+  "uncompressedSha256": "361ffffca4e6da8952e9398d6a9a5be7940ea44a9f25401163625073bb85a478",
+  "downloadUrl": "https://mpo.gov.cz/assets/cz/energetika/statistika/statistika-a-evidence-cerpacich-a-dobijecich-stanic/2026/10/Seznam_verDS_2026_09_30_v00.xlsx",
+  "source": {
+    "name": "MPO · Evidence veřejně přístupných dobíjecích stanic",
+    "url": "https://mpo.gov.cz/cz/energetika/statistika/statistika-a-evidence-cerpacich-a-dobijecich-stanic/seznam-verejne-pristupnych-dobijecich-stanic--280706/",
+    "asOf": "2026-09-30",
+    "updatedAt": "2026-10-20",
+    "retrievedAt": "2026-10-27",
+    "geographicGranularity": "municipality",
+    "temporalGranularity": "snapshot",
+    "scopeNote": "Evidované záznamy veřejných dobíjecích stanic MPO, nikoli nezávisle ověřený počet unikátních míst. Zdroj obsahuje rozpory v počtech; všechny hlášené řádky jsou zachovány. Stav k 30. 9. 2026.",
+    "methodology": "Geografické propojení původních souřadnic s úplnými polygony ČÚZK v EPSG:5514. Řádek je evidovaná stanice; počet dobíjecích bodů je explicitní údaj MPO, nikoli počet konektorů. Výkon je nominální maximální výkon stanice v kW, nikoli součet konektorů ani současná kapacita sítě. Všechny zdrojové záznamy se sčítají bez spekulativní deduplikace; pouze prostorově nepřiřazené řádky se vyřazují.",
+    "methodologyUrl": "https://github.com/hphugosm/energomapa-cr/blob/main/docs/charging-methodology.md",
+    "auditUrl": "https://hphugosm.github.io/energomapa-cr/data/charging-validation.json",
+    "limitations": [
+      "Evidence zahrnuje pouze nahlášené veřejně přístupné stanice; nejde o úplnou fyzickou infrastrukturu.",
+      "Hlavička XLSX uvádí 3783 stanic a 6591 bodů, tělo obsahuje 3790 řádků a 6601 bodů včetně pěti stanic pro těžká vozidla. Rozpor se neopravuje odhadem.",
+      "Bez stabilního ID nelze stejně označené stanice bezpečně deduplikovat. Všechny řádky se zachovávají a sčítají jako hlášené záznamy; shodné identity jsou označené v bodech a auditu. Více zařízení může oprávněně sdílet stejné místo.",
+      "Absence stanice není doložená nula; jediný snímek bez odhadované historie."
+    ],
+    "qualityWarnings": [
+      "source_header_body_disagreement",
+      "source_station_identity_ambiguity"
+    ]
+  }
+}

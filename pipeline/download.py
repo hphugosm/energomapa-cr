@@ -37,15 +37,35 @@ def download_geography(refresh=False):
         if root.find('{http://www.opengis.net/wfs/2.0}truncatedResponse') is not None:p.unlink()
 
 def download_tables():
-    import csv,io
+    import csv,io,tempfile
     url='https://data.csu.gov.cz/opendata/sady/REGUAP/distribuce/csv'
-    with urllib.request.urlopen(url,timeout=120) as response:
-        reader=csv.DictReader(io.TextIOWrapper(response,encoding='utf8'))
-        output=io.StringIO(newline='');writer=csv.DictWriter(output,fieldnames=reader.fieldnames);writer.writeheader()
-        for row in reader:
-            if row['IndicatorType']!='2406UAP891':break
-            writer.writerow(row)
-    (RAW/'population_2018_2025.csv.gz').write_bytes(gzip.compress(output.getvalue().encode(),mtime=0))
+    target=RAW/'population_2018_2025.csv.gz'
+    # Stream both the source and filtered output; publish only a complete,
+    # nonempty archive so a schema change cannot destroy the last good input.
+    temporary=None
+    try:
+        with urllib.request.urlopen(url,timeout=120) as response:
+            reader=csv.DictReader(io.TextIOWrapper(response,encoding='utf-8-sig',newline=''),strict=True)
+            if not reader.fieldnames or 'IndicatorType' not in reader.fieldnames:
+                raise ValueError('Population CSV is missing the IndicatorType column')
+            with tempfile.NamedTemporaryFile(dir=RAW,suffix='.csv.gz',delete=False) as output:
+                temporary=pathlib.Path(output.name)
+                with gzip.GzipFile(fileobj=output,mode='wb',filename='',mtime=0) as compressed:
+                    with io.TextIOWrapper(compressed,encoding='utf8',newline='') as text:
+                        writer=csv.DictWriter(text,fieldnames=reader.fieldnames)
+                        writer.writeheader()
+                        count=0
+                        for row in reader:
+                            if None in row or any(value is None for value in row.values()):
+                                raise ValueError(f'Malformed population CSV row at line {reader.line_num}')
+                            if row['IndicatorType'].strip()!='2406UAP891':continue
+                            writer.writerow(row)
+                            count+=1
+                        if not count:
+                            raise ValueError('Population CSV contains no rows for indicator 2406UAP891')
+        temporary.replace(target)
+    finally:
+        if temporary is not None:temporary.unlink(missing_ok=True)
     url='https://csu.gov.cz/docs/107516/3f36d27f-7eb1-b14c-0029-af89997bf192/struktura_uzemi_cr.xlsx?version=1.2'
     (RAW/'struktura_uzemi_cr.xlsx').write_bytes(urllib.request.urlopen(url,timeout=120).read())
 

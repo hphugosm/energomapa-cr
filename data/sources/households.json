@@ -1,0 +1,23 @@
+{
+  "rawFile": "sldb2021_domacnosti_clenu_typ.csv.gz",
+  "rawSha256": "eb4f58a438f878e755010b107ced8709b23b72cb2c58b3f2a853e6a42bde8168",
+  "uncompressedSha256": "c813712e6015a15649db83a7bdd9b163e6176d9024eed41219011bfd05da0d14",
+  "downloadUrl": "https://csu.gov.cz/docs/107508/05638b19-13ea-2ecf-f097-608a80e053eb/sldb2021_domacnosti_clenu_typ.csv?version=1.0",
+  "source": {
+    "name": "ČSÚ · Sčítání 2021 – hospodařící domácnosti podle velikosti a typu",
+    "url": "https://csu.gov.cz/produkty/vysledky-scitani-2021-otevrena-data",
+    "asOf": "2021-03-26",
+    "updatedAt": "2023-02-02",
+    "retrievedAt": "2026-10-27",
+    "geographicGranularity": "municipality",
+    "temporalGranularity": "snapshot",
+    "scopeNote": "Počet hospodařících domácností, nikoli obydlených bytů. Stav k 26. 3. 2021.",
+    "methodology": "Ukazatel 2423; celkový počet bez členění podle velikosti či typu. Přímé propojení kódem obce.",
+    "methodologyUrl": "https://github.com/hphugosm/energomapa-cr/blob/main/docs/households-methodology.md",
+    "limitations": [
+      "Sčítání 2021 neposkytuje současný počet domácností.",
+      "Chybějící obec je null; bez odhadovaného převodu územních změn.",
+      "Hospodařící domácnost není obydlený byt ani počet obyvatel."
+    ]
+  }
+}
