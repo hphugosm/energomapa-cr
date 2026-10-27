@@ -58,3 +58,5 @@ Obsah tohoto adresáře vložte do **kořene samostatného GitHub repozitáře**
 Workflow má jen `contents: read` při buildu; deployment navíc `pages: write` a `id-token: write`. Produkční deploymenty se navzájem nepřeruší. Nasazení vyžaduje povolené Actions/Pages a případná schválení prostředí nastavená vlastníkem. Tento projekt lokálně nic neposílá na vzdálený repozitář.
 
 Verze Actions byly ověřeny podle [oficiálního návodu Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [setup-node](https://github.com/actions/setup-node) a [setup-python](https://github.com/actions/setup-python). Posouzení referenčního projektu je v [docs/tt-decin-review.md](docs/tt-decin-review.md).
+
+Navigace mapy plynule přibližuje kraj a následně vybranou obec. Druhé kliknutí na vybranou obec nebo Escape vrátí celou ČR a zruší rozpracované načítání hranic. Escape v otevřeném dialogu nejprve zavře dialog. Výběr je zvýrazněn obrysem skutečného území; klávesnice používá obrys polygonu místo obdélníkového focus rámečku.

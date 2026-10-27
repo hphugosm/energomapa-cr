@@ -1,5 +1,5 @@
 import {MetricEngine, calendarYears, finite, format} from './engine.mjs';
-import {createEnergyMap} from './map.mjs';
+import {createEnergyMap} from './map.mjs?v=0.2.1';
 import {renderTimeChart} from './chart.mjs';
 
 const $ = id => document.getElementById(id);
@@ -162,23 +162,35 @@ async function selectTerritory(id, {writeURL = true} = {}) {
   const request = ++territoryRequest;
   const regionId = t.level === 'country' ? null : t.level === 'region' ? t.id : t.regionId || t.parentId;
   play(false); notice();
+  const path = regionId ? `./data/${manifest.geography.municipalities.replace('{regionId}', regionId)}` : null;
+  const existing = path ? cache.get(path) : null;
+  selectedGeometry = existing || null;
+  if (existing) map.setMunicipalities(regionId, existing);
+  state.selectedId = id; state.regionId = regionId;
+  map.setContext({regionId, selectedId: id});
+  $('town-search').value = t.level === 'municipality' ? t.name : '';
+  $('search-results').hidden = true; $('town-search').setAttribute('aria-expanded', 'false');
+  render({writeURL});
   try {
-    if (regionId) {
-      const path = manifest.geography.municipalities.replace('{regionId}', regionId);
-      const geometry = await json(`./data/${path}`);
+    if (path && !existing) {
+      const geometry = await json(path);
       if (request !== territoryRequest) return;
       map.setMunicipalities(regionId, geometry);
       selectedGeometry = geometry;
-    } else selectedGeometry = null;
-    state.selectedId = id; state.regionId = regionId;
-    map.setContext({regionId, selectedId: id});
-    $('town-search').value = t.level === 'municipality' ? t.name : '';
-    $('search-results').hidden = true; $('town-search').setAttribute('aria-expanded', 'false');
-    render({writeURL});
+      // A region starts moving immediately; only a searched municipality needs a second fit.
+      map.setContext({regionId, selectedId: id}, {fit:t.level === 'municipality'});
+      render({writeURL});
+    }
   } catch (error) {
     if (request !== territoryRequest) return;
     notice(`Hranice území nelze načíst. ${error.message}`, () => selectTerritory(id));
   }
+}
+
+function selectFromMap(id) {
+  if (id === state.selectedId && engine.territories.get(id)?.level === 'municipality') {
+    selectTerritory('CZ');
+  } else selectTerritory(id);
 }
 
 function breadcrumbs() {
@@ -371,6 +383,11 @@ function installEvents() {
     if (event.key === 'Escape') {$('search-results').hidden = true; $('town-search').setAttribute('aria-expanded', 'false'); $('town-search').focus();}
   });
   document.addEventListener('click', event => {if (!event.target.closest('.map-search')) {$('search-results').hidden = true; $('town-search').setAttribute('aria-expanded', 'false');}});
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || document.querySelector('dialog[open]')) return;
+    event.preventDefault();
+    selectTerritory('CZ');
+  });
   $('data-open').addEventListener('click', showData);
   $('close-data').addEventListener('click', () => $('data-dialog').close());
   document.addEventListener('visibilitychange', () => {if (document.hidden) play(false);});
@@ -387,7 +404,7 @@ async function init() {
     state.mode = query.get('mode') === 'yoy' && metric().years.length > 1 ? 'yoy' : 'value';
     const years = availableYears(), year = Number(query.get('year'));
     state.year = years.includes(year) ? year : years.at(-1) ?? null;
-    map = createEnergyMap($('map'), {onSelect: id => selectTerritory(id)});
+    map = createEnergyMap($('map'), {onSelect: selectFromMap});
     map.setOverview(overview); metricOptions();
     await engine.prepare(state.metric, state.normalization);
     installEvents();
