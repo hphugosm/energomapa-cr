@@ -1,6 +1,7 @@
 """Publish only public/; never package source/reference material or follow symlinks."""
 from pathlib import Path
 import shutil
+from publication import validate_public_tree
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -14,6 +15,7 @@ def main():
     for path in source.rglob('*'):
         if path.is_symlink():
             raise SystemExit(f'Refusing publish symlink: {path}')
+    validate_public_tree(source)
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(source, target)

@@ -9,6 +9,7 @@ from pyproj import Transformer
 from catalog import build_catalog, source_registry, normalizations, ALIASES, CATEGORIES
 from validation import validate_metrics, validate_points
 from isochrones import build_isochrones
+from databank import build_databank, build_offline_manifest
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 RAW=ROOT/'data/raw'; OUT=ROOT/'public/data'
 NS={'a':'http://inspire.ec.europa.eu/schemas/au/4.0','e':'http://www.locationframework.eu/schemas/AdministrativeUnits/1.0','g':'http://www.opengis.net/gml/3.2','n':'http://inspire.ec.europa.eu/schemas/gn/4.0','w':'http://www.opengis.net/wfs/2.0'}
@@ -151,9 +152,11 @@ def build():
     write(ROOT/'data/sources/registry.json',source_data)
     write(OUT/'sources.json',source_data)
     isochrone_index=build_isochrones(ROOT)
-    manifest={'schemaVersion':1,'version':'0.5.0','defaultMetric':'population','metricAliases':ALIASES,
+    databank_index=build_databank(ROOT)
+    manifest={'schemaVersion':1,'version':'0.6.1','defaultMetric':'population','metricAliases':ALIASES,
               'categories':CATEGORIES,'normalizations':normalizations(latest_year),
               'colorScales':{'electricity':['#eef3fc','#173da5'],'solar':['#fff4cb','#d98212'],'renewables':['#ecf7e9','#24763c'],'heat':['#fff0df','#bb5418'],'co2':['#fde9e7','#ab2929'],'grid':['#f1eafb','#6d42a5'],'storage':['#f1eafb','#6d42a5']},
+              'databank':{'index':'databank/index.json','datasets':len(databank_index['datasets']),'archive':'databank/offline.zip'},
               'metrics':metrics,'geography':{'overview':'geo/overview.geojson','municipalities':'geo/municipalities/{regionId}.geojson','source':geo_source},
               'territories':'territories.json','points':point_metadata,'sources':'sources.json','validation':'validation.json','pointsSchema':'points/schema.json','isochrones':{'manifest':'isochrones/manifest.json','origins':len(isochrone_index['origins']),'minutes':isochrone_index['minutes']}}
     write(OUT/'points/schema.json',json.loads((ROOT/'data/sources/flat-point-layer.schema.json').read_text()))
@@ -163,12 +166,13 @@ def build():
     report={'municipalities':len(codes),'regions':len(regions),'geographyAsOf':geo_source.get('asOf',geo_source['retrievedAt'][:10]),
             'geometryToleranceMetres':100,'metricCount':len(metrics),'realMetricCount':len(datasets),'pointLayers':len(layers),'metrics':reports}
     write(OUT/'validation.json',report)
+    build_offline_manifest(ROOT)
     report['publicBytes']=sum(p.stat().st_size for p in OUT.rglob('*') if p.is_file())
     write(ROOT/'data/processed/validation.json',report)
     print(json.dumps({k:v for k,v in report.items() if k!='metrics'},ensure_ascii=False,indent=2))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--download',action='store_true');p.add_argument('--download-solar',action='store_true');p.add_argument('--download-heating',action='store_true');p.add_argument('--download-family',choices=['storage','charging','industry','households','pvgis']);args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--download',action='store_true');p.add_argument('--download-databank',action='store_true');p.add_argument('--download-solar',action='store_true');p.add_argument('--download-heating',action='store_true');p.add_argument('--download-family',choices=['storage','charging','industry','households','pvgis']);args=p.parse_args()
     if args.download:
         from download import download_geography,download_tables,refresh_source_metadata,pin_inputs
         download_geography(refresh=True)
@@ -190,7 +194,10 @@ if __name__=='__main__':
             existing=json.loads((OUT/'territories.json').read_text())['territories']
             fn(existing,ROOT,workers=16,rate=10)
         else:fn(ROOT)
-    if args.download or args.download_solar or args.download_heating or args.download_family:
+    if args.download or args.download_databank:
+        from databank import download_databank
+        download_databank(ROOT)
+    if args.download or args.download_databank or args.download_solar or args.download_heating or args.download_family:
         from download import pin_inputs
         pin_inputs()
     build()
