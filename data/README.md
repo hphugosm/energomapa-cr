@@ -1,4 +1,4 @@
-# Data EnergoMapy 0.4.0
+# Data EnergoMapy 0.6.0
 
 Běžný `python pipeline/build.py` je offline deterministický build z připnutých vstupů. SHA-256 v `sources/checksums.json` a metadata jednotlivých adaptérů chrání proti nepozorované změně zdroje. Neshoda nebo nevalidní schéma zastaví build. `processed/` a `../public/data/` jsou generované výstupy, nikoli místa pro ruční opravy dat.
 
@@ -58,3 +58,9 @@ python pipeline/build.py --download-family pvgis
 Obnova je výslovná údržba a může přepsat raw vstupy či připnout nové hashe. Některé adaptéry záměrně odmítají změněný originál do metodické revize. `--download` obnovuje všechny rodiny; pro cílenou obnovu volte jednotlivé přepínače. Novější datum ERÚ vyžaduje vědomou změnu adaptéru. Pro reprodukci již vydané verze se nestahuje nový živý zdroj.
 
 Kontroly zahrnují konečnost a nezápornost čísel, povolené kódy, roky, schémata, součty a pokrytí proti baseline. Rodinné audity jsou v `processed/*-validation.json` a publikovaných datech. `processed/validation.json` obsahuje celkovou validaci a velikost produkčních dat; `public/data/validation.json` zveřejňuje pokrytí. Před vydáním spusťte Python i JS testy, opakovaný build s porovnáním hashů a browser smoke test. Výsledek konkrétního vydání patří do [protokolu ověření](../docs/verification.md).
+
+## Soutěžní databanka 0.6.0
+
+`raw/databank/` uchovává originální odpovědi ČEPS, OTE, Eurostatu, MPO/ČSÚ a evropské výřezy Energy-Charts s ENTSO-E jako upstream zdrojem. Metadata rodin jsou v `sources/flows-inputs.json`, `sources/ote-*.json`, `sources/databank-inputs.json` a `sources/entsoe-*.json`; všechny raw soubory zahrnuje globální `checksums.json`. Existující PVGIS a EEA originály se znovu nepřepisují.
+
+`pipeline/databank.py` sestavuje strojový katalog `../public/data/databank/index.json`, samostatné CSV/JSON a deterministický archiv `offline.zip`. Jednotky, období, časová pásma, původ a metodika jsou součástí každého JSON a katalogu; filtrovaný export z aplikace zapisuje metadata také do CSV. Statistiky zdrojů a případné chybějící hodnoty nejsou zpětně dopočítávány.

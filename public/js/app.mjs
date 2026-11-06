@@ -59,7 +59,7 @@ function updateURL() {
   const params = new URLSearchParams({metric: state.metric, territory: state.selectedId, normalization: state.normalization});
   if (state.year != null) params.set('year', state.year);
   if (state.mode !== 'value') params.set('mode', state.mode);
-  history.replaceState(null, '', `${location.pathname}?${params}`);
+  history.replaceState(null, '', `${location.pathname}?${params}${location.hash}`);
 }
 function play(playing) {
   clearTimeout(timer); timer = null;
@@ -480,6 +480,7 @@ function installEvents() {
   $('data-open').addEventListener('click', showData);
   $('close-data').addEventListener('click', () => $('data-dialog').close());
   document.addEventListener('visibilitychange', () => {if (document.hidden) play(false);});
+  window.addEventListener('workspacechange', event => {if (event.detail !== 'map') play(false);});
 }
 
 async function init() {
