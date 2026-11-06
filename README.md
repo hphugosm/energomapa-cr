@@ -14,7 +14,7 @@ Databanka nabízí ČEPS (2025–5. 11. 2026), OTE (červenec–září 2025), e
 
 Katalog je `public/data/databank/index.json`, každá sada má JSON a CSV. Filtr období a řad, srovnání států, minima/maxima/průměry a přepočty kompatibilních jednotek zachovávají `null`. Výkon MW se nepřevádí na MWh bez známé délky intervalu. Denní energie má hodnotu pouze pro úplné intervaly; denní saldo hranice není hrubý dovoz/vývoz. **Připravit aplikaci offline** uloží statický web i data do prohlížeče; přenosný archiv `public/data/databank/offline.zip` obsahuje CSV, JSON, katalog a metodiky. První příprava vyžaduje připojení a dostupné místo v prohlížeči.
 
-Obnova pouze databanky: `python pipeline/build.py --download-databank` (nebo `npm run data:databank`). Běžný build používá připnuté lokální originály bez sítě. Selhání síťové obnovy ponechává poslední uložený snapshot, jehož datum je dál v katalogu. [Databanka a zdroje](docs/databank-methodology.md) · [ČEPS](docs/flows-methodology.md) · [OTE](docs/ote-methodology.md) · [ENTSO-E](docs/entsoe-methodology.md)
+Obnova pouze databanky: `python pipeline/build.py --download-databank` (nebo `npm run data:databank`). Běžný build používá připnuté lokální originály bez sítě. Selhání síťové obnovy ponechává poslední uložený snapshot, jehož datum je dál v katalogu. [Databanka a zdroje](docs/databank-methodology.md) · [ČEPS](docs/flows-methodology.md) · [OTE](docs/ote-methodology.md) · [ENTSO-E / Energy-Charts](docs/databank-methodology.md)
 
 ## Obsah MVP
 
