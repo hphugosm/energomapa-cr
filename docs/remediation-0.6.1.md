@@ -19,7 +19,7 @@ Implementace oprav: [`3bc4194282eeba22ca2d45b9558c770b45ebc313`](https://github.
 ## Ověření a praktické meze
 
 - **Build a balení:** offline build úspěšný, 189 souborů v `dist/`. Běžné otevření nevyžaduje připojení k vydavatelům. Nový offline ZIP má 90 položek: 43 párů CSV/JSON, index a tři metodiky; bez XLSX OTE a bez DOCX.
-- **Testy:** 104/104 JS, 100/100 Python, 14/14 skutečných prohlížečových scénářů. [CI](../.github/workflows/pages.yml) spouští stejné sady včetně instalace Chromia; PR neuploaduje Pages artefakt a nespouští deploy. Prohlížečové snímky a výsledky jsou samostatný CI artefakt `remediation-browser-evidence`.
+- **Testy:** 104/104 JS, 100/100 Python, 14/14 skutečných prohlížečových scénářů. [CI](../.github/workflows/pages.yml) spouští stejné sady na připnutém Ubuntu 24.04 včetně instalace Chromia; PR neuploaduje Pages artefakt a nespouští deploy. Prohlížečové snímky a výsledky jsou samostatný CI artefakt `remediation-browser-evidence`.
 - **Determinismus:** následný úplný offline build vytvořil 194 stejných výstupů, včetně ZIP a manifestu offline souborů s hashi.
 - **Kontinuita mapy:** všech 41 původních souborů geometrií, metrik, území a bodových dat bajtově shodných s `main`; 6 258 obcí, 14 krajů, 22 dostupných metrik + jedna výslovně nedostupná. Geografie se nemění.
 - **Offline:** příprava, online→offline navigace, katalog, nová sada, vyhledání dosud neotevřené obce Liberec na `/energomapa-cr/`; studená navigace i na `/`. Skutečné selhání druhé aktualizace HTTP 503 a chybného hashe navíc ověřeny v Chromium. Snapshoty jsou konzistentní i po restartu simulovaného SW v JS regresi. Reálné vypnutí sítě emuluje Playwright; veřejný hosting tohoto commitu nebyl deployován.
