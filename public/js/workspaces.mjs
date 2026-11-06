@@ -18,10 +18,10 @@ async function showWorkspace(id) {
   const root = panels.get(id);
   const loading = (async () => {
     if (id === 'electricity') {
-      const {initializeElectricityPanel} = await import('./ui/electricity-panel.mjs?v=0.6.0');
+      const {initializeElectricityPanel} = await import('./ui/electricity-panel.mjs?v=0.6.1');
       initializeElectricityPanel({root, loadJSON}).open();
     } else {
-      const {initializeDatabankPanel} = await import('./ui/databank-panel.mjs?v=0.6.0');
+      const {initializeDatabankPanel} = await import('./ui/databank-panel.mjs?v=0.6.1');
       await initializeDatabankPanel({root, loadJSON});
     }
   })();

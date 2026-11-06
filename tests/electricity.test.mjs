@@ -21,5 +21,31 @@ test('selection exports units, provenance, filtered columns and original missing
   const records=[{time:'2025-01-01T00:00:00Z',DE:-20.123456,AT:null}];
   const json=exportSelection(dataset,records,['AT']);
   assert.equal(json.source.url,dataset.source.url);assert.deepEqual(json.records,[{time:records[0].time,AT:null}]);assert.equal(json.columns.length,1);
-  const csv=selectionCSV(dataset,records,['DE','AT']);assert.match(csv,/-20\.123456,,MW/);assert.match(csv,/column_units/);assert.match(csv,/https:\/\/example\.org\//);assert.match(csv,/"Raw, net values"/);assert.match(csv,/Positive = import/);
+  const csv=selectionCSV(dataset,records,['DE','AT']);assert.match(csv,/-20\.123456,\r\n/);assert.match(csv,/"columns"/);assert.match(csv,/https:\/\/example\.org\//);assert.match(csv,/"Raw, net values"/);assert.match(csv,/Positive = import/);
+});
+
+test('A06 annual Eurostat filter includes 2010 and exports that year', async()=>{
+  const {readFile} = await import('node:fs/promises');
+  const dataset=JSON.parse(await readFile(new URL('../public/data/databank/eurostat-electricity-imp.json',import.meta.url)));
+  const records=filterRecords(dataset.records,'2010','2010','year');
+  assert.equal(records.length,1);assert.equal(records[0].time,'2010');
+  assert.deepEqual(filterRecords(dataset.records,'2010-01-01','2010-12-31','year'),records);
+  const json=exportSelection(dataset,records,['CZ','DE']);
+  assert.deepEqual(json.period,{start:'2010',end:'2010'});
+  assert.equal(json.coverage.rows,1);assert.equal(json.coverage.expectedValues,2);
+  assert.match(selectionCSV(dataset,records,['CZ']),/\r\n2010,/);
+});
+
+test('A07 24 hours and 3 borders have actual coverage and original metadata', async()=>{
+  const {readFile} = await import('node:fs/promises');
+  const data=JSON.parse(await readFile(new URL('../public/data/databank/flows-physical.json',import.meta.url)));
+  const records=filterRecords(data.records,'2025-07-01','2025-07-01','hour');
+  const result=exportSelection(data,records,['PL','SK','AT']);
+  assert.equal(result.records.length,24);assert.equal(result.columns.length,3);
+  assert.deepEqual(result.period,{start:'2025-07-01T00:00:00Z',end:'2025-07-01T23:00:00Z'});
+  assert.equal(result.coverage.rows,24);assert.equal(result.coverage.expectedValues,72);
+  assert.equal(result.coverage.availableValues,72);assert.equal(result.coverage.missingCells,0);
+  assert.deepEqual(result.originalPeriod,data.period);assert.deepEqual(result.originalCoverage,data.coverage);
+  assert.equal(result.originalCoverage.rows,16176);
+  const empty=exportSelection(data,[],['AT']);assert.deepEqual(empty.period,{start:null,end:null});assert.equal(empty.coverage.expectedValues,0);
 });

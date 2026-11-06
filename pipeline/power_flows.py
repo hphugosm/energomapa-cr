@@ -5,11 +5,13 @@ from pathlib import Path
 import urllib.request
 import xml.etree.ElementTree as ET
 from zoneinfo import ZoneInfo
+from csv_export import write_dataset_csv
 
 ENDPOINT='https://www.ceps.cz/_layouts/CepsData.asmx'
 NS='https://www.ceps.cz/CepsData/'
 DOC_URL='https://www.ceps.cz/cs/ke-stazeni/webove-sluzby/dokumentace/cepsvip-popis-rozhrani-strukturovana-data-3-2.docx'
 BORDERS={'DE':('TenneT','50HzT'),'PL':('PSE',),'SK':('SEPS',),'AT':('APG',)}
+FLOW_AGGREGATION='Dovoz/vývoz v bilanci = součet kladných/záporných hodinových sald čtyř zemí. Německo je TenneT + 50Hertz před rozdělením znamének; opačné profily se nettují. Nejde o hrubé toky všech TSO ani jednotlivých vedení. Denní bilance integruje tyto hodinové části, nikoli kladné/záporné denní netto.'
 NAMES={'DE':'Německo','PL':'Polsko','SK':'Slovensko','AT':'Rakousko'}
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -113,6 +115,8 @@ def build_power_flows(root=ROOT):
     flow_rows=by_method['CrossborderPowerFlows'];datasets=[]
     common={'publisher':meta['publisher'],'url':meta['url'],'retrievedAt':meta['retrievedAt'],'methodology':meta['methodology'],'signConvention':meta['signConvention'],'documentation':meta['documentation'],'license':meta['license'],'rawInputs':[{k:item[k] for k in ('path','sha256')} for item in meta['files']]}
     common['documentationReference']=meta.get('documentationReference')
+    common['aggregationScope']=FLOW_AGGREGATION
+    common['methodology']+=' '+FLOW_AGGREGATION
     columns=[{'key':code,'label':NAMES[code],'unit':'MW','border':code,'direction':'net'} for code in BORDERS]
     for ident,flavour,title,kind in [('flows-physical','Actual','Fyzické přeshraniční toky ČR','physical_flow'),('flows-commercial','Planned','Obchodní výměna ČR · plánované toky ČEPS','commercial_exchange')]:
         records=[]
@@ -131,8 +135,8 @@ def build_power_flows(root=ROOT):
         pumping=round(demand-without,6) if demand is not None and without is not None else None
         residual=round(gross+imports-exports-demand,6) if all(v is not None for v in (gross,imports,exports,demand)) else None
         records.append({'time':time,'generation':gross,'load':demand,'loadWithoutPumping':without,'pumping':pumping,'import':imports,'export':exports,'residual':residual})
-    balance_columns=[{'key':key,'label':label,'unit':'MW'} for key,label in [('generation','Výroba brutto'),('load','Zatížení včetně čerpání'),('loadWithoutPumping','Zatížení bez čerpání'),('pumping','Čerpání'),('import','Dovoz přes hranice (součet kladných profilů)'),('export','Vývoz přes hranice (součet záporných profilů)'),('residual','Rozdíl výroba + dovoz − vývoz − zatížení')]]
-    datasets.append({'id':'flows-balance','title':'Bilance elektřiny ČR · provozní hodinové hodnoty','kind':'electricity_balance','unit':'MW','frequency':'hour','columns':balance_columns,'records':records,'description':'Provozní data ČEPS: součet publikovaných typů výroby brutto, zatížení včetně/bez čerpání a hraniční toky. Rozdíl bilance je zobrazen samostatně: soubory mohou mít odlišné měřicí pokrytí a nejsou statistickou bilanční ročenkou. Výroba není dopočítána ze zatížení.'})
+    balance_columns=[{'key':key,'label':label,'unit':'MW'} for key,label in [('generation','Výroba brutto'),('load','Zatížení včetně čerpání'),('loadWithoutPumping','Zatížení bez čerpání'),('pumping','Čerpání'),('import','Dovoz — součet kladných hodinových sald zemí'),('export','Vývoz — součet záporných hodinových sald zemí'),('residual','Rozdíl výroba + dovoz − vývoz − zatížení')]]
+    datasets.append({'id':'flows-balance','title':'Bilance elektřiny ČR · provozní hodinové hodnoty','kind':'electricity_balance','unit':'MW','frequency':'hour','columns':balance_columns,'records':records,'description':'Provozní data ČEPS: součet publikovaných typů výroby brutto, zatížení včetně/bez čerpání a hraniční toky. Rozdíl bilance je zobrazen samostatně: soubory mohou mít odlišné měřicí pokrytí a nejsou statistickou bilanční ročenkou. Výroba není dopočítána ze zatížení. '+FLOW_AGGREGATION})
     # Genuine generation mix is separately available for competition calculations.
     labels={'TPP':'Parní','CCGT':'Plynové a paroplynové','NPP':'Jaderné','HPP':'Vodní','PsPP':'Přečerpávací (výroba)','AltPP':'Alternativní','ApPP':'Závodní','WPP':'Větrné','PVPP':'Fotovoltaické'}
     generation_columns=[{'key':key,'label':label,'unit':'MW'} for key,label in labels.items()]
@@ -152,8 +156,7 @@ def build_power_flows(root=ROOT):
         write(out/(dataset['id']+'.json'),dataset)
         fields=['time']+[c['key'] for c in dataset['columns']]+(['availableHours','expectedHours'] if dataset['frequency']=='day' else [])
         csv_path=out/(dataset['id']+'.csv')
-        with csv_path.open('w',newline='',encoding='utf-8-sig') as handle:
-            writer=csv.DictWriter(handle,fields);writer.writeheader();writer.writerows(records)
+        write_dataset_csv(csv_path,dataset,fields)
         descriptors.append({key:dataset[key] for key in ('id','title','description','kind','unit','frequency','period','source','status','coverage','columns','timezone') }|{'rowCount':len(records),'path':dataset['id']+'.json','csv':dataset['id']+'.csv'})
     return descriptors
 

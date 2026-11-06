@@ -67,24 +67,54 @@ test('empty and reversed date selections contain no synthetic observations',()=>
   assert.deepEqual(result.records,[]);
   assert.deepEqual(result.period,{start:null,end:null});
   assert.equal(result.rowCount,0);
-  assert.match(exportSeriesCSV(result),/^time,energy,/);
+  assert.match(exportSeriesCSV(result),/\r\ntime,energy\r\n/);
+  assert.match(exportSeriesCSV(result),/^# metadata: /);
 });
 
 test('CSV retains source, retrieval, methodology and mixed column units with honest missing cells',()=>{
   const result=filterSeries(fixture(),{start:'2021',unit:'GWh'}),csv=exportSeriesCSV(result);
-  assert.match(csv,/2021,0,,0,balance,GWh,year,UTC/);
-  assert.match(csv,/2022,,25,1,balance,GWh,year,UTC/);
-  assert.match(csv,/https:\/\/example\.org\/statistics,ČSÚ,2026-11-06T10:00:00Z/);
-  assert.match(csv,/"Saldo, nikoli hrubý tok\. Chybějící hodnoty nejsou nula\."/);
-  assert.match(csv,/""unit"":""GWh""/);
-  assert.match(csv,/""unit"":""%""/);
-  assert.match(csv,/""unit"":""count""/);
+  assert.match(csv,/2021,0,,0/);
+  assert.match(csv,/2022,,25,1/);
+  assert.match(csv,/https:\/\/example\.org\/statistics/);
+  assert.match(csv,/2026-11-06T10:00:00Z/);
+  assert.match(csv,/Saldo, nikoli hrubý tok\. Chybějící hodnoty nejsou nula\./);
+  assert.match(csv,/"unit":"GWh"/);
+  assert.match(csv,/"unit":"%"/);
+  assert.match(csv,/"unit":"count"/);
 });
 
-test('CSV neutralizes spreadsheet formulas in metadata while retaining signed numbers',()=>{
+test('CSV metadata is non-executable JSON and numeric cells keep their signs',()=>{
   const data=fixture();data.id='=HYPERLINK("bad")';data.source.publisher=' \t@unsafe';
   const csv=exportSeriesCSV(data);
-  assert.match(csv,/2020,-3\.6,10,2,/);
-  assert.ok(csv.includes("\"'=HYPERLINK(\"\"bad\"\")\""));
-  assert.ok(csv.includes("' \t@unsafe"));
+  const [first] = csv.split('\r\n');
+  assert.equal(JSON.parse(first.slice('# metadata: '.length)).id, data.id);
+  assert.match(csv,/2020,-3\.6,10,2/);
+});
+
+test('A07 MPO single year and seven columns recomputes coverage after conversion',async()=>{
+  const {readFile}=await import('node:fs/promises');
+  const data=JSON.parse(await readFile(new URL('../public/data/databank/mpo-czech-energy-balance.json',import.meta.url)));
+  const columns=data.columns.slice(0,7).map(col=>col.key);
+  const result=filterSeries(data,{start:'2024',end:'2024',columns,unit:'GWh'});
+  assert.equal(result.records.length,1);assert.equal(result.columns.length,7);
+  assert.deepEqual(result.period,{start:'2024',end:'2024'});
+  assert.equal(result.coverage.rows,1);assert.equal(result.coverage.numericCells,7);
+  assert.deepEqual(result.originalCoverage,data.coverage);assert.deepEqual(result.originalPeriod,data.period);
+  assert.equal(result.originalCoverage.rows,15);
+});
+
+test('A05 CSV keeps flags for selected Eurostat cells and all provenance in empty export',()=>{
+  const data=fixture();data.columns=[{key:'CZ',unit:'TJ'},{key:'DE',unit:'TJ'}];
+  data.records=[{time:'2020',CZ:1,DE:null},{time:'2021',CZ:null,DE:0}];
+  data.qualityFlags=[{time:'2020',geo:'CZ',flag:'p'},{time:'2020',geo:'DE',flag:'e'},{time:'2021',geo:'CZ',flag:'b'}];
+  data.source.license='Example terms';data.source.attribution='Example credit';
+  const result=filterSeries(data,{start:'2020',end:'2020',columns:['CZ']});
+  assert.deepEqual(result.qualityFlags,[{time:'2020',geo:'CZ',flag:'p'}]);
+  const metadata=JSON.parse(exportSeriesCSV(result).split('\r\n')[0].slice('# metadata: '.length));
+  assert.deepEqual(metadata.qualityFlags,result.qualityFlags);
+  assert.equal(metadata.source.license,'Example terms');assert.equal(metadata.source.attribution,'Example credit');
+  const empty=filterSeries(data,{start:'2050'});
+  const emptyMetadata=JSON.parse(exportSeriesCSV(empty).split('\r\n')[0].slice('# metadata: '.length));
+  assert.equal(emptyMetadata.source.retrievedAt,data.source.retrievedAt);
+  assert.equal(emptyMetadata.coverage.rows,0);assert.equal(emptyMetadata.unit,'TJ');
 });

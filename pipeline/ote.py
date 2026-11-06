@@ -13,6 +13,7 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 import openpyxl
+from csv_export import write_dataset_csv
 
 FIRST = date(2025, 7, 1)
 LAST = date(2025, 9, 30)
@@ -140,14 +141,7 @@ def publish(root, ident, title, kind, unit, frequency, source, columns, records)
                'intervalDurationSeconds': 3600 if frequency == 'hour' else 86400}
     folder = private_root(root) / 'exports'
     dump(folder / f'{ident}.json', dataset)
-    with (folder / f'{ident}.csv').open('w', encoding='utf-8', newline='') as output:
-        fields = ['time', *[c['key'] for c in columns], 'unit', 'timezone', 'source_url', 'retrieved_at', 'methodology']
-        writer = csv.DictWriter(output, fieldnames=fields)
-        writer.writeheader()
-        for row in records:
-            writer.writerow({key: row[key] for key in ['time', *[c['key'] for c in columns]]} |
-                            {'unit': unit, 'timezone': dataset['timezone'], 'source_url': source['url'],
-                             'retrieved_at': source['retrievedAt'], 'methodology': source['methodology']})
+    write_dataset_csv(folder / f'{ident}.csv', dataset)
     return {key: dataset[key] for key in ('id', 'title', 'description', 'kind', 'unit', 'frequency', 'period', 'source', 'status', 'coverage')} | {
         'rowCount': len(records), 'path': ident + '.json', 'csv': ident + '.csv'}
 

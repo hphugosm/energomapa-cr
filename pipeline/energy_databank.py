@@ -1,5 +1,6 @@
 """Reproducible local energy series. Downloads are explicit; builds use pinned bytes only."""
 import csv, gzip, hashlib, itertools, json, math, pathlib, urllib.parse, urllib.request
+from csv_export import write_dataset_csv
 from collections import defaultdict
 from datetime import datetime, timezone
 
@@ -57,9 +58,7 @@ def publish(root,ident,title,kind,unit,frequency,source,columns,records,**extra)
     missing=sum(r.get(k) is None for r in records for k in numeric)
     data={'schemaVersion':1,'id':ident,'title':title,'description':source['methodology'],'kind':kind,'unit':unit,'frequency':frequency,'timezone':'not applicable' if frequency in ('year','climatological_month') else 'UTC','period':{'start':records[0]['time'],'end':records[-1]['time']},'source':source,'columns':columns,'records':records,'coverage':{'rows':len(records),'numericCells':len(records)*len(numeric),'missingCells':missing},'status':'snapshot',**extra}
     out=root/'public/data/databank';dump(out/(ident+'.json'),data)
-    with (out/(ident+'.csv')).open('w',encoding='utf-8-sig',newline='') as stream:
-        writer=csv.DictWriter(stream,fieldnames=['time']+[c['key'] for c in columns]);writer.writeheader()
-        for row in records:writer.writerow({k:row.get(k) for k in writer.fieldnames})
+    write_dataset_csv(out/(ident+'.csv'),data)
     return {k:data[k] for k in ('id','title','kind','unit','frequency','period','source','status','coverage')}|{'rowCount':len(records),'path':ident+'.json','csv':ident+'.csv'}
 
 def cols(labels,unit):return [{'key':k,'label':label,'type':'number','unit':unit} for k,label in labels.items()]
@@ -71,6 +70,8 @@ def build_energy_databank(root):
         if hashlib.sha256(p.read_bytes()).hexdigest()!=meta[name]['sha256']:raise ValueError('Databank checksum mismatch '+name)
         return json.loads(gzip.decompress(p.read_bytes()))
     def source(name,method):
+        if name.startswith('eurostat'):
+            return meta[name]|{'methodology':method,'license':'Eurostat reuse policy; acknowledge Eurostat and identify transformations.','licenseUrl':'https://ec.europa.eu/eurostat/help/copyright-notice','attribution':'Source: Eurostat; EnergoMapa selection and processing.','snapshotNote':'Lokální historický snapshot; nejde o aktuální měření.'}
         return meta[name]|{'methodology':method,'license':'Eurostat reuse policy' if name.startswith('eurostat') else 'Public official statistical publication','snapshotNote':'Lokální historický snapshot; nejde o aktuální měření.'}
     balances=raw('eurostat-balance.json.gz');rows=list(jsonstat_rows(balances))
     for balance,label in BALANCES.items():

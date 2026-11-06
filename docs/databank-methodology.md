@@ -64,3 +64,7 @@ Originální odpovědi v2 jsou v `data/raw/databank/entsoe-energycharts-*.json.g
 - `entsoe-load-comparison`: hodinové **průměrné MW**, nikoli součet MW. Z 15min zdroje musí být přítomny všechny čtyři čtvrthodiny; slovenské nativní hodinové hodnoty zůstávají nezměněny. Chybějící data se neinterpolují.
 
 Obnova je explicitní: `python pipeline/entsoe.py --download`; běžný `build_entsoe(root)` je offline a ověřuje kontrolní součty. Primární Transparency API nadále vyžaduje registrovaný token; tato pipeline si veřejný republisher nevydává za přímý přístup k němu.
+
+## Přenositelná metadata CSV (0.6.1)
+
+Každé CSV, včetně přímého stažení a výběrového exportu, začíná jediným řádkem `# metadata: {JSON}` v UTF-8 (ke stažení s BOM). Tento řádek obsahuje veškerá metadata JSON bez records: jednotky jednotlivých sloupců, zónu, zdroj, URL, datum získání, metodiku, licence a atribuce, skutečné období/pokrytí výběru i kvalitativní příznaky Eurostatu s časem a sloupcem. Následuje běžná CSV hlavička a hodnoty; prázdné pole = null. Při importu se metadata přečtou z prvního řádku (po odstranění BOM a prefixu), CSV parser dostane zbývající řádky. Samostatný sidecar není potřeba. Neurčená licence se výslovně označuje jako nedoložená, nevymýšlí se.

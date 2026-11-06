@@ -1,5 +1,6 @@
 """Assemble independently sourced, pinned offline datasets for the static app."""
 import json
+import hashlib
 import pathlib
 import zipfile
 
@@ -67,5 +68,9 @@ def build_offline_manifest(root):
     root = pathlib.Path(root)
     public = root / 'public'
     files = [p for p in public.rglob('*') if p.is_file() and p.name not in ('offline-files.json', '.DS_Store')]
-    dump(public / 'offline-files.json', {'version': '0.6.0', 'files': sorted(str(path.relative_to(public)) for path in files),
-                                       'bytes': sum(path.stat().st_size for path in files)})
+    entries = [{'path': str(path.relative_to(public)), 'bytes': path.stat().st_size,
+                'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+               for path in sorted(files)]
+    revision = hashlib.sha256(json.dumps(entries, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    dump(public / 'offline-files.json', {'schemaVersion': 2, 'version': '0.6.1', 'snapshot': revision,
+                                        'files': entries, 'bytes': sum(item['bytes'] for item in entries)})

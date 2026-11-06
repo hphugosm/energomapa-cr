@@ -16,7 +16,7 @@ Implementace přidává 47 samostatných datových sad s 75 605 záznamy. Původ
 | PVGIS | Měsíční klimatologický profil výroby 1 kWp pro ČR a kraje, reference 2005–2023, vážení rozlohou; nejde o historické měření |
 | EEA | Ohlášené průmyslové CO₂ a počet ohlašujících provozoven 2007–2022; CO₂ včetně biomasy, nikoli národní inventura |
 
-Přeshraniční panel má směrové šipky, filtr hranic a období, přehrávání skutečných intervalů, graf, tabulku a export výběru. ČEPS plánovaná výměna zůstává oddělená od fyzického toku i realizovaných tržních objemů OTE. Kladné znaménko ČEPS znamená dovoz do ČR. Denní saldo hranice se neoznačuje jako hrubý dovoz/vývoz; hrubá integrovaná množství uvádí provozní bilance. Reziduum se nezamlčuje ani nevynuluje.
+Přeshraniční panel má směrové šipky, filtr hranic a období, přehrávání skutečných intervalů, graf, tabulku a export výběru. ČEPS plánovaná výměna zůstává oddělená od fyzického toku i realizovaných tržních objemů OTE. Kladné znaménko ČEPS znamená dovoz do ČR. Denní saldo hranice se neoznačuje jako hrubý dovoz/vývoz; provozní bilance integruje kladná/záporná hodinová salda čtyř zemí po německém nettování, nikoli hrubé toky všech TSO. Reziduum se nezamlčuje ani nevynuluje.
 
 Databanka podporuje vyhledávání a filtr poskytovatele, časové a řadové filtry, evropská srovnání, grafy, minima/maxima a prosté aritmetické průměry. Převody MW/GW a MWh/GWh/TWh/TJ/PJ respektují rozdíl výkonu a energie. CSV/JSON export výběru zachovává metadata zdroje, jednotky a null. Každá publikovaná sada má samostatný CSV i JSON a deskriptor katalogu.
 

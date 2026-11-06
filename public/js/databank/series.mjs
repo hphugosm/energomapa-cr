@@ -1,4 +1,4 @@
-import {toCSV} from '../analysis/export.mjs';
+import {selectionMetadata, datasetCSV} from './metadata.mjs';
 
 const scales = [
   {W: 1, kW: 1e3, MW: 1e6, GW: 1e9},
@@ -24,10 +24,9 @@ export function filterSeries(dataset, {start = '', end = '', columns, unit = dat
     for (const col of selected) result[col.key] = (col.unit || dataset.unit) === dataset.unit && numeric(row[col.key]) ? convert(row[col.key], dataset.unit, unit) : row[col.key] ?? null;
     return result;
   });
-  return {...dataset, unit, columns: selected.map(col => ({...col, unit: (col.unit || dataset.unit) === dataset.unit ? unit : col.unit})), records,
-    period: {start: records[0]?.time ?? null, end: records.at(-1)?.time ?? null},
-    selection: {start, end, columns: selected.map(col => col.key), originalUnit: dataset.unit, outputUnit: unit},
-    originalPeriod: dataset.period, rowCount: records.length};
+  const outputColumns = selected.map(col => ({...col, unit: (col.unit || dataset.unit) === dataset.unit ? unit : col.unit}));
+  return {...dataset, unit, columns: outputColumns, records, ...selectionMetadata(dataset, records, outputColumns),
+    selection: {start, end, columns: selected.map(col => col.key), originalUnit: dataset.unit, outputUnit: unit}};
 }
 export function summarizeSeries(dataset) {
   return dataset.columns.map(col => {
@@ -38,12 +37,7 @@ export function summarizeSeries(dataset) {
   });
 }
 export function exportSeriesCSV(dataset) {
-  const provenance = {dataset_id: dataset.id, unit: dataset.unit, frequency: dataset.frequency, timezone: dataset.timezone,
-    source: dataset.source?.url, publisher: dataset.source?.publisher, retrieved_at: dataset.source?.retrievedAt,
-    methodology: dataset.source?.methodology, period_start: dataset.period?.start, period_end: dataset.period?.end,
-    columns_metadata: JSON.stringify(dataset.columns)};
-  const fields = ['time', ...dataset.columns.map(col => col.key), ...Object.keys(provenance)];
-  return toCSV(dataset.records.map(row => ({...row, ...provenance})), fields);
+  return datasetCSV(dataset);
 }
 export function downloadArtifact(content, name, type) {
   const url = URL.createObjectURL(new Blob([content], {type}));

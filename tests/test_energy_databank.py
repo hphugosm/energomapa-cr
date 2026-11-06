@@ -40,6 +40,10 @@ class DatabankTests(unittest.TestCase):
             text=(root/'public/data/databank/example.csv').read_text(encoding='utf-8-sig')
             self.assertIn('2020,0',text)
             self.assertIn('2021,\n',text)
+            metadata=json.loads(text.splitlines()[0].removeprefix('# metadata: '))
+            self.assertEqual(metadata['unit'],'GWh')
+            self.assertEqual(metadata['source']['url'],'https://example.org')
+            self.assertIn('license',metadata['source'])
 
     def test_mpo_rejects_tampered_workbook_before_parsing(self):
         with tempfile.TemporaryDirectory() as directory:

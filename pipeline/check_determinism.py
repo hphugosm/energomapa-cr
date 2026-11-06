@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def hashes():
     files = [p for folder in ('public/data','data/processed') for p in (ROOT/folder).rglob('*') if p.is_file()]
-    files.append(ROOT/'data/sources/registry.json')
+    files.extend([ROOT/'data/sources/registry.json', ROOT/'public/offline-files.json'])
     return {str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
 
 def main():
