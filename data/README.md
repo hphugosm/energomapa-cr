@@ -61,6 +61,6 @@ Kontroly zahrnují konečnost a nezápornost čísel, povolené kódy, roky, sch
 
 ## Soutěžní databanka 0.6.0
 
-`raw/databank/` uchovává originální odpovědi ČEPS, OTE, Eurostatu, MPO/ČSÚ a evropské výřezy Energy-Charts s ENTSO-E jako upstream zdrojem. Metadata rodin jsou v `sources/flows-inputs.json`, `sources/ote-*.json`, `sources/databank-inputs.json` a `sources/entsoe-*.json`; všechny raw soubory zahrnuje globální `checksums.json`. Existující PVGIS a EEA originály se znovu nepřepisují.
+`raw/databank/` uchovává originální odpovědi ČEPS, OTE, Eurostatu, MPO/ČSÚ a evropské výřezy Energy-Charts s ENTSO-E jako upstream zdrojem. Metadata rodin jsou v `sources/flows.json`, `sources/ote-inputs.json`, `sources/databank-inputs.json` a `sources/entsoe-inputs.json`; všechny raw soubory zahrnuje globální `checksums.json`. Existující PVGIS a EEA originály se znovu nepřepisují.
 
 `pipeline/databank.py` sestavuje strojový katalog `../public/data/databank/index.json`, samostatné CSV/JSON a deterministický archiv `offline.zip`. Jednotky, období, časová pásma, původ a metodika jsou součástí každého JSON a katalogu; filtrovaný export z aplikace zapisuje metadata také do CSV. Statistiky zdrojů a případné chybějící hodnoty nejsou zpětně dopočítávány.
