@@ -1,10 +1,20 @@
-# EnergoMapa Česka 0.5.0
+# EnergoMapa Česka 0.6.0
 
 Statický energetický atlas ČR s navigací **ČR → kraj → obec**, vyhledáváním, časovým grafem, porovnáním území a kombinovaným Energy Profile. Rozložení mapy, pravého panelu a časové osy navazuje na TT-Decin. Metriky, zdroje, normalizace a bodové vrstvy řídí manifest; frontend nepotřebuje serverovou databázi, API klíče, CDN ani CSV upload.
 
 [Repozitář](https://github.com/hphugosm/energomapa-cr) · [GitHub Pages](https://hphugosm.github.io/energomapa-cr/) · [Ověření a omezení](docs/verification.md) · [Datový model](docs/data-model.md)
 
 Odkaz Pages je cílová adresa projektu; stav nasazení této verze dokládá až příslušný GitHub Actions deployment.
+
+## Databanka a přeshraniční elektřina 0.6.0
+
+Pracovní prostory **Mapa obcí**, **Přeshraniční toky** a **Databanka** mají oddělené líné načítání. Původní metriky a 6 258 obcí zůstávají dostupné. Přeshraniční panel přehrává skutečné historické intervaly ČEPS, rozlišuje fyzické a plánované obchodní výměny, zobrazuje čtyři hranice, filtry, graf, provozní bilanci a export výběru s původem a jednotkami.
+
+Databanka nabízí ČEPS (2025–5. 11. 2026), OTE (červenec–září 2025), evropské řady ENTSO-E publikované přes Fraunhofer ISE Energy-Charts (1.–7. 7. 2025), Eurostat (roční bilance a indikátory), MPO/ČSÚ (bilance 2010–2024), EEA (2007–2022) a měsíční klimatologický model PVGIS. Přesná období každé sady určuje katalog. ENTSO-E je výslovně označený zprostředkovaný zdroj; historické ani modelové údaje se neoznačují jako aktuální měření.
+
+Katalog je `public/data/databank/index.json`, každá sada má JSON a CSV. Filtr období a řad, srovnání států, minima/maxima/průměry a přepočty kompatibilních jednotek zachovávají `null`. Výkon MW se nepřevádí na MWh bez známé délky intervalu. Denní energie má hodnotu pouze pro úplné intervaly; denní saldo hranice není hrubý dovoz/vývoz. **Připravit aplikaci offline** uloží statický web i data do prohlížeče; přenosný archiv `public/data/databank/offline.zip` obsahuje CSV, JSON, katalog a metodiky. První příprava vyžaduje připojení a dostupné místo v prohlížeči.
+
+Obnova pouze databanky: `python pipeline/build.py --download-databank` (nebo `npm run data:databank`). Běžný build používá připnuté lokální originály bez sítě. Selhání síťové obnovy ponechává poslední uložený snapshot, jehož datum je dál v katalogu. [Databanka a zdroje](docs/databank-methodology.md) · [ČEPS](docs/flows-methodology.md) · [OTE](docs/ote-methodology.md) · [ENTSO-E / Energy-Charts](docs/databank-methodology.md)
 
 ## Obsah MVP
 
