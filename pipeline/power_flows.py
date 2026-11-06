@@ -1,6 +1,6 @@
 """ČEPS hourly electricity snapshots. Offline build; explicit --download refresh only."""
 from __future__ import annotations
-import argparse, concurrent.futures, csv, datetime as dt, gzip, hashlib, io, json, math
+import argparse, concurrent.futures, csv, datetime as dt, gzip, hashlib, io, json, math, tempfile
 from pathlib import Path
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -47,6 +47,8 @@ def parse_xml(raw):
 def download_power_flows(root=ROOT,start='2025-01-01',end='2026-11-05'):
     """Archive full original SOAP responses and their exact query parameters."""
     root=Path(root);directory=root/'data/raw/databank';directory.mkdir(parents=True,exist_ok=True)
+    staging_context=tempfile.TemporaryDirectory(prefix='flows-refresh-',dir=root/'data')
+    staging=Path(staging_context.name)
     start_date=dt.date.fromisoformat(start);end_date=dt.date.fromisoformat(end)
     jobs=[];cursor=start_date
     while cursor<=end_date:
@@ -58,7 +60,7 @@ def download_power_flows(root=ROOT,start='2025-01-01',end='2026-11-05'):
     def download(job):
         method,a,b=job;raw,params,count=fetch(method,a,b)
         name=f'flows-{method}-{a[:7]}.xml.gz';compressed=gzip.compress(raw,mtime=0)
-        path=directory/name;path.write_bytes(compressed)
+        path=directory/name;(staging/name).write_bytes(compressed)
         print(f'{name}: {count} hours',flush=True)
         return {'path':str(path.relative_to(root)),'sha256':hashlib.sha256(compressed).hexdigest(),'decompressedSha256':hashlib.sha256(raw).hexdigest(),'method':method,'parameters':params,'rowCount':count}
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
@@ -66,10 +68,14 @@ def download_power_flows(root=ROOT,start='2025-01-01',end='2026-11-05'):
     # Preserve the primary documentation and sign convention evidence offline.
     for name,url in [('flows-methodology.docx',DOC_URL),('flows-sign-convention.html','https://www.ceps.cz/cs/data/preshranicni-toky')]:
         with urllib.request.urlopen(url,timeout=60) as response:raw=response.read()
-        target=directory/name;target.write_bytes(raw)
+        target=directory/name;(staging/name).write_bytes(raw)
         files.append({'path':str(target.relative_to(root)),'sha256':hashlib.sha256(raw).hexdigest(),'url':url})
     meta={'publisher':'ČEPS, a.s.','url':'https://www.ceps.cz/cs/webove-sluzby','endpoint':ENDPOINT,'documentation':DOC_URL,'retrievedAt':dt.datetime.now(dt.timezone.utc).isoformat(),'requestedPeriod':{'start':start,'end':end},'files':files,'signConvention':'Kladná hodnota je dovoz do ČR; záporná vývoz z ČR. Potvrzeno větví val < 0 → export v oficiálním grafu ČEPS.','methodology':'HR / AVG / RT. Hodinový průměr výkonu v MW. Čas začátku intervalu převeden z explicitního UTC offsetu zdroje do UTC. Každý interval trvá 1 h. DE je součet profilů TenneT a 50HzT; ostatní profily PSE, SEPS, APG. Planned jsou plánované přeshraniční výměny ČEPS, nikoli realizované obchody OTE.','license':'Veřejně dostupná data ČEPS; zachovat uvedení zdroje, licence pro další užití není v rozhraní deklarována.'}
+    # All requests and parsing succeeded before touching the last good snapshot.
+    for item in files:
+        target=root/item['path'];(staging/target.name).replace(target)
     write(root/'data/sources/flows.json',meta)
+    staging_context.cleanup()
     return meta
 
 def complete_sum(values):
