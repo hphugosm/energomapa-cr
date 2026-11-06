@@ -20,7 +20,7 @@ def download_energy_databank(root):
       'eurostat-balance':('nrg_bal_s',{'unit':'GWH','siec':['TOTAL','E7000']}),
       'eurostat-dependency':('nrg_ind_id',{'unit':'PC','siec':'TOTAL'}),
       'eurostat-renewables':('nrg_ind_ren',{'unit':'PC'})}
-    manifest={'schemaVersion':1,'inputs':{}}
+    manifest={'schemaVersion':1,'inputs':{}};pending={}
     for name,(code,filters) in queries.items():
         params={'lang':'EN','geo':list(COUNTRIES),'sinceTimePeriod':'2000',**filters}
         url=BASE+code+'?'+urllib.parse.urlencode(params,doseq=True)
@@ -28,12 +28,15 @@ def download_energy_databank(root):
         with urllib.request.urlopen(req,timeout=120) as response:payload=response.read()
         data=json.loads(payload)
         if data.get('class')!='dataset' or not data.get('value'):raise ValueError('Empty Eurostat response '+code)
-        name+='.json.gz';raw=gzip.compress(payload,mtime=0);(folder/name).write_bytes(raw)
+        name+='.json.gz';raw=gzip.compress(payload,mtime=0);pending[name]=raw
         manifest['inputs'][name]={'url':url,'publisher':'Eurostat','retrievedAt':datetime.now(timezone.utc).isoformat(),'sha256':hashlib.sha256(raw).hexdigest(),'dataset':code}
         print(name,len(payload),flush=True)
     with urllib.request.urlopen(MPO_URL,timeout=90) as response:payload=response.read()
-    name='mpo-energy-balance.xlsx';(folder/name).write_bytes(payload)
+    name='mpo-energy-balance.xlsx';pending[name]=payload
     manifest['inputs'][name]={'url':MPO_URL,'publisher':'MPO / ČSÚ','retrievedAt':datetime.now(timezone.utc).isoformat(),'sha256':hashlib.sha256(payload).hexdigest(),'referencePage':'https://mpo.gov.cz/cz/energetika/statistika/energeticke-bilance/souhrnna-energeticka-bilance-statu-v-metodice-eurostatu-za-leta-2010_2024--290739/'}
+    # Fetch and validate every response before replacing any pinned snapshot.
+    for name,payload in pending.items():
+        temporary=folder/(name+'.tmp');temporary.write_bytes(payload);temporary.replace(folder/name)
     dump(root/'data/sources/databank-inputs.json',manifest)
 
 def jsonstat_rows(data):
