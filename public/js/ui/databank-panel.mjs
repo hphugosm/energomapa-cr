@@ -15,7 +15,7 @@ function chart(svg, data) {
   const validColumns = data.columns.filter(col => data.records.some(row => numeric(row[col.key])));
   const values = data.records.flatMap(row => validColumns.map(col => row[col.key]).filter(numeric));
   if (!values.length) {add('text', {x: 450, y: 150, 'text-anchor': 'middle', fill: '#65738a'}, 'Ve výběru nejsou číselná data.'); return;}
-  let low = Math.min(...values), high = Math.max(...values); if (low === high) {low -= Math.abs(low) * .05 || 1; high += Math.abs(high) * .05 || 1;}
+  let low = values.reduce((a, b) => Math.min(a, b), Infinity), high = values.reduce((a, b) => Math.max(a, b), -Infinity); if (low === high) {low -= Math.abs(low) * .05 || 1; high += Math.abs(high) * .05 || 1;}
   const x = i => 82 + i / Math.max(1, data.records.length - 1) * 795, y = value => 252 - (value - low) / (high - low) * 220;
   for (let i = 0; i < 5; i++) {
     const value = low + (high - low) * i / 4;
