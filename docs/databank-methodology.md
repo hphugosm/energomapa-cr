@@ -48,3 +48,19 @@ Převzata původní česká část F1_4, vydání v16. Výběr `Carbon dioxide (
 ## Reprodukce a obnova
 
 `python pipeline/energy_databank.py --download` explicitně obnoví čtyři síťové vstupy Eurostatu a MPO a jejich metadata. Běžný `build_energy_databank(root)` používá pouze místní soubory a kontroluje SHA-256; nevolá síť a neaktualizuje datum stažení. Neúspěšná obnova není novým pozorováním: používejte předchozí ověřený commit se snapshotem. Soubory PVGIS a EEA obnovuje stávající pipeline projektu.
+
+## Evropské intervalové řady — ENTSO-E prostřednictvím Energy-Charts
+
+API dokumentace a licence: https://api.energy-charts.info/
+Upstream: https://transparency.entsoe.eu/
+Příklad oficiálního grafu republishera s atribucí ENTSO-E: https://energy-charts.info/charts/power/chart.htm?c=CZ&l=en&year=2025&week=27
+
+Databanka obsahuje skutečná publikovaná data za historický týden 1.–7. července 2025 pro Česko, Německo, Rakousko, Polsko a Slovensko. Byla stažena veřejným endpointem `/v2/public_power` z **Fraunhofer ISE / Energy-Charts.info**, který pracuje s ENTSO-E a dalšími zdroji a může přidávat vlastní odhady a úpravy. **Nejde o přímé stažení autentizovaného API ENTSO-E**, nezávislý zdroj nebo záruku shodné revize. Tato odlišnost je výslovně uložena také v každém JSON. Licence republishera: CC BY 4.0 s atribucí Energy-Charts.info.
+
+Originální odpovědi v2 jsou v `data/raw/databank/entsoe-energycharts-*.json.gz`, přesné URL a SHA-256 v `data/sources/entsoe-inputs.json`. Timestamps podle dokumentace API označují začátek intervalu v místní zóně; publikované výstupy je převádějí na UTC. Intervaly CZ, DE, AT, PL jsou 15 minut; slovenská data jsou nativně hodinová a **nerozmnožují se na umělé čtvrthodiny**.
+
+- `entsoe-public-power-*`: každá původní výkonová řada výroby a zatížení v MW. Agregát přeshraničního obchodu, procenta a reziduální zatížení jsou z této sady vynechány, aby nemohly být omylem přičteny k výrobě. Čerpání má původní znaménko a není kladnou výrobou. Ani zatížení se nesčítá s výrobním mixem.
+- `entsoe-daily-energy-*`: MWh vypočtené integrací intervalového průměru MW × délka intervalu v hodinách. Publikují se pouze úplné dny UTC, se všemi 96/24 intervaly podle nativního kroku. Chybí-li byť jediná hodnota sloupce, denní hodnota je null. Místní týden začíná ve 22:00 UTC předchozího dne a končí v 21:45/21:00 UTC; neúplné krajní dny nejsou považovány za úplné denní součty. Výstup tak má šest celých dnů UTC.
+- `entsoe-load-comparison`: hodinové **průměrné MW**, nikoli součet MW. Z 15min zdroje musí být přítomny všechny čtyři čtvrthodiny; slovenské nativní hodinové hodnoty zůstávají nezměněny. Chybějící data se neinterpolují.
+
+Obnova je explicitní: `python pipeline/entsoe.py --download`; běžný `build_entsoe(root)` je offline a ověřuje kontrolní součty. Primární Transparency API nadále vyžaduje registrovaný token; tato pipeline si veřejný republisher nevydává za přímý přístup k němu.
