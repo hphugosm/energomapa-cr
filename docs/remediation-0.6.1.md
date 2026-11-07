@@ -1,5 +1,7 @@
 # Náprava nálezů A01–A09 — EnergoMapa 0.6.1
 
+Historický záznam z 6. 11.; následné opravy R02–R05 a aktuální stav vydání jsou v [release-0.6.1.md](release-0.6.1.md).
+
 Implementace oprav: [`3bc4194282eeba22ca2d45b9558c770b45ebc313`](https://github.com/hphugosm/energomapa-cr/commit/3bc4194282eeba22ca2d45b9558c770b45ebc313). Základ čisté větve `fix/audit-a01-a09-clean`: `main`, commit `9d2d3d751110106939bd859f76ce44cfaeed30f2`. Kontroly autora oprav proběhly 6. 11. 2026; nejde o nezávislé opakované review. To je samostatný další úkol pro finální commit PR. Bez merge, deploye, force push nebo změny stavu původního PR #1.
 
 ## Výsledek podle nálezu

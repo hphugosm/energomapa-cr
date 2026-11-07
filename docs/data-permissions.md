@@ -1,6 +1,12 @@
 # Podmínky dat ve veřejné verzi 0.6.1
 
-Ověřeno 6. 11. 2026. Tento záznam rozlišuje odstranění neověřeně šířeného obsahu od získání licence. Licence zdrojového kódu neposkytuje práva ke zdrojovým datům.
+Aktualizováno 7. 11. 2026. Tento záznam rozlišuje potvrzení držitele projektu od kontroly konkrétního licenčního dokumentu. Licence zdrojového kódu neposkytuje práva ke zdrojovým datům.
+
+## Potvrzení uživatele a rozsah vydání (R01)
+
+Uživatel v navazujícím zadání výslovně potvrzuje, že má schválení/licenci ke sdílení dat, a povoluje merge PR #2 a nasazení. Toto potvrzení respektujeme. V dostupných místních podkladech, diskusi PR #2, navazujícím chatu ani cíleném hledání v připojené poště a Google Drive nebyl nalezen vlastní dokument schválení ČEPS/MPO. Implementátor jej tedy neověřil a neuvádí domnělý text, datum udělení, rozsah ani URL licence.
+
+Před zveřejněním musí být vyjasněno pokrytí obou poskytovatelů: veřejné původní raw kopie v GitHubu, odvozené CSV/JSON a jejich distribuce v offline ZIP a cache prohlížeče. Byl položen pouze tento konkrétní dotaz na rozsah; obecný audit ani nové obecné povolení merge se nevyžadují. Do odpovědi zůstává rozsah R01 otevřený a PR draft. Potvrzení licence číselných dat se nepřenáší na omezený dokument ČEPS/Seyfor nebo na OTE.
 
 ## OTE — oprávnění nedoloženo, veřejná distribuce odstraněna (A01)
 
@@ -16,6 +22,10 @@ Původní PR #1 a jeho historie zůstávají beze změny. Toto opatření odstra
 
 [Dokumentace rozhraní 3.2](https://www.ceps.cz/cs/ke-stazeni/webove-sluzby/dokumentace/cepsvip-popis-rozhrani-strukturovana-data-3-2.docx) obsahuje omezení oběhu a užití bez písemného souhlasu Seyfor. Souhlas není doložen. V nové větvi není dokument ani jeho textová kopie; `data/sources/flows.json` uchovává pouze URL, stručný vlastní popis a SHA-256. Obnova dokument pouze zahashuje v paměti. Originál není součástí ZIP.
 
-## Číselná data ČEPS — samostatný nevyřešený požadavek
+## Číselná data ČEPS — stav veřejných podkladů
 
-[Veřejné datové rozhraní ČEPS](https://www.ceps.cz/cs/webove-sluzby) a [datová stránka](https://www.ceps.cz/cs/data) umožňují přístup k číselným údajům. Nebyla doložena konkrétní licence veřejné redistribuce těchto dat. Dokumentační doložka není důkazem licence číselných dat ani důkazem jejich zákazu. Číselné snapshoty zůstávají v rozsahu opravy na výslovné zadání; metadata a UI jejich neurčené podmínky uvádějí. Získání oprávnění není tímto PR prohlášeno za vyřešené. Před vydáním musí být tento požadavek samostatně posouzen.
+[Veřejné datové rozhraní ČEPS](https://www.ceps.cz/cs/webove-sluzby) a [datová stránka](https://www.ceps.cz/cs/data) umožňují přístup k číselným údajům. Samotné rozhraní konkrétní licenci redistribuce nedeklaruje. Dokumentační doložka není důkazem licence číselných dat ani důkazem jejich zákazu. Číselné snapshoty zůstávají na výslovné zadání; uživatelem hlášené individuální schválení a dosud nezkontrolovaný dokument jsou rozlišeny výše. Nepředstíráme vlastní právní ověření.
+
+## MPO / ČSÚ — kombinovaná publikace
+
+Rozsah individuálního schválení musí pokrývat i workbook `SEB_2010-2024.xlsx`, nikoli pouze samostatné statistiky ČSÚ. Přesný zdroj a SHA-256 zůstávají v `data/sources/databank-inputs.json`; [metodika](databank-methodology.md) vysvětluje společný původ MPO/ČSÚ/Eurostat. Konkrétní licenční dokument k této publikaci nebyl implementátorem nalezen ani ověřen; platí potvrzení uživatele a otázka rozsahu výše.

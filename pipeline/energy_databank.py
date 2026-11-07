@@ -8,6 +8,8 @@ COUNTRIES={'CZ':'Česko','DE':'Německo','PL':'Polsko','SK':'Slovensko','AT':'Ra
 BASE='https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/'
 MPO_URL='https://mpo.gov.cz/assets/cz/energetika/statistika/energeticke-bilance/2026/2/SEB_2010-2024.xlsx'
 BALANCES={'PPRD':'Primární produkce','IMP':'Dovoz','EXP':'Vývoz','GAE':'Hrubá dostupná energie','GIC':'Hrubá domácí spotřeba','FC_E':'Konečná energetická spotřeba','FC_IND_E':'Průmysl','FC_TRA_E':'Doprava','FC_OTH_HH_E':'Domácnosti','GEP':'Hrubá výroba elektřiny','DL':'Distribuční ztráty'}
+EUROSTAT_DISCLAIMER = 'Eurostat is not responsible for the selection, processing or presentation of these data by EnergoMapa, including filtering and unit conversions.'
+EUROSTAT_MODIFICATIONS = 'EnergoMapa selects indicators, countries and periods, reshapes JSON-stat into tables, translates labels and may filter observations and convert compatible units. Source null values and quality flags are preserved.'
 
 def dump(path,obj):
     path.parent.mkdir(parents=True,exist_ok=True)
@@ -71,7 +73,7 @@ def build_energy_databank(root):
         return json.loads(gzip.decompress(p.read_bytes()))
     def source(name,method):
         if name.startswith('eurostat'):
-            return meta[name]|{'methodology':method,'license':'Eurostat reuse policy; acknowledge Eurostat and identify transformations.','licenseUrl':'https://ec.europa.eu/eurostat/help/copyright-notice','attribution':'Source: Eurostat; EnergoMapa selection and processing.','snapshotNote':'Lokální historický snapshot; nejde o aktuální měření.'}
+            return meta[name]|{'methodology':method,'license':'Eurostat reuse policy; acknowledge Eurostat, identify transformations and retain the non-responsibility disclaimer.','licenseUrl':'https://ec.europa.eu/eurostat/help/copyright-notice','attribution':f"Source: Eurostat, {meta[name]['dataset']}, accessed {meta[name]['retrievedAt']}; EnergoMapa selection and processing.",'modifications':EUROSTAT_MODIFICATIONS,'disclaimer':EUROSTAT_DISCLAIMER,'snapshotNote':'Lokální historický snapshot; nejde o aktuální měření.'}
         return meta[name]|{'methodology':method,'license':'Eurostat reuse policy' if name.startswith('eurostat') else 'Public official statistical publication','snapshotNote':'Lokální historický snapshot; nejde o aktuální měření.'}
     balances=raw('eurostat-balance.json.gz');rows=list(jsonstat_rows(balances))
     for balance,label in BALANCES.items():

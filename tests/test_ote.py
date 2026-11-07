@@ -5,6 +5,7 @@ import unittest
 import json
 import hashlib
 import tempfile
+import subprocess
 from unittest.mock import patch
 from datetime import date
 
@@ -12,7 +13,7 @@ import openpyxl
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'pipeline'))
-from ote import parse_export, download_ote, private_root
+from ote import parse_export, download_ote, import_ote, build_ote, private_root, snapshot_days
 
 
 def fixture(day=date(2025, 7, 1), missing=False, price=-10):
@@ -85,6 +86,63 @@ class OTEAdapterTests(unittest.TestCase):
             self.assertNotEqual(revised.keys(), inputs.keys())
             for name, meta in revised.items():
                 self.assertEqual(parse_export((root / 'data/raw/databank' / name).read_bytes(), date.fromisoformat(meta['day']))[0]['price'], 123)
+
+    def test_user_file_import_of_full_snapshot_builds_privately_without_any_network(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory) / 'private'
+            supplied = pathlib.Path(directory) / 'supplied'
+            supplied.mkdir()
+            for day in snapshot_days():
+                (supplied / f'DT_{day:%d_%m_%Y}_CZ.xlsx').write_bytes(fixture(day))
+            original = {p.name: p.read_bytes() for p in supplied.iterdir()}
+            with patch('ote.urlopen', side_effect=AssertionError('Import must not use the network')) as network:
+                self.assertEqual(import_ote(root, supplied), 92)
+                datasets = build_ote(root)
+                network.assert_not_called()
+            self.assertEqual({p.name: p.read_bytes() for p in supplied.iterdir()}, original)
+            self.assertEqual([item['rowCount'] for item in datasets], [2208, 2208, 92, 92])
+            self.assertFalse((root / 'public').exists())
+            self.assertEqual(len(list((root / 'exports').glob('*'))), 8)
+            manifest = json.loads((root / 'data/sources/ote-inputs.json').read_text())
+            self.assertEqual(manifest['acquisition'], 'user-file-import')
+            for meta in manifest['inputs'].values():
+                self.assertIsNone(meta['retrievedAt'])
+                self.assertEqual(meta['inputMethod'], 'user-file-import')
+
+    def test_empty_missing_duplicate_or_invalid_user_inputs_never_fall_back_to_download(self):
+        first, second = date(2025, 7, 1), date(2025, 7, 2)
+        with tempfile.TemporaryDirectory() as directory, patch('ote.FIRST', first), patch('ote.LAST', second), patch('ote.urlopen', side_effect=AssertionError('No download fallback')) as network:
+            root = pathlib.Path(directory) / 'private'
+            supplied = pathlib.Path(directory) / 'supplied';supplied.mkdir()
+            with self.assertRaisesRegex(ValueError, 'user-supplied'):
+                import_ote(root, supplied)
+            self.assertFalse(root.exists())
+            for day in (first, second):
+                (supplied / f'ote-{day}.xlsx').write_bytes(fixture(day))
+            import_ote(root, supplied)
+            manifest = root / 'data/sources/ote-inputs.json';original = manifest.read_bytes()
+            originals = {p: p.read_bytes() for p in (root / 'data/raw').rglob('*.xlsx')}
+            (supplied / f'ote-{first}.xlsx').write_bytes(fixture(first, price=123))
+            (supplied / f'ote-{second}.xlsx').write_bytes(fixture(first))
+            with self.assertRaisesRegex(ValueError, 'date mismatch'):
+                import_ote(root, supplied)
+            self.assertEqual(manifest.read_bytes(), original)
+            self.assertTrue(all(p.read_bytes() == payload for p, payload in originals.items()))
+            self.assertFalse(list((root / 'data/raw/databank/ote-snapshots').glob('.staging-*')))
+            (supplied / f'DT_{first:%d_%m_%Y}_CZ.xlsx').write_bytes(fixture(first))
+            with self.assertRaisesRegex(ValueError, 'exactly one'):
+                import_ote(root, supplied)
+            network.assert_not_called()
+
+    def test_cli_requires_supplied_inputs_and_distinguishes_import_from_download(self):
+        with tempfile.TemporaryDirectory() as directory:
+            command = [sys.executable, str(ROOT / 'pipeline/ote.py'), '--private-dir', str(pathlib.Path(directory) / 'private'), '--i-have-permission']
+            result = subprocess.run(command, capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('no files are downloaded implicitly', result.stderr)
+            result = subprocess.run(command + ['--import-dir', directory, '--download'], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('not allowed with argument', result.stderr)
 
 
 if __name__ == '__main__':

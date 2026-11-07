@@ -6,7 +6,7 @@ const element = (tag, text, attrs = {}) => {
   for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
   return node;
 };
-const colors = ['#173da5', '#bd6013', '#278260', '#863ca4', '#bc354d', '#366f86', '#716500', '#5b626d'];
+const colors = ['#173da5', '#a34f0b', '#207452', '#863ca4', '#bc354d', '#366f86', '#716500', '#5b626d'];
 const NS = 'http://www.w3.org/2000/svg';
 function chart(svg, data) {
   svg.replaceChildren(); svg.setAttribute('viewBox', '0 0 900 300');
@@ -84,6 +84,9 @@ export async function initializeDatabankPanel({root, loadJSON}) {
       if (value) dl.append(element('dt', label), element('dd', value));
     }
     metadata.append(dl);
+    for (const value of [data.source?.attribution, data.source?.modifications, data.source?.disclaimer]) {
+      if (value) detail.append(element('p', value, {class: 'bank-source-notice'}));
+    }
     if (/^https?:\/\//.test(data.source?.url)) metadata.append(element('a', 'Otevřít původní zdroj ↗', {href: data.source.url, target: '_blank', rel: 'noopener'}));
     detail.append(metadata);
     const controls = element('div', null, {class: 'bank-range'});

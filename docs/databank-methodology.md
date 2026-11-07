@@ -11,6 +11,12 @@ Původní odpovědi JSON-stat jsou uloženy beze změny obsahu v deterministick�
 
 Výběr zemí: ČR, Německo, Polsko, Slovensko, Rakousko, EU27 v současném složení. Časová řada od roku 2000; skutečný konec vyplývá ze zdroje. EU27 se nesčítá s jednotlivými zeměmi.
 
+[Eurostat reuse policy](https://ec.europa.eu/eurostat/help/copyright-notice), ověřena 7. 11. 2026, vyžaduje označení úprav a dovětek o neodpovědnosti. EnergoMapa vybírá ukazatele, země a období, převádí JSON-stat na tabulky, překládá popisky a umožňuje filtrování a převody kompatibilních jednotek. Původní null i příznaky kvality zůstávají zachovány. Všech 20 sad nese atribuci s kódem zdroje a datem stažení, `source.modifications` a tento `source.disclaimer`:
+
+> Eurostat is not responsible for the selection, processing or presentation of these data by EnergoMapa, including filtering and unit conversions.
+
+Jde o prohlášení EnergoMapy, nikoli citaci textu licence. Zobrazuje se v obou datových pracovních prostorech a přenáší se do katalogu, původních i filtrovaných CSV/JSON a jejich kopií v offline ZIP. Například dovoz elektřiny CZ 2010 je 6 642 GWh = 6 642 000 MWh; převod nemění zdrojovou atribuci ani vybrané quality flags.
+
 - `nrg_bal_s`: zjednodušené energetické bilance, `freq=A`, `unit=GWH`, `siec=TOTAL` (všechna paliva). Primární produkce PPRD, dovoz IMP, vývoz EXP, hrubá dostupná energie GAE, hrubá domácí spotřeba GIC, konečná energetická spotřeba FC_E, průmysl FC_IND_E, doprava FC_TRA_E, domácnosti FC_OTH_HH_E, distribuční ztráty DL. GEP/TOTAL je hrubá výroba elektřiny souhrnně ze všech vstupních paliv.
 - Samostatné elektřinové bilance vybírají `siec=E7000` pro dovoz, vývoz, konečnou spotřebu a ztráty. Jde o roční statistickou bilanci. Nejde o okamžité fyzické toky ani obchodní plány.
 - `nrg_ind_id`: celková energetická dovozní závislost, procenta, TOTAL. Čistý dovoz dělený hrubou dostupnou energií; záporné hodnoty jsou přípustné.

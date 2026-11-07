@@ -118,3 +118,20 @@ test('A05 CSV keeps flags for selected Eurostat cells and all provenance in empt
   assert.equal(emptyMetadata.source.retrievedAt,data.source.retrievedAt);
   assert.equal(emptyMetadata.coverage.rows,0);assert.equal(emptyMetadata.unit,'TJ');
 });
+
+test('R03 real 2010 CZ electricity import conversion and flagged selection retain Eurostat notices',async()=>{
+  const {readFile}=await import('node:fs/promises');
+  const data=JSON.parse(await readFile(new URL('../public/data/databank/eurostat-electricity-imp.json',import.meta.url)));
+  const converted=filterSeries(data,{start:'2010',end:'2010',columns:['CZ'],unit:'MWh'});
+  assert.deepEqual(converted.records,[{time:'2010',CZ:6642000}]);
+  assert.equal(converted.selection.originalUnit,'GWh');assert.match(converted.source.disclaimer,/Eurostat is not responsible/);
+  const flagsData=JSON.parse(await readFile(new URL('../public/data/databank/eurostat-renewable-heat.json',import.meta.url)));
+  const flagged=flagsData.qualityFlags.find(flag=>flag.geo==='EU27_2020');assert.ok(flagged);
+  const selection=filterSeries(flagsData,{start:flagged.time,end:flagged.time,columns:[flagged.geo]});
+  assert.deepEqual(selection.qualityFlags,[flagged]);
+  for(const [value,original] of [[converted,data],[selection,flagsData],[filterSeries(data,{start:'2050'}),data]]){
+    const csv=JSON.parse(exportSeriesCSV(value).split('\r\n')[0].slice('# metadata: '.length));
+    const json=JSON.parse(JSON.stringify(value));
+    for(const result of [csv,json]){assert.equal(result.source.disclaimer,original.source.disclaimer);assert.equal(result.source.modifications,original.source.modifications);assert.equal(result.source.attribution,original.source.attribution);assert.deepEqual(result.qualityFlags,value.qualityFlags);}
+  }
+});

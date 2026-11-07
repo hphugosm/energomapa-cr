@@ -15,16 +15,18 @@ const digest=data=>createHash('sha256').update(data).digest('hex');
 const result={checks:[],consoleErrors:[],performance:[],contrast:[]};
 const check=(name,evidence)=>{result.checks.push({name,ok:true,evidence});console.log(`PASS ${name}`);};
 let revision=1,interrupted=false,corrupt=false,stageWritten;
-const bodies=()=>({'index.html':'<title>Offline regression</title>','a.json':JSON.stringify({snapshot:revision,key:'a'}),'b.json':JSON.stringify({snapshot:revision,key:'b'})});
+const scopeRevisions=new Map([['/alpha/',2],['/beta/',10]]);
+const bodies=(version=revision)=>({'index.html':'<title>Offline regression</title>','a.json':JSON.stringify({snapshot:version,key:'a'}),'b.json':JSON.stringify({snapshot:version,key:'b'})});
 const mime={'.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.json':'application/json','.geojson':'application/json','.html':'text/html','.svg':'image/svg+xml','.csv':'text/csv'};
 const server=createServer(async(req,res)=>{
  try{
   const pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
   res.setHeader('Cache-Control','no-store');
-  if(pathname.startsWith('/offline-regression/')){
-   const name=pathname.slice('/offline-regression/'.length)||'index.html';
+  const testScope=['/offline-regression/',...scopeRevisions.keys()].find(scope=>pathname.startsWith(scope));
+  if(testScope){
+   const name=pathname.slice(testScope.length)||'index.html';
    if(name==='sw.js'){res.setHeader('Content-Type','text/javascript');return res.end(await fs.readFile(path.join(publicDir,'sw.js')));}
-   const data=bodies();
+   const data=bodies(scopeRevisions.get(testScope)??revision);
    if(name==='offline-files.json'){
     const files=Object.entries(data).map(([path,body])=>({path,bytes:Buffer.byteLength(body),sha256:digest(body)}));
     res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({schemaVersion:2,snapshot:digest(JSON.stringify(files)),files}));
@@ -104,11 +106,44 @@ try{
   const violations=await page.evaluate(async()=>{const r=await axe.run('.bank-catalog',{runOnly:{type:'rule',values:['color-contrast']}});return r.violations;});assert.deepEqual(violations,[]);
  }
  check('A09 computed contrast and axe normal/hover/selected',result.contrast);
+ // The actual Eurostat selection must carry the disclaimer through both downloads.
+ await page.locator('.bank-dataset').filter({hasText:'Dovoz elektřiny — evropské'}).click();
+ await page.getByRole('heading',{name:'Dovoz elektřiny — evropské srovnání',exact:true}).waitFor();
+ assert.ok(await page.getByText('Eurostat is not responsible', {exact:false}).isVisible());
+ const euroRange=page.locator('.bank-range select');await euroRange.nth(0).selectOption('2010');await euroRange.nth(1).selectOption('2010');await euroRange.nth(2).selectOption('MWh');
+ for(const input of await page.locator('.bank-columns input').all())if(await input.inputValue()!=='CZ')await input.uncheck();
+ const euroJSON=JSON.parse(await download(page,page.getByRole('button',{name:'↓ Výběr JSON',exact:true}),'eurostat-cz-2010-mwh.json'));
+ const euroCSV=await download(page,page.getByRole('button',{name:'↓ Výběr CSV',exact:true}),'eurostat-cz-2010-mwh.csv');
+ const euroMeta=JSON.parse(euroCSV.replace(/^\uFEFF/,'').split('\r\n')[0].slice('# metadata: '.length));
+ assert.deepEqual(euroJSON.records,[{time:'2010',CZ:6642000}]);assert.equal(euroJSON.source.disclaimer,euroMeta.source.disclaimer);assert.match(euroMeta.source.disclaimer,/Eurostat is not responsible/);assert.ok(euroMeta.source.modifications);assert.match(euroCSV,/2010,6642000/);
+ assert.deepEqual(euroMeta.qualityFlags,euroJSON.qualityFlags);check('R03 actual 2010 CZ 6642 GWh to 6642000 MWh CSV/JSON with disclaimer',euroJSON.records);
  await page.screenshot({path:path.join(output,'desktop-databank.png'),fullPage:true});
  // Every public dataset must render through the lazy catalog without JS errors.
  const cards=page.locator('.bank-dataset');
- for(let i=0;i<43;i++){const title=await cards.nth(i).locator('strong').textContent();await cards.nth(i).click();await page.waitForFunction(title=>document.querySelector('.bank-detail h2')?.textContent===title,title);}
+ for(let i=0;i<43;i++){
+  const title=await cards.nth(i).locator('strong').textContent();await cards.nth(i).click();await page.waitForFunction(title=>document.querySelector('.bank-detail h2')?.textContent===title,title);
+  // Exercise all palette entries (PVGIS has 15 series) and the visible workspace.
+  for(const input of await page.locator('.bank-columns input').all())await input.check();
+  const contrast=await page.locator('.bank-chart-legend > span').evaluateAll(nodes=>nodes.map(node=>{
+   const linear=value=>{value/=255;return value<=.04045?value/12.92:((value+.055)/1.055)**2.4;};
+   const luminance=color=>{const rgb=color.match(/[\d.]+/g).slice(0,3).map(Number).map(linear);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};
+   let parent=node,bg;while(parent){bg=getComputedStyle(parent).backgroundColor;if(bg!=='rgba(0, 0, 0, 0)')break;parent=parent.parentElement;}
+   const color=getComputedStyle(node).color,foreground=luminance(color),background=luminance(bg);
+   return {color,bg,ratio:(Math.max(foreground,background)+.05)/(Math.min(foreground,background)+.05)};
+  }));
+  assert.ok(contrast.every(item=>item.ratio>=4.5),`${title}: ${JSON.stringify(contrast)}`);result.contrast.push({dataset:title,legend:contrast});
+  if(title.includes('plánované')){
+   for(const state of ['normal','hover','focus','filtered']){
+    const target=page.locator('.bank-chart-legend > span').nth(1);
+    if(state==='hover')await target.hover();
+    if(state==='focus')await page.locator('.bank-columns input').first().focus();
+    if(state==='filtered')await page.locator('.bank-columns input').first().uncheck();
+    const violations=await page.evaluate(async()=>{const r=await axe.run('.databank-panel',{runOnly:{type:'rule',values:['color-contrast']}});return r.violations;});assert.deepEqual(violations,[],state);
+   }
+  }
+ }
  check('all 43 public datasets render',43);
+ check('R04 every legend palette color and visible planned-flow workspace contrast',result.contrast.length);
  await page.getByRole('button',{name:'Mapa obcí',exact:true}).click();await page.getByLabel('Vyhledat obec').fill('Děčín');await page.locator('#search-results button').first().click();
  await page.waitForFunction(()=>document.querySelector('#territory-title')?.textContent.includes('Děčín'));assert.ok(requests.some(url=>url.includes('/geo/municipalities/CZ042')));check('municipal search and region load','Děčín CZ042');
  const ready=await prepare(page);assert.equal(ready.done,true);check('complete application snapshot',ready);
@@ -116,6 +151,9 @@ try{
  await page.getByRole('button',{name:'Mapa obcí',exact:true}).click();await mapReady(page);await page.getByLabel('Vyhledat obec').fill('Liberec');await page.locator('#search-results button').first().click();await page.waitForFunction(()=>document.querySelector('#territory-title')?.textContent.includes('Liberec'));
  await page.getByRole('button',{name:'Přeshraniční toky',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.electricity-status')?.textContent.includes('Nejde o živá data'));await page.getByLabel('Datová sada elektřiny').selectOption('flows-commercial');
  await page.waitForFunction(()=>document.querySelector('.electricity-source strong')?.textContent.includes('plánované'));check('Pages subpath online to offline navigation, map and new dataset','Liberec + flows-commercial');
+ const offlineExport=JSON.parse(await download(page,page.getByRole('button',{name:'Export výběru JSON',exact:true}),'offline-commercial.json'));
+ assert.equal(offlineExport.id,'flows-commercial');assert.ok(offlineExport.records.length>0);assert.equal(offlineExport.columns.length,4);
+ await page.getByRole('button',{name:'▶ Přehrát',exact:true}).click();await page.getByRole('button',{name:'Ⅱ Pozastavit',exact:true}).click();check('offline planned-flow export and playback',offlineExport.coverage);
  await page.screenshot({path:path.join(output,'offline-subpath.png'),fullPage:true});await context.close();
  // Also prepare and cold-navigate the actual app at the domain root.
  const rootContext=await browser.newContext();const rootPage=await rootContext.newPage();await rootPage.goto(origin+'/');await mapReady(rootPage);assert.equal((await prepare(rootPage)).done,true);await rootContext.setOffline(true);await rootPage.goto(origin+'/?offline=1#databank');await bankReady(rootPage);check('domain root offline cold navigation',43);await rootContext.close();
@@ -125,15 +163,34 @@ try{
   if(workspace==='databank')await bankReady(mp);if(workspace==='electricity')await mp.waitForFunction(()=>document.querySelector('.electricity-status')?.textContent.includes('Nejde o živá data'));
   assert.ok(await mp.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await mp.screenshot({path:path.join(output,`mobile-${workspace}.png`),fullPage:true});
  }
+ await mp.locator('.bank-dataset').filter({has:mp.getByText('Obchodní výměna ČR · plánované toky ČEPS',{exact:true})}).click();await mp.waitForFunction(()=>document.querySelector('.bank-detail h2')?.textContent.includes('plánované'));
+ await mp.addScriptTag({path:require.resolve('axe-core/axe.min.js')});
+ const mobileContrast=await mp.evaluate(async()=>{const r=await axe.run('.databank-panel',{runOnly:{type:'rule',values:['color-contrast']}});return r.violations;});assert.deepEqual(mobileContrast,[]);check('R04 mobile planned-flow workspace contrast',true);
  check('mobile 390x844 map/electricity/catalog, no page overflow',true);await mobile.close();
+ // Independent registrations must coexist in ONE BrowserContext / CacheStorage.
+ const shared=await browser.newContext();const alpha=await shared.newPage(),beta=await shared.newPage();
+ await alpha.goto(origin+'/alpha/');assert.equal((await prepare(alpha)).done,true);
+ await beta.goto(origin+'/beta/');assert.equal((await prepare(beta)).done,true);
+ const values=page=>page.evaluate(()=>Promise.all(['a.json','b.json'].map(async name=>(await(await fetch(name)).json()).snapshot)));
+ const state=page=>page.evaluate(async()=>{const scope=new URL('./',location.href).href;const prefix='energomapa-v3:'+encodeURIComponent(scope)+':';const pointer=await(await(await caches.open(prefix+'state')).match(scope+'__offline_active__')).json();return {pointer,entries:(await(await caches.open(pointer.cache)).keys()).length,caches:(await caches.keys()).filter(name=>name.startsWith(prefix))};});
+ const betaBefore=await state(beta);
+ await shared.setOffline(true);assert.deepEqual(await values(alpha),[2,2]);assert.deepEqual(await values(beta),[10,10]);
+ await shared.setOffline(false);
+ for(const version of [3,4,5]){scopeRevisions.set('/alpha/',version);assert.equal((await prepare(alpha)).done,true);}
+ assert.deepEqual(await state(beta),betaBefore);assert.equal((await state(alpha)).caches.filter(name=>name.includes(':snapshot:')).length,2);
+ await shared.setOffline(true);assert.deepEqual(await values(alpha),[5,5]);assert.deepEqual(await values(beta),[10,10]);
+ await alpha.reload();await beta.reload();assert.deepEqual(await values(alpha),[5,5]);assert.deepEqual(await values(beta),[10,10]);
+ check('R02 alpha/beta same BrowserContext offline and after three alpha cleanups',{alpha:await state(alpha),beta:await state(beta)});await shared.close();
  // Real CacheStorage and a real HTTP 503 after new a.json reaches staging.
  const failureContext=await browser.newContext();const fp=await failureContext.newPage();await fp.goto(origin+'/offline-regression/');assert.equal((await prepare(fp)).done,true);
- const pointer=()=>fp.evaluate(async()=>await(await(await caches.open('energomapa-state-v2')).match(new URL('__offline_active__',location.href))).text());const before=await pointer();
+ const pointer=()=>fp.evaluate(async()=>await(await(await caches.open('energomapa-v3:'+encodeURIComponent(new URL('./',location.href).href)+':state')).match(new URL('__offline_active__',location.href))).text());const before=await pointer();
  revision=2;interrupted=true;
- stageWritten=(async()=>{for(let attempt=0;attempt<400;attempt++){const staged=await fp.evaluate(async()=>{for(const key of await caches.keys()){if(!key.startsWith('energomapa-snapshot-v2-'))continue;const saved=await(await caches.open(key)).match(new URL('a.json',location.href));if(saved&&(await saved.json()).snapshot===2)return true;}return false;});if(staged)return;await new Promise(resolve=>setTimeout(resolve,10));}throw Error('new a.json never staged');})();
+ stageWritten=(async()=>{for(let attempt=0;attempt<400;attempt++){const staged=await fp.evaluate(async()=>{for(const key of await caches.keys()){if(!key.startsWith('energomapa-v3:'+encodeURIComponent(new URL('./',location.href).href)+':snapshot:'))continue;const saved=await(await caches.open(key)).match(new URL('a.json',location.href));if(saved&&(await saved.json()).snapshot===2)return true;}return false;});if(staged)return;await new Promise(resolve=>setTimeout(resolve,10));}throw Error('new a.json never staged');})();
  const failure=await prepare(fp);assert.match(failure.error,/503/);assert.equal(await pointer(),before);check('A03 actual browser interrupted second update',failure);
  await failureContext.setOffline(true);assert.deepEqual(await fp.evaluate(async()=>Promise.all(['a.json','b.json'].map(async name=>(await(await fetch(name)).json()).snapshot))),[1,1]);
- await failureContext.setOffline(false);interrupted=false;corrupt=true;assert.match((await prepare(fp)).error,/integrita/);assert.equal(await pointer(),before);corrupt=false;assert.equal((await prepare(fp)).done,true);await failureContext.setOffline(true);assert.deepEqual(await fp.evaluate(async()=>Promise.all(['a.json','b.json'].map(async name=>(await(await fetch(name)).json()).snapshot))),[2,2]);check('A03 hash rejection and successful atomic recovery',[2,2]);await failureContext.close();
+ await failureContext.setOffline(false);interrupted=false;corrupt=true;assert.match((await prepare(fp)).error,/integrita/);assert.equal(await pointer(),before);
+ await failureContext.setOffline(true);assert.deepEqual(await fp.evaluate(async()=>Promise.all(['a.json','b.json'].map(async name=>(await(await fetch(name)).json()).snapshot))),[1,1]);
+ await failureContext.setOffline(false);corrupt=false;assert.equal((await prepare(fp)).done,true);await failureContext.setOffline(true);assert.deepEqual(await fp.evaluate(async()=>Promise.all(['a.json','b.json'].map(async name=>(await(await fetch(name)).json()).snapshot))),[2,2]);check('A03 hash rejection and successful atomic recovery',[2,2]);await failureContext.close();
  assert.deepEqual(result.consoleErrors,[]);check('browser console errors',0);
 }catch(error){result.failure=String(error.stack||error);throw error;}
 finally{await fs.writeFile(path.join(output,'browser-results.json'),JSON.stringify(result,null,2)+'\n');await browser.close();await new Promise(resolve=>server.close(resolve));}

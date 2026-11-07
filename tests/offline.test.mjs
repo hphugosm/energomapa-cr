@@ -37,7 +37,7 @@ for (const base of ['/', '/energomapa-cr/']) test(`A03 atomic offline refresh, H
       return {
         async put(request, response) {
           values.set(key(request), response.clone());
-          if (fail && name.startsWith('energomapa-snapshot-') && key(request).endsWith('/a.json')) stagedA.resolve();
+          if (fail && name.includes(':snapshot:') && key(request).endsWith('/a.json')) stagedA.resolve();
         },
         async match(request, options = {}) {
           let url = key(request);
@@ -69,13 +69,13 @@ for (const base of ['/', '/energomapa-cr/']) test(`A03 atomic offline refresh, H
     return (await promise).json();
   };
   assert.equal((await prepare()).done, true);
-  const state = () => stores.get('energomapa-state-v2').get(scope + '__offline_active__').clone().text();
+  const state = () => stores.get('energomapa-v3:' + encodeURIComponent(scope) + ':state').get(scope + '__offline_active__').clone().text();
   const original = await state();
   revision = 2; fail = true;
   let resolve; const promise = new Promise(done => resolve = done); stagedA = {promise, resolve};
   assert.match((await prepare()).error, /503/);
   assert.equal(await state(), original);
-  assert.equal([...stores.keys()].filter(name => name.startsWith('energomapa-snapshot-')).length, 1);
+  assert.equal([...stores.keys()].filter(name => name.includes(':snapshot:')).length, 1);
   offline = true; events = startWorker();
   assert.equal((await saved('a.json')).snapshot, 1);
   assert.equal((await saved('b.json')).snapshot, 1);
@@ -87,5 +87,20 @@ for (const base of ['/', '/energomapa-cr/']) test(`A03 atomic offline refresh, H
   offline = true;
   assert.equal((await saved('a.json')).snapshot, 2);
   assert.equal((await saved('b.json')).snapshot, 2);
+  // A worker upgrade may read its complete v2 snapshot without deleting any
+  // shared legacy cache, even when its first v3 refresh fails integrity.
+  const namespace='energomapa-v3:'+encodeURIComponent(scope)+':';
+  const pointer=JSON.parse(await state());
+  const legacyName='energomapa-snapshot-v2-legacy';
+  stores.set(legacyName,stores.get(pointer.cache));
+  stores.set('energomapa-state-v2',new Map([[scope+'__offline_active__',new Response(JSON.stringify({...pointer,cache:legacyName}))]]));
+  stores.set('energomapa-offline-unrelated',new Map([['https://example.org/foreign',new Response('foreign')]]));
+  for(const name of [...stores.keys()])if(name.startsWith(namespace))stores.delete(name);
+  events=startWorker();assert.equal((await saved('a.json')).snapshot,2);
+  offline=false;corrupt=true;assert.match((await prepare()).error,/integrita/);
+  offline=true;assert.equal((await saved('b.json')).snapshot,2);
+  offline=false;corrupt=false;revision=3;assert.equal((await prepare()).done,true);
+  assert.ok(stores.has(legacyName));assert.ok(stores.has('energomapa-offline-unrelated'));
+  offline=true;assert.equal((await saved('a.json')).snapshot,3);
   assert.ok(requests.filter(path => path.endsWith('b.json')).length >= 4);
 });

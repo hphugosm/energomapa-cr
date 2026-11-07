@@ -12,6 +12,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'pipeline'))
 from publication import validate_public_tree
+from energy_databank import EUROSTAT_DISCLAIMER, EUROSTAT_MODIFICATIONS
 
 
 class PublicRelease(unittest.TestCase):
@@ -86,6 +87,26 @@ class PublicRelease(unittest.TestCase):
             payload = (public / item['path']).read_bytes()
             self.assertEqual(len(payload), item['bytes'])
             self.assertEqual(hashlib.sha256(payload).hexdigest(), item['sha256'])
+
+    def test_all_twenty_eurostat_datasets_csv_json_catalog_and_zip_retain_notice_and_flags(self):
+        folder = ROOT / 'public/data/databank'
+        index = json.loads((folder / 'index.json').read_text())
+        eurostat = [item for item in index['datasets'] if item['id'].startswith('eurostat-')]
+        self.assertEqual(len(eurostat), 20)
+        with zipfile.ZipFile(folder / 'offline.zip') as archive:
+            for item in eurostat:
+                data = json.loads((folder / item['path']).read_text())
+                csv = (folder / item['csv']).read_text(encoding='utf-8-sig')
+                metadata = json.loads(csv.splitlines()[0].removeprefix('# metadata: '))
+                archived_csv = archive.read(item['csv']).decode('utf-8-sig')
+                archived_metadata = json.loads(archived_csv.splitlines()[0].removeprefix('# metadata: '))
+                for value in (item, data, metadata, json.loads(archive.read(item['path'])), archived_metadata):
+                    with self.subTest(dataset=item['id']):
+                        self.assertEqual(value['source']['disclaimer'], EUROSTAT_DISCLAIMER)
+                        self.assertEqual(value['source']['modifications'], EUROSTAT_MODIFICATIONS)
+                        self.assertIn('Eurostat', value['source']['attribution'])
+                self.assertEqual(metadata['qualityFlags'], data['qualityFlags'])
+                self.assertEqual(archived_metadata['qualityFlags'], data['qualityFlags'])
 
 
 if __name__ == '__main__':

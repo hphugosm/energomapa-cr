@@ -36,7 +36,7 @@ jobs:
         run: python pipeline/package.py
       - name: Install test browser
         run: node node_modules/playwright-core/cli.js install --with-deps chromium
-      - name: Test exports, contrast, mobile and atomic offline recovery
+      - name: Test Eurostat exports, contrast, mobile and isolated offline scopes
         run: npm run test:browser
       - uses: actions/upload-artifact@v4
         if: always()

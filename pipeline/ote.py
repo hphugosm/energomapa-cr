@@ -1,4 +1,4 @@
-"""Official OTE day-ahead exports: explicitly refreshed, pinned and built offline."""
+"""Private OTE exports: user-file import or explicitly requested download, never public."""
 import csv
 import hashlib
 import io
@@ -74,26 +74,59 @@ def private_root(root):
     return root
 
 
+def snapshot_days():
+    return [FIRST + timedelta(days=i) for i in range((LAST - FIRST).days + 1)]
+
+
+def import_ote(root, input_dir):
+    """Import user-supplied XLSX only. No network calls or fallback downloader."""
+    root = private_root(root)
+    input_dir = private_root(input_dir)
+    selected = {}
+    for day in snapshot_days():
+        candidates = [input_dir / f'ote-{day.isoformat()}.xlsx', input_dir / f'DT_{day:%d_%m_%Y}_CZ.xlsx']
+        matches = [path for path in candidates if path.is_file()]
+        if len(matches) != 1:
+            raise ValueError(f'OTE import requires exactly one user-supplied XLSX for {day}; found {len(matches)}')
+        selected[day] = matches[0]
+
+    def load(day):
+        path = selected[day]
+        return path.read_bytes(), {'day': day.isoformat(), 'url': source_url(day), 'publisher': 'OTE, a.s.',
+                                   'inputMethod': 'user-file-import', 'originalFilename': path.name,
+                                   'retrievedAt': None, 'importedAt': datetime.now(timezone.utc).isoformat(timespec='seconds')}
+
+    return store_snapshot(root, load, 'user-file-import')
+
+
 def download_ote(root):
-    """For authorized private use only. An atomic manifest points to immutable inputs."""
+    """Separate opt-in downloader for authorized private use; never an import fallback."""
+    def load(day):
+        url = source_url(day)
+        with urlopen(Request(url, headers={'User-Agent': 'EnergoMapa authorized private data use'}), timeout=60) as response:
+            payload = response.read()
+        return payload, {'day': day.isoformat(), 'url': url, 'publisher': 'OTE, a.s.',
+                         'inputMethod': 'explicit-download', 'retrievedAt': datetime.now(timezone.utc).isoformat(timespec='seconds')}
+
+    return store_snapshot(root, load, 'explicit-download')
+
+
+def store_snapshot(root, load, acquisition):
+    """Validate a complete staging generation before the single manifest commit."""
     root = private_root(root)
     folder = root / 'data/raw/databank'
     snapshots = folder / 'ote-snapshots'
     snapshots.mkdir(parents=True, exist_ok=True)
-    days = [FIRST + timedelta(days=i) for i in range((LAST - FIRST).days + 1)]
+    days = snapshot_days()
     with tempfile.TemporaryDirectory(prefix='.staging-', dir=snapshots) as temporary:
         staging = Path(temporary)
 
         def fetch(day):
-            url = source_url(day)
-            with urlopen(Request(url, headers={'User-Agent': 'EnergoMapa authorized private data use'}), timeout=60) as response:
-                payload = response.read()
+            payload, metadata = load(day)
             parse_export(payload, day)
             name = f'ote-{day.isoformat()}.xlsx'
             (staging / name).write_bytes(payload)
-            return name, {'day': day.isoformat(), 'url': url, 'publisher': 'OTE, a.s.',
-                          'sha256': hashlib.sha256(payload).hexdigest(),
-                          'retrievedAt': datetime.now(timezone.utc).isoformat(timespec='seconds')}
+            return name, metadata | {'sha256': hashlib.sha256(payload).hexdigest()}
 
         with ThreadPoolExecutor(max_workers=6) as executor:
             inputs = dict(executor.map(fetch, days))
@@ -113,7 +146,7 @@ def download_ote(root):
                     raise ValueError('OTE immutable snapshot was modified')
         else:
             os.replace(staging, destination)
-        manifest = {'schemaVersion': 2, 'privateUseOnly': True,
+        manifest = {'schemaVersion': 2, 'privateUseOnly': True, 'acquisition': acquisition,
                     'inputs': {f'ote-snapshots/{revision}/{name}': meta for name, meta in sorted(inputs.items())}}
         target = root / 'data/sources/ote-inputs.json'
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -167,7 +200,9 @@ def build_ote(root):
     if len(rows) != 2208 or len(daily_prices) != 92:
         raise ValueError('OTE July–September snapshot coverage is incomplete')
     source = {'publisher': 'OTE', 'url': LANDING + '?report_date=2025-09-30',
-              'retrievedAt': max(meta['retrievedAt'] for meta in inputs.values()),
+              'retrievedAt': max((meta['retrievedAt'] for meta in inputs.values() if meta.get('retrievedAt')), default=None),
+              'importedAt': max((meta['importedAt'] for meta in inputs.values() if meta.get('importedAt')), default=None),
+              'inputMethod': sorted({meta.get('inputMethod', 'explicit-download') for meta in inputs.values()}),
               'rawManifest': 'private:data/sources/ote-inputs.json',
               'license': 'Redistribution permission not evidenced; authorized private use only.',
               'termsUrl': 'https://www.ote-cr.cz/cs/dokumentace/zasady-pouzivani',
@@ -191,13 +226,19 @@ def build_ote(root):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--download', action='store_true')
+    acquisition = parser.add_mutually_exclusive_group()
+    acquisition.add_argument('--import-dir', type=Path, help='Import user-supplied daily XLSX from this directory, without network access')
+    acquisition.add_argument('--download', action='store_true', help='Separate explicit network download; never used by --import-dir')
     parser.add_argument('--private-dir', type=Path, required=True)
     parser.add_argument('--i-have-permission', action='store_true', help='Confirm permission for your specific private use; this does not grant a license')
     args = parser.parse_args()
     if not args.i_have_permission:
         parser.error('Private OTE processing requires permission for your specific use (--i-have-permission)')
     root = private_root(args.private_dir)
-    if args.download:
+    if args.import_dir:
+        print('Imported user-supplied OTE files:', import_ote(root, args.import_dir))
+    elif args.download:
         print('Downloaded OTE files:', download_ote(root))
+    elif not (root / 'data/sources/ote-inputs.json').is_file():
+        parser.error('No private snapshot. Supply your own XLSX with --import-dir; no files are downloaded implicitly.')
     print(json.dumps(build_ote(root), ensure_ascii=False, default=str)[:500])
