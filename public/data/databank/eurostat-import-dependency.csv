@@ -1,0 +1,27 @@
+﻿# metadata: {"schemaVersion":1,"id":"eurostat-import-dependency","title":"Energetická dovozní závislost","description":"Čistý dovoz / hrubá dostupná energie × 100; záporné hodnoty jsou přípustné. Eurostat, roční hodnoty v procentech. Chybějící údaje jsou null; bez interpolace.","kind":"energy_indicator","unit":"%","frequency":"year","timezone":"not applicable","period":{"start":"2000","end":"2024"},"source":{"url":"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_ind_id?lang=EN&geo=CZ&geo=DE&geo=PL&geo=SK&geo=AT&geo=EU27_2020&sinceTimePeriod=2000&unit=PC&siec=TOTAL","publisher":"Eurostat","retrievedAt":"2026-11-06T17:56:04.896914+00:00","sha256":"f1d0285da0e56a81dad55a15f41423546b8aa495ac76565451e55aaf240bf0d7","dataset":"nrg_ind_id","methodology":"Čistý dovoz / hrubá dostupná energie × 100; záporné hodnoty jsou přípustné. Eurostat, roční hodnoty v procentech. Chybějící údaje jsou null; bez interpolace.","license":"Eurostat reuse policy; acknowledge Eurostat, identify transformations and retain the non-responsibility disclaimer.","licenseUrl":"https://ec.europa.eu/eurostat/help/copyright-notice","attribution":"Source: Eurostat, nrg_ind_id, accessed 2026-11-06T17:56:04.896914+00:00; EnergoMapa selection and processing.","modifications":"EnergoMapa selects indicators, countries and periods, reshapes JSON-stat into tables, translates labels and may filter observations and convert compatible units. Source null values and quality flags are preserved.","disclaimer":"Eurostat is not responsible for the selection, processing or presentation of these data by EnergoMapa, including filtering and unit conversions.","snapshotNote":"Lokální historický snapshot; nejde o aktuální měření."},"columns":[{"key":"CZ","label":"Česko","type":"number","unit":"%"},{"key":"DE","label":"Německo","type":"number","unit":"%"},{"key":"PL","label":"Polsko","type":"number","unit":"%"},{"key":"SK","label":"Slovensko","type":"number","unit":"%"},{"key":"AT","label":"Rakousko","type":"number","unit":"%"},{"key":"EU27_2020","label":"EU 27","type":"number","unit":"%"}],"coverage":{"rows":25,"numericCells":150,"missingCells":0},"status":"snapshot","qualityFlags":[],"csvMetadataVersion":1}
+time,CZ,DE,PL,SK,AT,EU27_2020
+2000,22.704,59.441,10.722,65.065,65.543,56.285
+2001,25.012,60.891,10.45,62.537,65.044,55.769
+2002,26.204,60.126,11.439,64.476,68.022,56.256
+2003,24.929,60.54,13.309,64.918,70.993,56.878
+2004,25.338,61.158,14.727,68.18,71.451,56.854
+2005,27.846,60.74,17.748,65.99,71.76,57.819
+2006,27.498,60.981,20.149,64.344,72.248,58.244
+2007,24.989,58.516,25.79,69.736,68.475,57.219
+2008,27.737,60.769,30.862,65.842,68.738,58.37
+2009,26.867,61.103,32.041,67.692,65.122,57.172
+2010,25.38,59.992,31.559,61.942,62.782,55.745
+2011,28.832,61.801,34.008,63.462,69.981,56.331
+2012,25.413,61.215,31.613,58.952,63.785,54.882
+2013,27.58,62.411,26.236,58.4,61.26,53.897
+2014,30.227,61.779,29.395,60.698,65.625,54.4
+2015,32.089,62.132,29.829,58.013,60.379,55.999
+2016,32.8,63.752,30.744,58.206,62.102,56.12
+2017,37.162,63.959,38.255,62.541,63.93,57.494
+2018,36.879,63.478,43.52,61.905,64.223,58.112
+2019,40.81,67.055,45.251,69.785,71.601,60.49
+2020,38.768,63.676,42.775,56.329,58.281,57.459
+2021,39.958,63.395,40.464,52.584,51.952,55.501
+2022,41.772,68.652,46.115,69.595,73.986,62.513
+2023,41.679,66.831,47.996,58.41,60.317,58.342
+2024,39.32,66.812,45.669,53.501,53.325,57.286

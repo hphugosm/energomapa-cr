@@ -1,0 +1,27 @@
+﻿# metadata: {"schemaVersion":1,"id":"eurostat-gic","title":"Hrubá domácí spotřeba — evropské srovnání","description":"Eurostat nrg_bal_s; freq=A, nrg_bal=GIC, siec=TOTAL, unit=GWH; hodnoty jednotlivých států a EU27 se nesčítají. Zachovány chybějící buňky null a příznaky kvality zdroje. Roční energie v GWh není výkon v MW.","kind":"energy_balance","unit":"GWh","frequency":"year","timezone":"not applicable","period":{"start":"2000","end":"2024"},"source":{"url":"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_bal_s?lang=EN&geo=CZ&geo=DE&geo=PL&geo=SK&geo=AT&geo=EU27_2020&sinceTimePeriod=2000&unit=GWH&siec=TOTAL&siec=E7000","publisher":"Eurostat","retrievedAt":"2026-11-06T17:56:04.028007+00:00","sha256":"2ffc17ea634c9d098a6f8a20831e29d721380e764b7d3d0094b610451646c2c7","dataset":"nrg_bal_s","methodology":"Eurostat nrg_bal_s; freq=A, nrg_bal=GIC, siec=TOTAL, unit=GWH; hodnoty jednotlivých států a EU27 se nesčítají. Zachovány chybějící buňky null a příznaky kvality zdroje. Roční energie v GWh není výkon v MW.","license":"Eurostat reuse policy; acknowledge Eurostat, identify transformations and retain the non-responsibility disclaimer.","licenseUrl":"https://ec.europa.eu/eurostat/help/copyright-notice","attribution":"Source: Eurostat, nrg_bal_s, accessed 2026-11-06T17:56:04.028007+00:00; EnergoMapa selection and processing.","modifications":"EnergoMapa selects indicators, countries and periods, reshapes JSON-stat into tables, translates labels and may filter observations and convert compatible units. Source null values and quality flags are preserved.","disclaimer":"Eurostat is not responsible for the selection, processing or presentation of these data by EnergoMapa, including filtering and unit conversions.","snapshotNote":"Lokální historický snapshot; nejde o aktuální měření."},"columns":[{"key":"CZ","label":"Česko","type":"number","unit":"GWh"},{"key":"DE","label":"Německo","type":"number","unit":"GWh"},{"key":"PL","label":"Polsko","type":"number","unit":"GWh"},{"key":"SK","label":"Slovensko","type":"number","unit":"GWh"},{"key":"AT","label":"Rakousko","type":"number","unit":"GWh"},{"key":"EU27_2020","label":"EU 27","type":"number","unit":"GWh"}],"coverage":{"rows":25,"numericCells":150,"missingCells":0},"status":"snapshot","qualityFlags":[],"csvMetadataVersion":1}
+time,CZ,DE,PL,SK,AT,EU27_2020
+2000,480199.382,3982502.324,1037609.479,206215.312,339867.914,17423581.696
+2001,492686.087,4097193.13,1045109.326,215141.281,358488.696,17864845.967
+2002,499365.64,4006193.437,1033008.729,216825.796,360578.758,17888401.923
+2003,521492.703,4015896.099,1059976.708,215678.314,379607.112,18327565.668
+2004,534811.516,4044862.484,1063953.429,212360.349,384653.503,18572093.68
+2005,529571.316,4029507.28,1076723.429,217468.644,399815.685,18652108.8
+2006,541564.516,4152458.689,1134374.81,215627.949,403455.555,18813188.073
+2007,540408.057,3947908.222,1129993.804,206504.363,396556.384,18569930.943
+2008,530450.743,3997723.145,1143046.764,212393.463,399729.551,18524264.123
+2009,498249.089,3739305.109,1096195.116,194106.947,379523.216,17431415.615
+2010,528761.136,3933842.626,1181469.589,214320.042,405107.485,18138773.291
+2011,507264.324,3730480.84,1182136.892,207770.665,393343.793,17583264.264
+2012,502898.194,3763567.546,1137068.124,201217.944,392184.623,17363017.466
+2013,505268.726,3846878.839,1145235.301,202970.16,396766.897,17191583.753
+2014,488597.742,3681515.504,1102467.932,187601.505,382853.325,16598155.826
+2015,489058.064,3699420.381,1114638.933,195971.046,392238.448,16839421.625
+2016,484495.018,3721921.816,1169488.435,197754.384,397659.441,16981027.94
+2017,505464.574,3744761.197,1223494.208,207983.163,404810.571,17343675.024
+2018,507513.287,3661841.316,1279369.643,203921.389,395599.62,17227004.332
+2019,499319.875,3583731.111,1233932.53,197922.388,404356.68,16949679.658
+2020,468910.538,3313201.413,1197580.8,191274.169,375532.733,15588595.183
+2021,496915.425,3446492.312,1274526.912,206930.882,397256.773,16537858.67
+2022,486693.325,3282598.893,1215178.035,193367.417,380610.407,15751554.546
+2023,447052.311,2969003.855,1142993.284,191185.32,372343.919,15111157.887
+2024,441062.953,2922632.198,1140707.876,182936.069,369481.132,15023859.726

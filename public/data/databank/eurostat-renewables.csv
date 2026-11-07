@@ -1,0 +1,24 @@
+﻿# metadata: {"schemaVersion":1,"id":"eurostat-renewables","title":"Podíl obnovitelných zdrojů — celkem","description":"Oficiální indikátor REN dle metodiky SHARES; normalizovaná výroba z vody a větru, specifická pravidla pro dopravu; není prostým podílem vyrobené elektřiny. Eurostat, roční hodnoty v procentech. Chybějící údaje jsou null; bez interpolace.","kind":"energy_indicator","unit":"%","frequency":"year","timezone":"not applicable","period":{"start":"2004","end":"2025"},"source":{"url":"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_ind_ren?lang=EN&geo=CZ&geo=DE&geo=PL&geo=SK&geo=AT&geo=EU27_2020&sinceTimePeriod=2000&unit=PC","publisher":"Eurostat","retrievedAt":"2026-11-06T17:56:05.704524+00:00","sha256":"3888858b76130677dd38df4d92494c466e9367c248d1ae3ba8074dd9367aef5a","dataset":"nrg_ind_ren","methodology":"Oficiální indikátor REN dle metodiky SHARES; normalizovaná výroba z vody a větru, specifická pravidla pro dopravu; není prostým podílem vyrobené elektřiny. Eurostat, roční hodnoty v procentech. Chybějící údaje jsou null; bez interpolace.","license":"Eurostat reuse policy; acknowledge Eurostat, identify transformations and retain the non-responsibility disclaimer.","licenseUrl":"https://ec.europa.eu/eurostat/help/copyright-notice","attribution":"Source: Eurostat, nrg_ind_ren, accessed 2026-11-06T17:56:05.704524+00:00; EnergoMapa selection and processing.","modifications":"EnergoMapa selects indicators, countries and periods, reshapes JSON-stat into tables, translates labels and may filter observations and convert compatible units. Source null values and quality flags are preserved.","disclaimer":"Eurostat is not responsible for the selection, processing or presentation of these data by EnergoMapa, including filtering and unit conversions.","snapshotNote":"Lokální historický snapshot; nejde o aktuální měření."},"columns":[{"key":"CZ","label":"Česko","type":"number","unit":"%"},{"key":"DE","label":"Německo","type":"number","unit":"%"},{"key":"PL","label":"Polsko","type":"number","unit":"%"},{"key":"SK","label":"Slovensko","type":"number","unit":"%"},{"key":"AT","label":"Rakousko","type":"number","unit":"%"},{"key":"EU27_2020","label":"EU 27","type":"number","unit":"%"}],"coverage":{"rows":22,"numericCells":132,"missingCells":0},"status":"snapshot","qualityFlags":[{"time":"2025","geo":"EU27_2020","flag":"p"},{"time":"2025","geo":"CZ","flag":"p"},{"time":"2025","geo":"DE","flag":"p"},{"time":"2025","geo":"AT","flag":"p"},{"time":"2025","geo":"PL","flag":"p"},{"time":"2025","geo":"SK","flag":"p"}],"csvMetadataVersion":1}
+time,CZ,DE,PL,SK,AT,EU27_2020
+2004,6.773,6.207,6.882,6.391,22.553,9.605
+2005,7.113,7.167,6.867,6.36,24.353,10.182
+2006,7.362,8.466,6.859,6.584,26.276,10.778
+2007,7.895,10.039,6.903,7.766,28.144,11.749
+2008,8.674,10.072,7.686,7.723,28.788,12.552
+2009,9.977,10.851,8.676,9.368,31.039,13.85
+2010,10.513,11.667,9.281,9.099,31.205,14.405
+2011,10.945,12.47,10.337,10.348,31.552,14.547
+2012,12.814,13.549,10.955,10.453,32.734,16.002
+2013,13.927,13.757,11.452,10.133,32.665,16.659
+2014,15.074,14.381,11.605,11.713,33.55,17.416
+2015,15.07,14.901,11.881,12.882,33.497,17.82
+2016,14.926,14.885,11.396,12.029,33.37,17.978
+2017,14.799,15.472,11.059,11.465,33.136,18.411
+2018,15.139,16.66,14.936,11.896,33.784,19.096
+2019,16.239,17.266,15.377,16.894,33.755,19.887
+2020,17.303,19.09,16.102,17.345,36.545,22.038
+2021,17.614,19.302,15.604,17.419,34.643,21.897
+2022,18.123,20.829,16.644,17.482,34.057,23.003
+2023,18.555,21.512,16.651,16.991,41.6,24.579
+2024,19.211,22.474,17.77,18.092,42.951,25.241
+2025,19.1,23.9,18.7,16.3,44.2,26.2

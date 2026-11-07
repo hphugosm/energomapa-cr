@@ -1,0 +1,18 @@
+﻿# metadata: {"schemaVersion":1,"id":"eea-emissions-tonnes","title":"EEA — ohlášené průmyslové emise CO₂ v ČR","description":"E-PRTR v16: všechny české neanonymní provozovny ohlašující Carbon dioxide (CO2), pouze ovzduší. Deduplikace facilityId/rok, kg / 1000 = t. Součet obsahuje i hlášení bez bezpečné lokalizace do obce a proto se může lišit od mapové vrstvy. Celkové CO₂ včetně biomasy; nezahrnuje všechna zařízení ani celostátní inventář emisí. Chybějící hlášení nejsou nuly.","kind":"industrial_emissions","unit":"t CO₂","frequency":"year","timezone":"not applicable","period":{"start":"2007","end":"2022"},"source":{"name":"EEA · E-PRTR v16, ohlášené úniky CO₂ do ovzduší","url":"https://sdi.eea.europa.eu/catalogue/srv/api/records/657ac3cb-affa-4295-a4a9-27b4f539adab","updatedAt":"2026-02-20","retrievedAt":"2026-10-27","geographicGranularity":"facility","temporalGranularity":"annual","timeType":"timeseries","scopeNote":"Ohlášené průmyslové úniky CO₂ celkem včetně biomasy do ovzduší podle E-PRTR, nikoli veškeré emise ČR ani EU ETS. Česká data ve v16 obsahují pouze roky 2007–2022; 2023–2024 nejsou pro Česko v této tabulce k dispozici. Počet znamená provozovny ohlašující tento CO₂.","methodology":"E-PRTR v16: všechny české neanonymní provozovny ohlašující Carbon dioxide (CO2), pouze ovzduší. Deduplikace facilityId/rok, kg / 1000 = t. Součet obsahuje i hlášení bez bezpečné lokalizace do obce a proto se může lišit od mapové vrstvy. Celkové CO₂ včetně biomasy; nezahrnuje všechna zařízení ani celostátní inventář emisí. Chybějící hlášení nejsou nuly.","methodologyUrl":"https://github.com/hphugosm/energomapa-cr/blob/main/docs/industry-methodology.md","auditUrl":"https://hphugosm.github.io/energomapa-cr/data/industry-validation.json","limitations":["E-PRTR má prahové hodnoty a pokrývá vybrané velké provozovny; nejde o úplný průmyslový emisní inventář.","Celkové CO₂ zahrnuje biomasu, nelze jej zaměňovat s CO₂ bez biomasy ani ověřenými emisemi EU ETS.","Novější roky 2023–2024 deklarované pro celoevropské vydání nejsou v české části tabulky F1_4 přítomny. Žádné nové roky nejsou dopočítány.","Historické provozovny jsou přiřazeny k aktuální geometrii obcí, nikoli k historickým správním hranicím.","Souřadnice reprezentují bod provozovny; nejde o její plošný rozsah. Součty publikují pouze bezpečně umístěná hlášení."],"completeness":"partial","latestAvailableYear":2022,"missingSourceYears":[2023,2024],"license":"CC BY 4.0","publisher":"EEA","rawSha256":"8fec0c5d7697e4f97bf4036934077cca6b799542ab230b518f94704a4fb1ce63","attribution":"EEA"},"columns":[{"key":"CZ","label":"Česko","type":"number","unit":"t CO₂"}],"coverage":{"rows":16,"numericCells":16,"missingCells":0},"status":"snapshot","csvMetadataVersion":1,"qualityFlags":[]}
+time,CZ
+2007,86705000.0
+2008,79940000.0
+2009,73253000.0
+2010,75736000.0
+2011,74432000.0
+2012,69894000.0
+2013,65938000.0
+2014,64567000.0
+2015,65665000.0
+2016,66733000.0
+2017,65641000.0
+2018,66705413.32464171
+2019,63259163.59905101
+2020,52650823.08857075
+2021,58463172.43314917
+2022,57787024.10869017

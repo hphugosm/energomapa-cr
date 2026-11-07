@@ -5,3 +5,9 @@ node_modules/
 dist/
 artifacts/
 .DS_Store
+
+# OTE data stay outside the publishable repository, including accidental imports.
+data/raw/databank/ote-*
+data/sources/ote-inputs.json
+public/data/databank/ote-*
+data/raw/databank/flows-methodology.docx

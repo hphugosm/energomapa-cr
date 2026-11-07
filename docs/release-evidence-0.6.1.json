@@ -1,0 +1,305 @@
+{
+  "date": "2026-11-07",
+  "reviewedBase": "ad15e5987c269939ef191218371cda0df3c9309f",
+  "javascript": {
+    "passed": 105,
+    "failed": 0
+  },
+  "python": {
+    "passed": 105,
+    "failed": 0
+  },
+  "browser": {
+    "passed": 19,
+    "failed": 0,
+    "consoleErrors": [],
+    "performance": [
+      {
+        "initialMapMs": 142.325333,
+        "requests": 29
+      }
+    ],
+    "minimumLegendContrast": 5.563096900897665,
+    "checks": [
+      {
+        "name": "lazy map startup",
+        "ok": true,
+        "evidence": {
+          "initialMapMs": 142.325333,
+          "requests": 29
+        }
+      },
+      {
+        "name": "A06 annual 2010 control and actual JSON download",
+        "ok": true,
+        "evidence": {
+          "start": "2010",
+          "end": "2010"
+        }
+      },
+      {
+        "name": "A07 actual 24h/3-border exports and playback",
+        "ok": true,
+        "evidence": {
+          "rows": 24,
+          "numericCells": 72,
+          "missingCells": 0,
+          "expectedValues": 72,
+          "availableValues": 72,
+          "available": 24,
+          "expected": 24,
+          "missingPolicy": "null; žádná interpolace; neúplný den nemá energii"
+        }
+      },
+      {
+        "name": "A07 MPO actual 1-year/7-column export and conversion",
+        "ok": true,
+        "evidence": {
+          "rows": 1,
+          "numericCells": 7,
+          "missingCells": 0,
+          "expectedValues": 7,
+          "availableValues": 7,
+          "available": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "A09 computed contrast and axe normal/hover/selected",
+        "ok": true,
+        "evidence": [
+          {
+            "state": "normal",
+            "values": [
+              {
+                "fg": "rgb(77, 92, 115)",
+                "bg": "rgb(255, 255, 255)",
+                "ratio": 6.787384047175296
+              },
+              {
+                "fg": "rgb(77, 92, 115)",
+                "bg": "rgb(255, 255, 255)",
+                "ratio": 6.787384047175296
+              }
+            ]
+          },
+          {
+            "state": "hover",
+            "values": [
+              {
+                "fg": "rgb(77, 92, 115)",
+                "bg": "rgb(239, 243, 251)",
+                "ratio": 6.103276577405595
+              },
+              {
+                "fg": "rgb(77, 92, 115)",
+                "bg": "rgb(239, 243, 251)",
+                "ratio": 6.103276577405595
+              }
+            ]
+          },
+          {
+            "state": "selected",
+            "values": [
+              {
+                "fg": "rgb(77, 92, 115)",
+                "bg": "rgb(238, 243, 255)",
+                "ratio": 6.108537496937715
+              },
+              {
+                "fg": "rgb(77, 92, 115)",
+                "bg": "rgb(238, 243, 255)",
+                "ratio": 6.108537496937715
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "R03 actual 2010 CZ 6642 GWh to 6642000 MWh CSV/JSON with disclaimer",
+        "ok": true,
+        "evidence": [
+          {
+            "time": "2010",
+            "CZ": 6642000
+          }
+        ]
+      },
+      {
+        "name": "all 43 public datasets render",
+        "ok": true,
+        "evidence": 43
+      },
+      {
+        "name": "R04 every legend palette color and visible planned-flow workspace contrast",
+        "ok": true,
+        "evidence": 46
+      },
+      {
+        "name": "municipal search and region load",
+        "ok": true,
+        "evidence": "Děčín CZ042"
+      },
+      {
+        "name": "complete application snapshot",
+        "ok": true,
+        "evidence": {
+          "done": true,
+          "current": 187,
+          "total": 187,
+          "snapshot": "db4a3e6a6e366ac299bdf5941141c5e804548bda1f16cf1cd798d3df123d3c84"
+        }
+      },
+      {
+        "name": "Pages subpath online to offline navigation, map and new dataset",
+        "ok": true,
+        "evidence": "Liberec + flows-commercial"
+      },
+      {
+        "name": "offline planned-flow export and playback",
+        "ok": true,
+        "evidence": {
+          "rows": 16176,
+          "numericCells": 64704,
+          "missingCells": 0,
+          "expectedValues": 64704,
+          "availableValues": 64704,
+          "available": 16176,
+          "expected": 16176,
+          "missingPolicy": "null; žádná interpolace; neúplný den nemá energii"
+        }
+      },
+      {
+        "name": "domain root offline cold navigation",
+        "ok": true,
+        "evidence": 43
+      },
+      {
+        "name": "R04 mobile planned-flow workspace contrast",
+        "ok": true,
+        "evidence": true
+      },
+      {
+        "name": "mobile 390x844 map/electricity/catalog, no page overflow",
+        "ok": true,
+        "evidence": true
+      },
+      {
+        "name": "R02 alpha/beta same BrowserContext offline and after three alpha cleanups",
+        "ok": true,
+        "evidence": {
+          "alpha": {
+            "pointer": {
+              "cache": "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Falpha%2F:snapshot:ad9d456d-c804-48fb-92b6-236b06cbfa75",
+              "snapshot": "cb57d17ee9cd168154aa5facf4c403651890eb0f14edaee89de458406b8eb1de"
+            },
+            "entries": 5,
+            "caches": [
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Falpha%2F:state",
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Falpha%2F:snapshot:09941e9a-44f5-435f-890f-385fc893c7c0",
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Falpha%2F:snapshot:ad9d456d-c804-48fb-92b6-236b06cbfa75"
+            ]
+          },
+          "beta": {
+            "pointer": {
+              "cache": "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Fbeta%2F:snapshot:16fe097b-0322-49db-a086-b34356f1c391",
+              "snapshot": "cf77e66bef004e715c793302acf735a5cd0724ed8a87e75beca83f93b223b20e"
+            },
+            "entries": 5,
+            "caches": [
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Fbeta%2F:snapshot:16fe097b-0322-49db-a086-b34356f1c391",
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Fbeta%2F:state"
+            ]
+          }
+        }
+      },
+      {
+        "name": "A03 actual browser interrupted second update",
+        "ok": true,
+        "evidence": {
+          "error": "Soubor b.json: 503"
+        }
+      },
+      {
+        "name": "A03 hash rejection and successful atomic recovery",
+        "ok": true,
+        "evidence": [
+          2,
+          2
+        ]
+      },
+      {
+        "name": "browser console errors",
+        "ok": true,
+        "evidence": 0
+      }
+    ]
+  },
+  "history": {
+    "base": "9d2d3d751110106939bd859f76ce44cfaeed30f2",
+    "headBeforeReleaseCommit": "ad15e5987c269939ef191218371cda0df3c9309f",
+    "originalPRCommitsScanned": 14,
+    "forbiddenBlobCount": 103,
+    "reachableForbiddenBlobs": 0,
+    "workingTreeForbiddenBlobs": 0,
+    "unchangedOriginalPublicDataFiles": 68,
+    "originalPRIsAncestor": false
+  },
+  "oteHTTPRecovery": {
+    "userSuppliedInputFilesBeforeDownload": 0,
+    "initialRows": {
+      "ote-prices": {
+        "available": 2208,
+        "expected": 2208
+      },
+      "ote-market-volume": {
+        "available": 2208,
+        "expected": 2208
+      },
+      "ote-prices-daily": {
+        "available": 92,
+        "expected": 92
+      },
+      "ote-market-volume-daily": {
+        "available": 92,
+        "expected": 92
+      }
+    },
+    "failureException": "HTTP Error 503: Service Unavailable",
+    "revisedFirstFileStagedBefore503": true,
+    "manifestUnchanged": true,
+    "all92OldInputsUnchanged": true,
+    "buildAfterFailurePassed": true,
+    "successfulWholeRefresh": true,
+    "newFirstPrice": 1001.0,
+    "privateOnlyOutput": true,
+    "automaticDownloadWithoutUserSuppliedFiles": true,
+    "requests": 199,
+    "repositoryGuard": "OTE requires a private directory outside the repository; redistribution permission is not evidenced"
+  },
+  "license": {
+    "status": "user-confirmed",
+    "confirmedOn": "2026-11-07",
+    "userReportsPermission": true,
+    "documentFound": false,
+    "licenseDocumentReviewed": false,
+    "scopeConfirmationPending": [],
+    "confirmedScope": [
+      "CEPS and MPO public raw",
+      "derived CSV and JSON",
+      "offline ZIP and browser cache"
+    ]
+  },
+  "build": {
+    "packagedFiles": 189,
+    "determinism": {
+      "identicalOutputs": 194,
+      "passed": true
+    }
+  },
+  "branchProtection": {
+    "mainProtected": false,
+    "rules": []
+  },
+  "permissionFollowUpBase": "3d9e26f07beeb04c06ba467ea3290dba2973fdea"
+}

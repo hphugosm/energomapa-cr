@@ -1,0 +1,27 @@
+﻿# metadata: {"schemaVersion":1,"id":"eurostat-exp","title":"Vývoz — evropské srovnání","description":"Eurostat nrg_bal_s; freq=A, nrg_bal=EXP, siec=TOTAL, unit=GWH; hodnoty jednotlivých států a EU27 se nesčítají. Zachovány chybějící buňky null a příznaky kvality zdroje. Roční energie v GWh není výkon v MW.","kind":"energy_balance","unit":"GWh","frequency":"year","timezone":"not applicable","period":{"start":"2000","end":"2024"},"source":{"url":"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_bal_s?lang=EN&geo=CZ&geo=DE&geo=PL&geo=SK&geo=AT&geo=EU27_2020&sinceTimePeriod=2000&unit=GWH&siec=TOTAL&siec=E7000","publisher":"Eurostat","retrievedAt":"2026-11-06T17:56:04.028007+00:00","sha256":"2ffc17ea634c9d098a6f8a20831e29d721380e764b7d3d0094b610451646c2c7","dataset":"nrg_bal_s","methodology":"Eurostat nrg_bal_s; freq=A, nrg_bal=EXP, siec=TOTAL, unit=GWH; hodnoty jednotlivých států a EU27 se nesčítají. Zachovány chybějící buňky null a příznaky kvality zdroje. Roční energie v GWh není výkon v MW.","license":"Eurostat reuse policy; acknowledge Eurostat, identify transformations and retain the non-responsibility disclaimer.","licenseUrl":"https://ec.europa.eu/eurostat/help/copyright-notice","attribution":"Source: Eurostat, nrg_bal_s, accessed 2026-11-06T17:56:04.028007+00:00; EnergoMapa selection and processing.","modifications":"EnergoMapa selects indicators, countries and periods, reshapes JSON-stat into tables, translates labels and may filter observations and convert compatible units. Source null values and quality flags are preserved.","disclaimer":"Eurostat is not responsible for the selection, processing or presentation of these data by EnergoMapa, including filtering and unit conversions.","snapshotNote":"Lokální historický snapshot; nejde o aktuální měření."},"columns":[{"key":"CZ","label":"Česko","type":"number","unit":"GWh"},{"key":"DE","label":"Německo","type":"number","unit":"GWh"},{"key":"PL","label":"Polsko","type":"number","unit":"GWh"},{"key":"SK","label":"Slovensko","type":"number","unit":"GWh"},{"key":"AT","label":"Rakousko","type":"number","unit":"GWh"},{"key":"EU27_2020","label":"EU 27","type":"number","unit":"GWh"}],"coverage":{"rows":25,"numericCells":150,"missingCells":0},"status":"snapshot","qualityFlags":[],"csvMetadataVersion":1}
+time,CZ,DE,PL,SK,AT,EU27_2020
+2000,98632.193,354877.987,234047.029,43114.304,34710.448,3563289.727
+2001,98648.219,338572.563,247780.501,49991.142,40326.768,3616270.673
+2002,95397.34,347709.699,247453.144,50743.679,41149.851,3688796.73
+2003,100363.353,413084.377,230928.791,51657.931,45139.1,3814914.868
+2004,93940.614,491481.206,236480.031,57897.026,51571.637,4211625.508
+2005,96768.384,585534.59,228204.589,59587.841,47084.289,4476417.574
+2006,105160.218,559596.551,235442.272,62726.981,38614.345,4540773.709
+2007,105647.452,572184.387,197126.053,61838.09,45452.897,4461745.961
+2008,99140.304,530982.02,165393.406,57098.822,48449.491,4592568.85
+2009,101697.819,466755.247,148355.503,55125.444,48748.58,4467210.909
+2010,105825.361,505641.244,177409.878,50344.231,47955.359,4760423.693
+2011,102314.983,474368.908,177862.307,58904.466,47535.014,4744432.363
+2012,100775.913,483343.987,190791.998,55768.375,54067.142,5062013.991
+2013,97215.251,555283.092,233372.289,61124.808,51555.857,5239039.914
+2014,97533.846,583063.738,227661.269,56688.839,53741.713,5239467.29
+2015,98026.24,703550.334,244944.833,66285.374,58172.866,5595823.687
+2016,92385.688,606609.306,243090.572,61189.439,57474.653,5585349.891
+2017,89984.427,703844.341,203929.72,61016.155,61484.878,5487667.25
+2018,81287.45,387417.033,187977.037,52369.728,64236.713,5014255.582
+2019,75126.405,375240.511,176675.791,53688.981,65538.201,4870591.599
+2020,64371.406,375224.364,166496.717,57208.258,64041.118,4409546.388
+2021,78267.987,417738.546,177389.471,68956.455,62715.422,4798770.957
+2022,75792.412,448586.154,185931.862,55489.979,48209.051,4977056.71
+2023,66166.999,393336.459,186442.36,59493.555,57508.69,5056131.362
+2024,63640.831,448490.345,173985.316,57536.169,62312.922,4936131.802

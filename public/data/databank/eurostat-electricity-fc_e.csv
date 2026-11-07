@@ -1,0 +1,27 @@
+﻿# metadata: {"schemaVersion":1,"id":"eurostat-electricity-fc_e","title":"Konečná spotřeba elektřiny — evropské srovnání","description":"Eurostat nrg_bal_s; nrg_bal=FC_E, siec=E7000, unit=GWH, roční elektřina. Statistická energetická bilance, nikoli směrové přeshraniční výkonové toky nebo obchodní plány. EU27 se nesčítá s členskými státy; null není nula.","kind":"electricity_balance","unit":"GWh","frequency":"year","timezone":"not applicable","period":{"start":"2000","end":"2024"},"source":{"url":"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_bal_s?lang=EN&geo=CZ&geo=DE&geo=PL&geo=SK&geo=AT&geo=EU27_2020&sinceTimePeriod=2000&unit=GWH&siec=TOTAL&siec=E7000","publisher":"Eurostat","retrievedAt":"2026-11-06T17:56:04.028007+00:00","sha256":"2ffc17ea634c9d098a6f8a20831e29d721380e764b7d3d0094b610451646c2c7","dataset":"nrg_bal_s","methodology":"Eurostat nrg_bal_s; nrg_bal=FC_E, siec=E7000, unit=GWH, roční elektřina. Statistická energetická bilance, nikoli směrové přeshraniční výkonové toky nebo obchodní plány. EU27 se nesčítá s členskými státy; null není nula.","license":"Eurostat reuse policy; acknowledge Eurostat, identify transformations and retain the non-responsibility disclaimer.","licenseUrl":"https://ec.europa.eu/eurostat/help/copyright-notice","attribution":"Source: Eurostat, nrg_bal_s, accessed 2026-11-06T17:56:04.028007+00:00; EnergoMapa selection and processing.","modifications":"EnergoMapa selects indicators, countries and periods, reshapes JSON-stat into tables, translates labels and may filter observations and convert compatible units. Source null values and quality flags are preserved.","disclaimer":"Eurostat is not responsible for the selection, processing or presentation of these data by EnergoMapa, including filtering and unit conversions.","snapshotNote":"Lokální historický snapshot; nejde o aktuální měření."},"columns":[{"key":"CZ","label":"Česko","type":"number","unit":"GWh"},{"key":"DE","label":"Německo","type":"number","unit":"GWh"},{"key":"PL","label":"Polsko","type":"number","unit":"GWh"},{"key":"SK","label":"Slovensko","type":"number","unit":"GWh"},{"key":"AT","label":"Rakousko","type":"number","unit":"GWh"},{"key":"EU27_2020","label":"EU 27","type":"number","unit":"GWh"}],"coverage":{"rows":25,"numericCells":150,"missingCells":0},"status":"snapshot","qualityFlags":[],"csvMetadataVersion":1}
+time,CZ,DE,PL,SK,AT,EU27_2020
+2000,49381.0,483453.0,98073.0,22010.0,51541.0,2197997.384
+2001,50881.0,495267.0,98228.0,23452.0,53614.0,2259699.623
+2002,50823.0,508508.0,96956.0,22760.0,53854.0,2287924.241
+2003,52407.0,514903.0,100703.0,22985.0,55617.0,2350208.304
+2004,52354.0,521621.0,104193.0,24027.0,56777.0,2405668.534
+2005,53601.0,522407.0,105005.0,22850.0,57499.51,2435673.705
+2006,55225.0,528136.0,110634.0,23654.0,58633.349,2487965.275
+2007,55366.0,529533.0,114092.0,24573.0,59124.56,2507601.538
+2008,56136.0,527762.0,117189.0,24765.0,59415.659,2521047.667
+2009,53124.0,497492.0,112305.0,23098.0,57194.653,2392832.602
+2010,54223.0,532023.0,118690.0,24135.0,59934.196,2510554.529
+2011,53651.0,524877.0,121492.0,24812.0,59893.951,2475193.118
+2012,53884.0,524524.0,122169.0,23937.0,60825.359,2483534.164
+2013,53217.0,522310.0,123557.0,25084.0,61150.894,2460535.531
+2014,53216.0,511757.0,125346.473,24157.0,60199.068,2408646.273
+2015,54477.0,514948.0,127818.62,24371.0,61154.053,2449355.658
+2016,55852.0,517554.0,132838.5,24987.0,62138.192,2480308.585
+2017,57407.212,518953.0,135787.901,25803.0,63082.723,2504711.863
+2018,58102.662,509394.0,140468.752,25935.0,63444.955,2504688.462
+2019,58416.453,496515.0,140411.563,25192.0,63512.36,2477473.966
+2020,57100.015,482227.0,137321.531,23813.0,62471.328,2383872.294
+2021,59989.817,499737.5,143686.956,25549.0,65151.03,2490532.259
+2022,57970.909,477200.0,139855.715,22870.0,63940.248,2405932.805
+2023,55655.418,463987.0,135617.953,21273.0,62349.637,2342330.682
+2024,54953.222,471794.0,140931.104,21417.0,63260.63,2394008.548
