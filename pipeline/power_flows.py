@@ -6,6 +6,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from zoneinfo import ZoneInfo
 from csv_export import write_dataset_csv
+from publication import confirmed_data_permission
 
 ENDPOINT='https://www.ceps.cz/_layouts/CepsData.asmx'
 NS='https://www.ceps.cz/CepsData/'
@@ -78,6 +79,7 @@ def download_power_flows(root=ROOT,start='2025-01-01',end='2026-11-05'):
     meta={'publisher':'ČEPS, a.s.','url':'https://www.ceps.cz/cs/webove-sluzby','endpoint':ENDPOINT,'documentation':DOC_URL,'retrievedAt':dt.datetime.now(dt.timezone.utc).isoformat(),'requestedPeriod':{'start':start,'end':end},'files':files,'signConvention':'Kladná hodnota je dovoz do ČR; záporná vývoz z ČR. Potvrzeno větví val < 0 → export v oficiálním grafu ČEPS.','methodology':'HR / AVG / RT. Hodinový průměr výkonu v MW. Čas začátku intervalu převeden z explicitního UTC offsetu zdroje do UTC. Každý interval trvá 1 h. DE je součet profilů TenneT a 50HzT; ostatní profily PSE, SEPS, APG. Planned jsou plánované přeshraniční výměny ČEPS, nikoli realizované obchody OTE.','license':'Veřejně dostupná data ČEPS; zachovat uvedení zdroje, licence pro další užití není v rozhraní deklarována.'}
     meta['documentationReference']=documentation_reference
     meta['license']='Číselná data ČEPS: podmínky dalšího užití nejsou v rozhraní deklarovány; oprávnění k redistribuci nebylo doloženo. Doložka dokumentu ČEPS/Seyfor není licencí těchto dat.'
+    meta.update(confirmed_data_permission(root, 'CEPS'))
     # All requests and parsing succeeded before touching the last good snapshot.
     for item in files:
         target=root/item['path'];(staging/target.name).replace(target)
@@ -115,6 +117,7 @@ def build_power_flows(root=ROOT):
     flow_rows=by_method['CrossborderPowerFlows'];datasets=[]
     common={'publisher':meta['publisher'],'url':meta['url'],'retrievedAt':meta['retrievedAt'],'methodology':meta['methodology'],'signConvention':meta['signConvention'],'documentation':meta['documentation'],'license':meta['license'],'rawInputs':[{k:item[k] for k in ('path','sha256')} for item in meta['files']]}
     common['documentationReference']=meta.get('documentationReference')
+    common.update(confirmed_data_permission(root, 'CEPS'))
     common['aggregationScope']=FLOW_AGGREGATION
     common['methodology']+=' '+FLOW_AGGREGATION
     columns=[{'key':code,'label':NAMES[code],'unit':'MW','border':code,'direction':'net'} for code in BORDERS]

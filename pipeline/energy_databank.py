@@ -1,6 +1,7 @@
 """Reproducible local energy series. Downloads are explicit; builds use pinned bytes only."""
 import csv, gzip, hashlib, itertools, json, math, pathlib, urllib.parse, urllib.request
 from csv_export import write_dataset_csv
+from publication import confirmed_data_permission
 from collections import defaultdict
 from datetime import datetime, timezone
 
@@ -36,7 +37,7 @@ def download_energy_databank(root):
         print(name,len(payload),flush=True)
     with urllib.request.urlopen(MPO_URL,timeout=90) as response:payload=response.read()
     name='mpo-energy-balance.xlsx';pending[name]=payload
-    manifest['inputs'][name]={'url':MPO_URL,'publisher':'MPO / ČSÚ','retrievedAt':datetime.now(timezone.utc).isoformat(),'sha256':hashlib.sha256(payload).hexdigest(),'referencePage':'https://mpo.gov.cz/cz/energetika/statistika/energeticke-bilance/souhrnna-energeticka-bilance-statu-v-metodice-eurostatu-za-leta-2010_2024--290739/'}
+    manifest['inputs'][name]={'url':MPO_URL,'publisher':'MPO / ČSÚ','retrievedAt':datetime.now(timezone.utc).isoformat(),'sha256':hashlib.sha256(payload).hexdigest(),'referencePage':'https://mpo.gov.cz/cz/energetika/statistika/energeticke-bilance/souhrnna-energeticka-bilance-statu-v-metodice-eurostatu-za-leta-2010_2024--290739/'} | confirmed_data_permission(root, 'MPO')
     # Fetch and validate every response before replacing any pinned snapshot.
     for name,payload in pending.items():
         temporary=folder/(name+'.tmp');temporary.write_bytes(payload);temporary.replace(folder/name)
@@ -125,6 +126,7 @@ def build_mpo(root,meta):
             if record[key] is None and row[8] is not None:flags.append({'time':str(year),'column':key,'flag':str(row[8])})
         records.append(record)
     workbook.close()
+    meta = meta | {name: meta[name] | confirmed_data_permission(root, 'MPO')}
     source=meta[name]|{'methodology':'MPO a ČSÚ: Souhrnná energetická bilance 2010–2024; původní listy YYYY-SB, sloupec I Celkem, kód bilance ve sloupci H. Jednotka TJ ověřena v buňce A5. Pouze číselné hodnoty, textové značky zachovány v qualityFlags a hodnota null. Bilance zahrnuje všechna paliva, ne pouze elektřinu. Převody TJ / 3,6 = GWh; PJ = TJ / 1000. Žádné doplnění chybějících hodnot.'}
     return [publish(root,'mpo-czech-energy-balance','MPO / ČSÚ — celková energetická bilance ČR','energy_balance','TJ','year',source,cols(labels,'TJ'),records,qualityFlags=flags)]
 

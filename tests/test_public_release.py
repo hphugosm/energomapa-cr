@@ -44,7 +44,8 @@ class PublicRelease(unittest.TestCase):
         self.assertEqual(reference['url'], meta['documentation'])
         self.assertRegex(reference['sha256'], r'^[0-9a-f]{64}$')
         self.assertEqual(reference['redistributionPermission'], 'not evidenced')
-        self.assertIn('nebylo doloženo', meta['license'])
+        self.assertEqual(meta['redistributionPermission']['status'], 'user-confirmed')
+        self.assertFalse(meta['redistributionPermission']['licenseDocumentReviewed'])
         self.assertFalse(any(item['path'].endswith('.docx') for item in meta['files']))
 
     def test_every_csv_retains_metadata_quality_flags_and_exact_values(self):
@@ -76,6 +77,24 @@ class PublicRelease(unittest.TestCase):
                             self.assertEqual(float(actual[key]), value)
                         else:
                             self.assertEqual(actual[key], str(value))
+
+    def test_confirmed_ceps_mpo_scope_survives_catalog_json_csv_and_zip(self):
+        folder = ROOT / 'public/data/databank'
+        index = json.loads((folder / 'index.json').read_text())
+        datasets = [item for item in index['datasets'] if item['id'].startswith('flows-') or item['id'] == 'mpo-czech-energy-balance']
+        self.assertEqual(len(datasets), 9)
+        with zipfile.ZipFile(folder / 'offline.zip') as archive:
+            for item in datasets:
+                data = json.loads((folder / item['path']).read_text())
+                metadata = json.loads((folder / item['csv']).read_text(encoding='utf-8-sig').splitlines()[0].removeprefix('# metadata: '))
+                for value in (item, data, metadata, json.loads(archive.read(item['path']))):
+                    permission = value['source']['redistributionPermission']
+                    self.assertEqual(permission['status'], 'user-confirmed')
+                    self.assertEqual(permission['confirmedOn'], '2026-11-07')
+                    self.assertFalse(permission['licenseDocumentReviewed'])
+                    self.assertEqual(permission['scope'], {'publicRawCopies': True, 'derivedCSVJSON': True, 'offlineZIP': True, 'browserCache': True})
+                    self.assertNotIn('licenseUrl', value['source'])
+                self.assertEqual(archive.read(item['csv']), (folder / item['csv']).read_bytes())
 
     def test_offline_manifest_hashes_every_published_file(self):
         public = ROOT / 'public'

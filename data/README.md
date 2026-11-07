@@ -65,4 +65,4 @@ Kontroly zahrnují konečnost a nezápornost čísel, povolené kódy, roky, sch
 
 `pipeline/databank.py` sestavuje strojový katalog `../public/data/databank/index.json`, samostatné CSV/JSON a deterministický archiv `offline.zip`. Jednotky, období, časová pásma, původ a metodika jsou součástí každého JSON a katalogu; filtrovaný export z aplikace zapisuje metadata také do CSV. Statistiky zdrojů a případné chybějící hodnoty nejsou zpětně dopočítávány.
 
-OTE originály ani odvozené sady se nedistribuují; omezený DOCX ČEPS je nahrazen URL a hashem v `sources/flows.json`. Podmínky číselných dat ČEPS zůstávají neurčené. Viz [stav oprávnění](../docs/data-permissions.md).
+OTE originály ani odvozené sady se nedistribuují; omezený DOCX ČEPS je nahrazen URL a hashem v `sources/flows.json`. Souhlasy ČEPS/MPO k veřejným raw, odvozeným CSV/JSON a offline ZIP/cache výslovně potvrdil uživatel 7. 11. 2026; konkrétní dokument implementátor neověřil. Viz [stav oprávnění](../docs/data-permissions.md).

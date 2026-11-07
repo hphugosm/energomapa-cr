@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "status": "user-confirmed",
+  "confirmedOn": "2026-11-07",
+  "basis": "explicit-user-confirmation",
+  "release": "EnergoMapa ČR 0.6.1",
+  "providers": ["CEPS", "MPO"],
+  "scope": {
+    "publicRawCopies": true,
+    "derivedCSVJSON": true,
+    "offlineZIP": true,
+    "browserCache": true
+  },
+  "licenseDocumentReviewed": false,
+  "notice": "Uživatel dne 7. 11. 2026 výslovně potvrdil, že souhlasy ČEPS i MPO pro EnergoMapu ČR 0.6.1 pokrývají veřejné raw kopie, odvozená CSV/JSON, offline ZIP i cache prohlížeče. Licenční dokument implementátor neviděl ani neověřil. Toto potvrzení se nevztahuje na OTE ani omezený dokument ČEPS/Seyfor."
+}

@@ -6,7 +6,7 @@ Aktualizováno 7. 11. 2026. Tento záznam rozlišuje potvrzení držitele projek
 
 Uživatel v navazujícím zadání výslovně potvrzuje, že má schválení/licenci ke sdílení dat, a povoluje merge PR #2 a nasazení. Toto potvrzení respektujeme. V dostupných místních podkladech, diskusi PR #2, navazujícím chatu ani cíleném hledání v připojené poště a Google Drive nebyl nalezen vlastní dokument schválení ČEPS/MPO. Implementátor jej tedy neověřil a neuvádí domnělý text, datum udělení, rozsah ani URL licence.
 
-Před zveřejněním musí být vyjasněno pokrytí obou poskytovatelů: veřejné původní raw kopie v GitHubu, odvozené CSV/JSON a jejich distribuce v offline ZIP a cache prohlížeče. Byl položen pouze tento konkrétní dotaz na rozsah; obecný audit ani nové obecné povolení merge se nevyžadují. Do odpovědi zůstává rozsah R01 otevřený a PR draft. Potvrzení licence číselných dat se nepřenáší na omezený dokument ČEPS/Seyfor nebo na OTE.
+Dne 7. 11. 2026 uživatel výslovně upřesnil, že souhlasy ČEPS i MPO pokrývají veřejné raw kopie, odvozená CSV/JSON, offline ZIP i cache, a znovu požádal o merge PR #2 a nasazení. **R01 je tímto vyřešen na základě potvrzení uživatele.** Strojový záznam je v `data/sources/publication-permissions.json`, stav `user-confirmed`, `licenseDocumentReviewed=false`; stejný rozsah nese metadata všech dotčených sad a exportů. Datum potvrzení není vydáváno za datum udělení licence. Nevymýšlí se licenční text ani URL. Potvrzení se nepřenáší na omezený dokument ČEPS/Seyfor nebo na OTE.
 
 ## OTE — oprávnění nedoloženo, veřejná distribuce odstraněna (A01)
 
@@ -28,4 +28,4 @@ Původní PR #1 a jeho historie zůstávají beze změny. Toto opatření odstra
 
 ## MPO / ČSÚ — kombinovaná publikace
 
-Rozsah individuálního schválení musí pokrývat i workbook `SEB_2010-2024.xlsx`, nikoli pouze samostatné statistiky ČSÚ. Přesný zdroj a SHA-256 zůstávají v `data/sources/databank-inputs.json`; [metodika](databank-methodology.md) vysvětluje společný původ MPO/ČSÚ/Eurostat. Konkrétní licenční dokument k této publikaci nebyl implementátorem nalezen ani ověřen; platí potvrzení uživatele a otázka rozsahu výše.
+Potvrzený rozsah individuálního schválení MPO se v této verzi vztahuje na veřejné kopie workbooku `SEB_2010-2024.xlsx` a jeho odvozené výstupy; nespoléhá se pouze na podmínky samostatných statistik ČSÚ. Přesný zdroj a SHA-256 zůstávají v `data/sources/databank-inputs.json`; [metodika](databank-methodology.md) vysvětluje společný původ MPO/ČSÚ/Eurostat. Konkrétní licenční dokument k této publikaci nebyl implementátorem nalezen ani ověřen; platí explicitní potvrzení uživatele v rozsahu popsaném výše.

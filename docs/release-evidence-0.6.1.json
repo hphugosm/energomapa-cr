@@ -6,7 +6,7 @@
     "failed": 0
   },
   "python": {
-    "passed": 104,
+    "passed": 105,
     "failed": 0
   },
   "browser": {
@@ -15,7 +15,7 @@
     "consoleErrors": [],
     "performance": [
       {
-        "initialMapMs": 83.08249999999998,
+        "initialMapMs": 142.325333,
         "requests": 29
       }
     ],
@@ -25,7 +25,7 @@
         "name": "lazy map startup",
         "ok": true,
         "evidence": {
-          "initialMapMs": 83.08249999999998,
+          "initialMapMs": 142.325333,
           "requests": 29
         }
       },
@@ -147,7 +147,7 @@
           "done": true,
           "current": 187,
           "total": 187,
-          "snapshot": "c3b6d23ce8e03b063c8694c877a9a87f687532ee84c366e0bbe3a8100c4f4db6"
+          "snapshot": "db4a3e6a6e366ac299bdf5941141c5e804548bda1f16cf1cd798d3df123d3c84"
         }
       },
       {
@@ -190,25 +190,25 @@
         "evidence": {
           "alpha": {
             "pointer": {
-              "cache": "energomapa-v3:http%3A%2F%2F127.0.0.1%3A59904%2Falpha%2F:snapshot:2aef6151-bf1d-4569-b6d8-adea76f77cfb",
+              "cache": "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Falpha%2F:snapshot:ad9d456d-c804-48fb-92b6-236b06cbfa75",
               "snapshot": "cb57d17ee9cd168154aa5facf4c403651890eb0f14edaee89de458406b8eb1de"
             },
             "entries": 5,
             "caches": [
-              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A59904%2Falpha%2F:state",
-              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A59904%2Falpha%2F:snapshot:51a89b4e-fdc2-4318-bd7f-4cd077624344",
-              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A59904%2Falpha%2F:snapshot:2aef6151-bf1d-4569-b6d8-adea76f77cfb"
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Falpha%2F:state",
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Falpha%2F:snapshot:09941e9a-44f5-435f-890f-385fc893c7c0",
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Falpha%2F:snapshot:ad9d456d-c804-48fb-92b6-236b06cbfa75"
             ]
           },
           "beta": {
             "pointer": {
-              "cache": "energomapa-v3:http%3A%2F%2F127.0.0.1%3A59904%2Fbeta%2F:snapshot:84820f8d-891f-497b-8e5b-06cf16b9c37c",
+              "cache": "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Fbeta%2F:snapshot:16fe097b-0322-49db-a086-b34356f1c391",
               "snapshot": "cf77e66bef004e715c793302acf735a5cd0724ed8a87e75beca83f93b223b20e"
             },
             "entries": 5,
             "caches": [
-              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A59904%2Fbeta%2F:snapshot:84820f8d-891f-497b-8e5b-06cf16b9c37c",
-              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A59904%2Fbeta%2F:state"
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Fbeta%2F:snapshot:16fe097b-0322-49db-a086-b34356f1c391",
+              "energomapa-v3:http%3A%2F%2F127.0.0.1%3A62234%2Fbeta%2F:state"
             ]
           }
         }
@@ -278,9 +278,13 @@
     "repositoryGuard": "OTE requires a private directory outside the repository; redistribution permission is not evidenced"
   },
   "license": {
+    "status": "user-confirmed",
+    "confirmedOn": "2026-11-07",
     "userReportsPermission": true,
     "documentFound": false,
-    "scopeConfirmationPending": [
+    "licenseDocumentReviewed": false,
+    "scopeConfirmationPending": [],
+    "confirmedScope": [
       "CEPS and MPO public raw",
       "derived CSV and JSON",
       "offline ZIP and browser cache"
@@ -296,5 +300,6 @@
   "branchProtection": {
     "mainProtected": false,
     "rules": []
-  }
+  },
+  "permissionFollowUpBase": "3d9e26f07beeb04c06ba467ea3290dba2973fdea"
 }
