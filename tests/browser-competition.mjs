@@ -1,0 +1,42 @@
+/** Browser integration smoke. Run after package.py and installing Playwright Chromium. */
+import {chromium} from 'playwright-core';
+import {createServer} from 'node:http';
+import {readFile,mkdir} from 'node:fs/promises';
+import {resolve,sep,extname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import assert from 'node:assert/strict';
+const root=fileURLToPath(new URL('../dist/',import.meta.url));
+const artifacts=fileURLToPath(new URL('../artifacts/competition/',import.meta.url));
+await mkdir(artifacts,{recursive:true});
+const prefix='/energomapa-cr/';
+const mime={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.css':'text/css','.svg':'image/svg+xml','.gz':'application/gzip'};
+const server=createServer(async(req,res)=>{try{const url=new URL(req.url,'http://localhost');if(!url.pathname.startsWith(prefix)){res.writeHead(404);res.end();return;}let relative=decodeURIComponent(url.pathname.slice(prefix.length));if(!relative||relative.endsWith('/'))relative+='index.html';const path=resolve(root,relative);if(!path.startsWith(resolve(root)+sep)){res.writeHead(403);res.end();return;}const data=await readFile(path);res.writeHead(200,{'Content-Type':mime[extname(path)]||'application/octet-stream'});res.end(data);}catch{res.writeHead(404);res.end('Not found');}});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));
+const url=`http://127.0.0.1:${server.address().port}${prefix}prezentace/`;
+let browser;
+try {
+  browser=await chromium.launch({headless:true});
+  const context=await browser.newContext({viewport:{width:1440,height:900},reducedMotion:'reduce'});
+  const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(url,{waitUntil:'networkidle'});await page.screenshot({path:resolve(artifacts,'home.png')});
+  await page.locator('#start').click();assert.match(await page.locator('#counter').innerText(),/1 \/ 6/);
+  await page.waitForTimeout(1100);assert.match(await page.locator('#timer').innerText(),/00:00/);
+  await page.locator('#timer').click();await page.waitForTimeout(1150);await page.locator('#timer').click();assert.match(await page.locator('#timer').innerText(),/00:01/);
+  await page.keyboard.press('ArrowRight');await page.waitForSelector('.metric-value');assert.match(await page.locator('.chart-panel').innerText(),/ČSÚ/);await page.screenshot({path:resolve(artifacts,'chart.png')});
+  await page.keyboard.press('ArrowRight');await page.waitForSelector('#frame-host:not([hidden]) iframe');
+  const frame=page.frameLocator('#frame-host iframe');await frame.locator('#metric').waitFor();await frame.locator('#metric').selectOption('population');
+  await page.waitForFunction(()=>document.querySelector('#frame-host iframe')?.contentDocument?.querySelector('#year')?.disabled===false);await frame.locator('#year').waitFor({state:'visible'});await frame.locator('#year').focus();await frame.locator('#year').press('ArrowLeft');assert.match(await page.locator('#counter').innerText(),/3 \/ 6/);
+  const handle=await page.locator('#frame-host iframe').elementHandle();const content=await handle.contentFrame();await content.evaluate(()=>{window.__kitRetention='kept';});
+  const year=await frame.locator('#year').inputValue();await frame.locator('#play').click();await frame.locator('body').press('ArrowRight');assert.match(await page.locator('#counter').innerText(),/4 \/ 6/);
+  await page.keyboard.press('ArrowLeft');assert.equal(await content.evaluate(()=>window.__kitRetention),'kept');assert.equal(await frame.locator('#year').inputValue(),year);assert.match(await frame.locator('#play').getAttribute('aria-label'),/Přehrát/);
+  await page.screenshot({path:resolve(artifacts,'map.png')});
+  await frame.locator('body').press('ArrowRight');await page.keyboard.press('ArrowRight');
+  for(const [k,v] of Object.entries({capex:100000,annualBenefit:30000,annualOpex:5000,years:10,discountRate:5}))await page.locator(`[name=${k}]`).fill(String(v));
+  await page.getByText('Spočítat variantu',{exact:true}).click();assert.match(await page.locator('.econ-results').innerText(),/93\s*043/);
+  await page.screenshot({path:resolve(artifacts,'economics.png')});
+  await page.locator('[name=years]').focus();await page.keyboard.press('ArrowLeft');assert.match(await page.locator('#counter').innerText(),/5 \/ 6/);
+  await page.locator('#next').click();await page.keyboard.press('Escape');assert.equal(await page.locator('#home').isVisible(),true);
+  await page.locator('#browse').click();assert.equal(await page.locator('#data-browser').isVisible(),true);await page.locator('#back-home').click();
+  await page.setViewportSize({width:1280,height:720});await page.locator('#start').click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);await page.screenshot({path:resolve(artifacts,'720p.png')});
+  assert.deepEqual(errors,[]);console.log('Competition browser smoke passed: navigation, timer, real chart, iframe state, input focus, calculator, Pages prefix, 720p.');
+}finally{await browser?.close();await new Promise(r=>server.close(r));}
