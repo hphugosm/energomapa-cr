@@ -1,12 +1,21 @@
 # EnergoMapa · pravidla pro Codex
 
+## Závazné pravidlo: nejdřív diskuse, potom implementace
+
+**Před jakýmikoli úpravami projektu si přečti `competition/COLLABORATION.md` a postupuj podle něj.**
+
+1. Po obdržení soutěžního zadání nejdřív krátce diskutuj s uživatelem: možnosti, doporučení, rizika. Zprávy typicky 2–5 vět a jedna otázka najednou.
+2. **Nezačínej měnit soubory ani programovat, dokud se nedohodnete na řešení a uživatel výslovně nepotvrdí zahájení práce.** Čtení existujících dat a průzkum zdrojů jsou dovoleny.
+3. Po potvrzení implementuj; **při důležitých volbách se často cíleně doptávej**, místo tichého rozhodování. Rutinní, snadno vratné technické detaily vyřeš sám.
+4. Posílej stručný průběžný stav. Neopakuj známé otázky; před publikací či mergem dodrž schválený rozsah.
+
 ## Nejdřív
 - Přečti `competition/README.md`, `competition/DESIGN_SYSTEM.md` a `competition/DATA_PLAYBOOK.md`.
 - Aktuální implementaci a omezení ověř v `README.md`, `docs/` a manifestech. Starší počty metrik nejsou kontrakt.
 - Pro prezentaci použij `public/prezentace/` a `competition/PRESENTATION_GUIDE.md`. Nenavrhuj nový vzhled ani AI orchestrátor.
 - Zadání soutěže má přednost před připravenými příklady. Nezačínej automaticky projektem s mapou nebo ML.
 
-## Co vytvořit z nového zadání
+## Po odsouhlasení řešení — co vytvořit z nového zadání
 1. Zkopíruj `competition/templates/project.md` do `competition/projects/<slug>/brief.md` a vyplň problém, baseline, kritérium úspěchu a omezení.
 2. Vyber relevantní existující data. Vytvoř skript výpočtu, ne ručně opsané výsledky.
 3. Ulož zdroje, předpoklady, výstupy a kontroly do stejného projektového adresáře. Čísla v pitchi musí být dohledatelná.

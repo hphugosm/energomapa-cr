@@ -3,6 +3,17 @@
 ## Přesné zadání
 [Doslovné zadání, původ, datum, povinné výstupy, limit prezentace a potvrzená pravidla.]
 
+## Dohoda před implementací
+- Diskutované směry (A/B/C), výhody a rizika:
+- Zvolený směr a důvod:
+- Potvrzení uživatele k zahájení implementace (přesné vyjádření, případně odkaz na chat):
+- Hranice schváleného rozsahu:
+
+## Průběžná rozhodnutí
+| Otázka / změna | Doporučení Codexu | Rozhodnutí uživatele | Dopad do projektu |
+|---|---|---|---|
+| | | | |
+
 ## Jedna věta
 Pomáháme [komu] vyřešit [problém] pomocí [mechanismu]; úspěch měříme [ukazatelem].
 

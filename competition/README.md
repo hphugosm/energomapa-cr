@@ -6,7 +6,7 @@ Podklady pro práci přes Codex. Žádný chatbot v aplikaci, serverový AI back
 
 | Potřeba | Kde začít |
 |---|---|
-| Jedno zadání pro Codex | `../AGENTS.md`, `../README_CODEX.md` |
+| Postup dialogu, schválení a průběžné otázky | `COLLABORATION.md`, `../AGENTS.md`, `../README_CODEX.md` |
 | Barvy, typografie, grafy, slidy | `DESIGN_SYSTEM.md`, `../public/prezentace/tokens.css` |
 | Funkční webová prezentace | `../public/prezentace/index.html`, obsah `deck.json` |
 | Struktura a ovládání pitch | `PRESENTATION_GUIDE.md` |
@@ -35,7 +35,7 @@ Web nevyžaduje npm build ani CDN. Mapa, graf a katalog používají existujíc�
 
 ## V den finále
 
-Vlož přesné znění zadání do Codexu a řekni: „Použij competition kit podle AGENTS.md; prezentaci postav z public/prezentace/deck.json.“ Codex má vyplnit projektovou šablonu, spočítat varianty a vyměnit obsah slidů. Hotová prezentace nesmí zůstat pracovním příkladem.
+Vlož přesné znění zadání do Codexu a řekni: „Postupuj podle `AGENTS.md` a `competition/COLLABORATION.md`. Nejprve se mnou stručně prober řešení, nepouštěj se zatím do práce.“ Codex navrhne 2–3 směry, doporučí jeden a položí jednu otázku. Až spolu schválíte konkrétní řešení a výslovně odsouhlasíš začátek implementace, má vyplnit projektovou šablonu, spočítat varianty a upravit `public/prezentace/deck.json`. Během práce se znovu ptá, pokud vyvstane skutečná obsahová, ekonomická, datová nebo prezentační volba. Hotová prezentace nesmí zůstat pracovním příkladem.
 
 Role lze rozdělit: jeden hlídá data, výpočty a demo, druhý problém, mentora, ekonomické vstupy a argumentaci. Nejde o pevné rozdělení jmen. Každý musí umět vysvětlit výsledek i jeho hranice.
 

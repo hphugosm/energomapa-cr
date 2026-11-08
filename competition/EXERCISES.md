@@ -2,6 +2,10 @@
 
 Vlastní tréninkové úlohy inspirované okruhy soutěže, NE přesná oficiální zadání minulých let. Nejsou zde předstírané vítězné výsledky. Smyslem je mít připravenou cestu od otázky ke kontrolovatelnému výstupu.
 
+## Pravidlo nácviku
+
+Nedávej Codexu rovnou povel k implementaci. Nejprve mu pošli pouze zadání a nechej ho postupovat podle `competition/COLLABORATION.md`: dvě až tři varianty, jedna cílená otázka, společný výběr, explicitní potvrzení startu. Pak ověř, jestli se během práce skutečně zeptá na zásadní chybějící vstup. Trénuj i rychlou změnu zadání během diskuse.
+
 ## 1. Má smysl obecní FVE?
 
 **Úkol:** Pro Roudnici nad Labem prověř hypotetickou instalaci 100 kWp jako předstudii, ne doporučení konkrétní stavby.

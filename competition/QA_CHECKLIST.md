@@ -1,5 +1,11 @@
 # Kontrola před pitch a publikací
 
+## Spolupráce s uživatelem
+- Před první úpravou proběhla krátká diskuse o alternativách a uživatel výslovně schválil zvolený směr i zahájení práce.
+- Větší obsahová, ekonomická a vizuální rozhodnutí byla průběžně probrána, nikoli mlčky vymyšlena; drobnosti nevyžadovaly zbytečné otázky.
+- Projektový brief zachycuje schválený rozsah a změny, které uživatel později rozhodl.
+- Před případným zveřejněním nebo sloučením proběhla odpovídající kontrola a schválení.
+
 ## Obsah
 - Zadání odpovídá oficiálně přidělenému tématu. Žádný ukázkový text nezůstal jako finální tvrzení.
 - Je jasný uživatel, problém, baseline, mechanismus, výsledek a pilot.
