@@ -6,6 +6,15 @@
 - Projektový brief zachycuje schválený rozsah a změny, které uživatel později rozhodl.
 - Před případným zveřejněním nebo sloučením proběhla odpovídající kontrola a schválení.
 
+## Ambice, využití času a soutěžní síla
+- Projekt má **výrazný vlastní mechanismus**, ne pouze výpočet úspor, přebarvení mapy nebo katalog dat.
+- Existuje velká vize i funkční technicky silné jádro, které porota skutečně uvidí.
+- Ukazujeme přínos proti baseline a technická omezení; neslibujeme neimplementované funkce.
+- Milníky, včasné škrtání a využití rezervy času jsou doložené; první verze prošla **kritikou a další iterací**, pokud to čas dovolil.
+- Pětiminutová prezentace je argument pro hodnotu řešení, nikoliv seznam technologií nebo prohlídka UI.
+- **Šipky a stopky** fungují. Ostatní design, dramaturgie a počet slidů nejsou předepsané; animační důkazy jsou promyšlené tam, kde přidávají hodnotu.
+- Pokud existuje video, PDF nebo screenshoty, všechny odpovídají stejné finální verzi a neztratily animace kvůli režimu reduced motion.
+
 ## Obsah
 - Zadání odpovídá oficiálně přidělenému tématu. Žádný ukázkový text nezůstal jako finální tvrzení.
 - Je jasný uživatel, problém, baseline, mechanismus, výsledek a pilot.

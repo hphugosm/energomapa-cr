@@ -1,8 +1,8 @@
-# Funkce převzaté z Děčína
+# Děčín jako inspirace, nikoli předepsaná prezentace
 
 Reference: https://github.com/hphugosm/TT-Decin/tree/main/prezentace
 
-Prozkoumané podklady: `README.md`, `AGENTS.md`, kořenový `BRAND_BIBLE.md`. Nový engine je jednoduchá implementace stejného základního ovládání, nikoli kopie migračních výpočtů.
+Prozkoumané podklady: `README.md`, `AGENTS.md`, kořenový `BRAND_BIBLE.md`. **Pro nové soutěžní projekty jsou povinné pouze dvě schopnosti: navigace šipkami (klávesnice i tlačítka) a viditelný pozastavitelný časovač.** Ostatní prvky zde ukazují, co umí výchozí šablona; Codex je smí upravit, opustit nebo nahradit. Není povinné 6 slidů, rozcestník, vložená mapa ani stejné rozložení.
 
 | Funkce | Nová šablona |
 |---|---|
@@ -20,7 +20,7 @@ Prozkoumané podklady: `README.md`, `AGENTS.md`, kořenový `BRAND_BIBLE.md`. No
 | Pozastavit skrytou mapu a média | implementováno |
 | Omezení pohybu | respektováno |
 | Grafy se skutečnými zdroji | existující MetricEngine + tabulková alternativa |
-| Přesun wordmarku, morph obcí a rozpad hypotézy | záměrně nepřevzato; specifické pro děčínský příběh |
+| Přesun wordmarku, morph obcí a rozpad hypotézy | nejsou hotovými generickými komponentami; **inspirovat se jejich dramaturgií a vytvořit nové smysluplné animace je vítané** |
 | Přesně jedenáct slidů | ne; obsah a počet se řídí aktuálním zadáním |
 
-Výsledek má být funkčně známý, obsahově energetický a snadno upravitelný. Nepřebírej z Děčína migrační barevné významy, neověřené kauzální závěry ani datové rozsahy.
+Výsledná prezentace má být **nově vymyšlený silný argument**, nikoli přebarvený Děčín. Zachovej jen šipky a stopky; vzhled, animace, počet slidů a živé demo přizpůsob zvolenému řešení. Nepřebírej migrační barevné významy, neověřené kauzální závěry ani datové rozsahy.

@@ -8,17 +8,17 @@
 
 - Po převzetí soutěžního zadání si nejprve **jen přečti** jeho úplné znění, pravidla a existující dokumentaci/datové katalogy.
 - Odpovídej **krátce česky**: typicky 2–5 vět nebo maximálně 3 stručné body. Nezahlcuj dlouhými plány, tabulkami a 10 otázkami najednou.
-- Nabídni **2–3 reálně odlišné směry**, případně jeden, pokud je jasně nejlepší. U každého v jedné větě řekni přínos a hlavní riziko; označ doporučenou variantu.
+- Nabídni **2–3 reálně odlišné, ambiciózní směry**, případně jeden, pokud je jasně nejlepší. U každého uveď *velkou vizi* i *funkční jádro demonstrace*, konkrétní přínos a hlavní riziko. Nehledej nejmenší kalkulačku, ale největší ověřitelný průlom v limitu. Doporuč jednu variantu.
 - Polož **jednu konkrétní otázku pro volbu směru**; další otázku polož po odpovědi. Pokud není jasné měřítko, uživatel, data, výstup nebo časový limit, zeptej se cíleně.
 - Nevydávej návrh mapy, ML ani vybraného příkladu automaticky za správné řešení. Letošní zadání má přednost.
 
 ### 2. Schvalovací bod před implementací
 
 Po vyjasnění krátce shrň:
-- **Co postavíme:** jedna věta o problému a výsledku.
+- **Co postavíme:** jedna věta o závažném problému, výjimečném mechanismu a velké vizi; odděl část skutečně proveditelnou v soutěžním limitu.
 - **Jak ověříme přínos:** baseline, 1–3 metriky a zdroje, známé limity.
 - **Co už máme:** použitelné části EnergoMapy, grafů a prezentace.
-- **Co dodáme:** demo, výpočty, prezentace a případně video; co naopak neděláme.
+- **Co dodáme:** nejtěžší funkční část, demo, výpočty, přesvědčivou prezentaci a případně video; co naopak odložíme. Zohledni časový plán `MOONSHOT_STRATEGY.md`.
 
 Pak polož explicitní otázku: **„Souhlasíš s tímto směrem a mám začít implementovat?“**
 
@@ -31,7 +31,8 @@ Pracuj samostatně na dohodnutém rozsahu. **Ptej se často, když existují sku
 - chybějící data, slabé pokrytí, nekompatibilní roky či nejisté předpoklady,
 - finance, emisní faktory, měřítko pilotu, technická proveditelnost,
 - zásadní vzhled dema/slidu, příběh pitch, efekty, zda má smysl video,
-- změna rozsahu, licenční či publikační omezení, riziko rozbití funkce.
+- změna rozsahu, licenční či publikační omezení, riziko rozbití funkce,
+- okamžik, kdy je nutné zvolit, které vedlejší funkce zahodit a které nejcennější jádro stabilizovat.
 
 Otázku formuluj krátce ve stylu: **„Narazil jsem na X. Doporučuji A kvůli Y, druhá možnost je B. Kterou chceš?“** Když je to možné, pokračuj mezitím na nezávislých úkolech. Na odpověď nečekej kvůli drobnostem, které lze snadno vrátit a neovlivní směr (pojmenování proměnné, výběr testovací funkce, rutinní oprava).
 
@@ -41,7 +42,8 @@ Neopakuj již zodpovězené otázky. Pokud je rozhodnutí už schválené, drž 
 
 - Po smysluplném milníku napiš jednu krátkou zprávu: co funguje, co právě řešíš, případně jednu otázku.
 - Nezahlcuj technickými logy ani falešným ujišťováním. Nenechávej uživatele dlouho bez informace.
-- Po dokončení dej odkaz na demo, výsledky, ověření a otevřené otázky. Před zveřejněním/merge se zeptej, pokud souhlas nebyl výslovně součástí dohody.
+- **První funkční verze není konec.** Nejprve kriticky zhodnoť originalitu, technickou hloubku, důkaz a sílu pitch; nabídni podstatná zlepšení. Je-li před deadlinem rezerva, se souhlasem uživatele přidej další kvalitní iteraci, neodevzdávej jen kvůli splněným testům.
+- Na konci dej odkaz na demo, výsledky, ověření a otevřené otázky. Před zveřejněním/merge se zeptej, pokud souhlas nebyl výslovně součástí dohody.
 - Neuváděj „hotovo“ u věcí, které ještě nejsou otestované nebo nasazené. Zachovej pravidla zdrojování a oprávnění z `AGENTS.md`.
 
 ## Ukázkový rozhovor

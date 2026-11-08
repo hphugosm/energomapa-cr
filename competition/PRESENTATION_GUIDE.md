@@ -1,56 +1,50 @@
-# Prezentační šablona
+# Prezentace: přesvědčit porotu, ne obcházet web
 
-Funkční základ v `public/prezentace/`, inspirovaný ovládáním TT-Decin. Čistý HTML/CSS/JS, žádné přihlašování, CDN nebo AI API.
+**Povinné převzaté funkce z Děčína jsou pouze:** šipky pro navigaci (klávesnice i viditelná tlačítka) a čitelný ručně ovladatelný časovač. **Všechno ostatní je volné**: vlastní vizuální styl, animace, interaktivní prototyp, 3D, diagramy, přechody, pořadí a počet snímků. Dodržuj přístupnost a identitu týmu. Snímky není nutné skládat ze šesti předem nadefinovaných typů.
 
-## Obsah versus engine
+## Hlavní otázka
 
-Upravuj primárně `deck.json`. `app.mjs` řeší přepínání, grafy, mapové iframe a časovač; `tokens.css` design; `math.mjs` testovatelné výpočty. Změna projektu nesmí vyžadovat přepsání enginu.
+Po pěti minutách musí porota přesně vědět:
+1. **Jakou skutečnou bolest řešíme?** Kdo na ni doplácí a proč současný stav nestačí?
+2. **V čem je náš vlastní technický průlom?** Jak mechanismus funguje a proč je lepší než jednoduchá baseline?
+3. **Co jsme opravdu postavili a ověřili?** Živá demonstrace, čísla, ekonomická logika, hlavní rizika a podmínky pilotu.
 
-Dostupné typy snímků:
+Jestli prezentace jen ukazuje data, mapu, kalkulačku a použité knihovny, přepiš **příběh**, ne pouze CSS.
 
-| type | Smysl | Pole navíc |
-|---|---|---|
-| title | problém, cílový uživatel | lead |
-| chart | skutečná časová řada z existujícího MetricEngine | metric, territory, normalization |
-| map | živá EnergoMapa | frame |
-| steps | mechanismus řešení | items: title/text |
-| economics | transparentní kalkulačka | vstupy zadá uživatel |
-| conclusion | pilot, výsledek, omezení | lead, items |
+## Vlastní dramaturgie
 
-Každý snímek má unikátní `id`, `title`, rozpočet `seconds` a neveřejné při projekci `notes`. `template: true` ukazuje upozornění na pracovní šablonu; nastav `false` až po doplnění zadání, důkazů a kontroly. Výchozí příklad populace není argument pro konkrétní energetický návrh.
+Nejde o povinných šest slidů ani o pevný čas pro mapu. Připrav nejsilnější posloupnost podle vybraného nápadu, například:
+- **Šok / konflikt:** konkrétní problém, překvapivé srovnání, přímý důsledek.
+- **Proč dnes selhává řešení:** co neumí běžný postup.
+- **Náš mechanismus:** nejtěžší technický nápad s názornou animací nebo interaktivním scénářem.
+- **Důkaz:** funkční demo, validace proti baseline, přínos a ekonomika, i když výsledek není pozitivní.
+- **Dopad / pilot:** co už funguje, co je předpoklad, co ověříme dál a proč má koncept cenu.
 
-Příklad konfigurace grafu:
+Každý slide/scéna má diváka posunout v argumentu. Vyhoď opakované KPI, dlouhé formuláře, generické „naše řešení“ a zbytečné podrobnosti. Promítací slidy mají být čitelné na dálku; pracovní formuláře patří do dema, nikoli na hlavní projekci.
 
-```json
-{"id":"proof","type":"chart","title":"Konkrétní doložitelný závěr","metric":"population","territory":"CZ042","normalization":"absolute","seconds":45,"notes":"Co přesně z grafu plyne a co nikoli."}
-```
+## Animace jsou nástroj dokazování
 
-Platná ID a jednotky zkontroluj přes `tools/competition.mjs check` a katalog. Graf používá existující agregace, nikoli vlastní sčítání. Má tabulkovou alternativu, rok, zdroj a omezení. Volbu metriky mění Codex v JSON, uživatel nepřepisuje data.
+Použij **více smysluplných vizuálních odhalení**, kdykoli pomáhají pochopit mechanismus nebo rozdíl: postupná stavba modelu, pohyb energie sítí, přiblížení mapy, změna jediné proměnné, průchod optimalizací, kumulovaný ekonomický dopad, hypotéza → naměřený výsledek. Nekopíruj konkrétní děčínské animační triky, převeď **jejich příběhovou funkci** do nového tématu.
 
-## Mapy
+- Animace musí fungovat v běžném režimu; **samostatně** ověř `prefers-reduced-motion`.
+- Při rychlém přepínání, návratu a změně rozlišení nesmí vznikat rozbité stavy.
+- Grafy nesmějí vizuálně přikrášlovat výsledky. Jednotky, období, baseline a zdroj jsou součástí důkazu.
+- Nedělej slideshow plnou animací bez obsahu; náročnější animace mají tvořit přímo pochopení průlomu.
 
-Konfigurace `frames` obsahuje ID a relativní URL. Například:
+## Technické možnosti
 
-```json
-{"energy-map":{"url":"../?metric=solar_capacity&territory=CZ&normalization=absolute","title":"Licencovaný přiřazený výkon FVE"}}
-```
+Základ `public/prezentace/` funguje, ale je jen **startovní komponenta**. `deck.json`, `app.mjs`, `math.mjs` a CSS můžeš **zásadně rozšířit, nahradit nebo reorganizovat** podle příběhu. Dosavadní typy `title/chart/map/steps/economics/conclusion` nejsou seznam povinných ani maximálních typů. Pokud pro funkční simulaci potřebuješ vlastní renderer, přidej jej a změň testy odpovídajícím způsobem; nepodřizuj nápad jedné šabloně.
 
-Více slidů se stejným `frame` sdílí jediný zachovaný iframe. Různá nastavení map musí mít různá ID. Iframe se nepřesouvá ani znovu nenačítá při návratu. Přednačítá se nejvýše další mapový slide. Bezpečnostně jsou povoleny jen URL stejného originu; nevkládej cizí stránky nebo tajné tokeny. Po přechodu z mapy se pozastaví její přehrávání a média. Aktuální implementace očekává mapu s prvkem `#map`, ne libovolný cizí dashboard.
+Živou EnergoMapu vlož jen tam, kde něco dokazuje; pokud potřebuješ samostatné interaktivní demo, udělej samostatnou scénu. S mapou a formulářem musí fungovat šipky (mimo aktivní textové vstupy a widgety), stopky musí zůstat přístupné. Ostatní volby, včetně rozcestníku a fullscreen, jsou volitelné.
 
-Prezentace zachovává šipky i po kliknutí do mapy. Pole, posuvníky a otevřené dialogy mají přednost. Esc vrací do rozcestníku, F přepíná fullscreen. Časovač se spouští a pauzuje kliknutím; změna snímku ho neresetuje. Při opuštění prezentace nebo skrytí karty se pozastaví.
+## Povinné ověření před odevzdáním
 
-## Doporučený příběh na 5 minut
+- Je jasná vlastní technická novost, ne jen obecná výhoda technologie?
+- Funguje klíčová demonstrace v živém prohlížeči a lze ji zopakovat? Existuje záložní video/screenshot?
+- Rozumí divák grafu za 3 sekundy? Je definovaný zdroj, jednotka, rok a baseline?
+- Prošel celý příběh nahlas do **300 sekund**, včetně animací a dema?
+- Šipky a časovač fungují i na 1280×720. Test běžného pohybu a reduced-motion byl proveden **odděleně**.
+- Poslední video, PDF a web vycházejí z **téže finální verze**. Nezaměňuj export bez animací za důkaz jejich absence v živé verzi.
+- Před „hotovo“ proveď soutěžní kritiku: *čím přesvědčíme porotu, že jde o něco mimořádného?* Oprav největší slabinu, pokud čas zbývá.
 
-30 s problém → 45 s důkaz → 55 s lokalita/demo → 55 s mechanismus → 65 s výsledky a ekonomika → 35 s pilot a omezení. Zbývá 15 s rezerva. Je to šablona, ne povinné pořadí. U tématu komunikace nebo regulace nahradit mapový slide vhodným prototypem; není důvod mapu násilně použít.
-
-Každé tvrzení formuluj jako výsledek, nikoli název kapitoly. Výsledek modelu doplň baseline a podmínkami. K prototypu řekni, co skutečně funguje a co je jen návrh. Při diskusi měj po ruce detail zdrojů a alternativní varianty.
-
-## Ekonomika a export
-
-Formulář vyžaduje explicitní investici, roční hrubý přínos, roční náklady, horizont a diskont. Zdroj parametrů ulož do projektové evidence. Pro finální vystoupení je lepší výsledky předem ověřit a prezentovat jako KPI a graf, ne ztrácet čas vyplňováním.
-
-Rozcestník umožňuje stáhnout poznámky jako Markdown. Print CSS je záloha textů a již načtených grafů; není slíbený věrný PDF export živé mapy. Před tiskem navštiv grafové snímky, mapy nahraď ověřenými screenshoty a tisk vizuálně zkontroluj. Obdobně screenshot musí obsahovat legendu, zdroj, datum a jednotku.
-
-## Prohlížečové testy
-
-Ověř hlavní projektové URL i podcestu `/energomapa-cr/prezentace/`, šipky, Esc, fullscreen, časovač, mapový focus, zachování nastavení při návratu, rozměry 1440×900 a 1280×720, chybějící zdroj, reduced motion a lokální start bez internetu. Samotné otevření HTML není plný smoke test.
+Výchozí rozpočet 285 sekund + 15 sekund rezervy lze změnit podle obsahu; limit 5 minut ale platí pro celý pitch.

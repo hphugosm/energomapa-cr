@@ -14,6 +14,33 @@
 |---|---|---|---|
 | | | | |
 
+## Ambiciózní vize a pětihodinové jádro
+- **Velká vize:** Co by byl skutečný průlom, i kdyby celý systém zabral týdny?
+- **Originální mechanismus:** Co nově umíme oproti současnému stavu / běžné kalkulačce?
+- **Pracující důkaz:** Jakou technicky nejtěžší část musíme opravdu zprovoznit?
+- **Baseline:** Jak ukážeme rozdíl proti jednoduchému postupu?
+- **Závažná rizika:** Kritické neznámé, data, fyzika, ceny, legislativa.
+
+## Milníky (reálný start a deadline)
+- Start, skutečný deadline, čas zbývající:
+- Do ~30 min schválení konceptu:
+- Do ~90 min technický spike:
+- Do ~210 min funkční end-to-end jádro:
+- Do ~255 min stabilizace a odsouhlasené škrty:
+- Do ~300 min prezentace, odevzdání, záloha:
+- **Pokud skončíme dříve:** co významného zlepšíme?
+
+## Prioritizace
+| MUST · jádro a důkaz | SHOULD · posílení | CUT FIRST · volitelné |
+|---|---|---|
+| | | |
+
+## Kritika po první funkční verzi
+- Není to jen kalkulačka nebo mapa? Co je opravdu nové?
+- Která skutečně hotová funkce působí jako průlom?
+- Kde by porota projekt rozebrala? Co opravíme v iteraci 2?
+- Rozhodnutí uživatele a provedené zlepšení:
+
 ## Jedna věta
 Pomáháme [komu] vyřešit [problém] pomocí [mechanismu]; úspěch měříme [ukazatelem].
 

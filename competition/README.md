@@ -6,7 +6,7 @@ Podklady pro práci přes Codex. Žádný chatbot v aplikaci, serverový AI back
 
 | Potřeba | Kde začít |
 |---|---|
-| Postup dialogu, schválení a průběžné otázky | `COLLABORATION.md`, `../AGENTS.md`, `../README_CODEX.md` |
+| Dialog a velká soutěžní strategie | `COLLABORATION.md`, **`MOONSHOT_STRATEGY.md`**, `../AGENTS.md`, `../README_CODEX.md` |
 | Barvy, typografie, grafy, slidy | `DESIGN_SYSTEM.md`, `../public/prezentace/tokens.css` |
 | Funkční webová prezentace | `../public/prezentace/index.html`, obsah `deck.json` |
 | Struktura a ovládání pitch | `PRESENTATION_GUIDE.md` |
@@ -35,7 +35,7 @@ Web nevyžaduje npm build ani CDN. Mapa, graf a katalog používají existujíc�
 
 ## V den finále
 
-Vlož přesné znění zadání do Codexu a řekni: „Postupuj podle `AGENTS.md` a `competition/COLLABORATION.md`. Nejprve se mnou stručně prober řešení, nepouštěj se zatím do práce.“ Codex navrhne 2–3 směry, doporučí jeden a položí jednu otázku. Až spolu schválíte konkrétní řešení a výslovně odsouhlasíš začátek implementace, má vyplnit projektovou šablonu, spočítat varianty a upravit `public/prezentace/deck.json`. Během práce se znovu ptá, pokud vyvstane skutečná obsahová, ekonomická, datová nebo prezentační volba. Hotová prezentace nesmí zůstat pracovním příkladem.
+Vlož přesné znění zadání do Codexu a řekni: „Postupuj podle `AGENTS.md` a `competition/COLLABORATION.md`. Nejprve se mnou stručně prober řešení, nepouštěj se zatím do práce.“ Codex navrhne 2–3 **ambiciózní** směry, doporučí jeden a položí jednu otázku. Až spolu schválíte řešení a výslovně odsouhlasíš začátek implementace, má vytvořit **technicky náročné, ale funkční soutěžní jádro** a pak jej tvrdě zkritizovat. První hotová verze není konec práce. Během vývoje se ptá na podstatná rozhodnutí, s blížícím se deadlinem ořezává méně důležité funkce. `public/prezentace/` a `deck.json` lze svobodně změnit nebo nahradit: povinné jsou **jen šipky a časovač**. Pětiminutový pitch musí prodat hodnotu řešení, ne seznam funkcí.
 
 Role lze rozdělit: jeden hlídá data, výpočty a demo, druhý problém, mentora, ekonomické vstupy a argumentaci. Nejde o pevné rozdělení jmen. Každý musí umět vysvětlit výsledek i jeho hranice.
 
@@ -45,7 +45,7 @@ Oficiální stránka ENOL uvádí finále 12.–13. 11. 2026, práci na tématec
 
 Zdroj ověřený 7. 11. 2026: https://www.energeticka-gramotnost.cz/olympi%C3%A1da
 
-Šablona plánuje 285 sekund řeči + 15 sekund rezervy. Je to náš návrh, ne pravidlo soutěže. Orientační pracovní rozpočet při 4 hodinách: 20 min problém a mentor, 80 min výpočet/demo, 45 min ekonomika a rizika, 45 min prezentace, 30 min nácvik a záloha. Přizpůsobte skutečně oznámenému času.
+Šablona plánuje 285 sekund řeči + 15 sekund rezervy, pouze jako výchozí příklad. Pro **modelový pětihodinový limit**: 0–30 min volba velké vize a odsouhlasení, 30–210 min intenzivní stavba nejtěžšího jádra, 210–255 min stabilizace a škrty, 255–300 min pitch, kontrola a záloha. **Když je první verze hotová dřív, navazuje kritika a další iterace.** Skutečný limit má vždy přednost. Podrobně `MOONSHOT_STRATEGY.md`.
 
 ## Vědomé hranice první sady
 

@@ -1,6 +1,6 @@
 # Design manuál
 
-Základ: osvědčený světlý datový styl TT-Decin, nikoli nový redesign. Zdroj: https://github.com/hphugosm/TT-Decin/blob/main/BRAND_BIBLE.md a pravidla prezentace `prezentace/AGENTS.md` v témže repozitáři.
+**Výchozí inspirace, ne závazná šablona.** Na soutěži má prezentace přesvědčivě odvyprávět silný nápad; Codex smí navrhnout úplně novou kompozici, scénu, grafický styl i animace, pokud zachová konzistentní identitu Týmu Trampolín, čitelnost a pravdivost dat. Z Děčína jsou pro prezentaci povinné **pouze šipky a časovač**. Referenční paleta vychází z https://github.com/hphugosm/TT-Decin/blob/main/BRAND_BIBLE.md; nevyžaduje stejný layout.
 
 ## Tokeny
 
@@ -21,7 +21,7 @@ Font: Inter, pokud je už nainstalovaný; jinak systémový sans-serif. Nevázat
 
 ## Kompozice
 
-Prezentace: obsahový nadpis vlevo nahoře, malý název projektu vpravo. Žádné drobné horní „01 / PROBLÉM“, opakované spodní závěry ani ozdobné panely navíc. Jedna myšlenka na snímek. Mapa může vyplnit celý snímek; navigace a časovač zůstávají pod ní.
+**Volná dramaturgie:** každý snímek nebo animovaná scéna má jednu silnou hlavní myšlenku; polohu nadpisů, množství map, panelů, grafů i typografii lze změnit. Nepředepisuj formát obrázků ani počet scén. Navigace šipkami a časovač musí zůstat použitelné i nad živým demem.
 
 16:9 je cílová projekce, rozhraní se přizpůsobí i 16:10. Nadpis 32–58 px, text přibližně 24–32 px, grafy alespoň 16 px; ověřit na projektoru. Zdroj a rok nesmí zmizet kvůli estetice. Rohy 14 px, rozestupy násobky 8, 12, 16 a 24 px. Bílé karty, jemné okraje, minimum stínů.
 
@@ -38,7 +38,7 @@ Prezentace: obsahový nadpis vlevo nahoře, malý název projektu vpravo. Žádn
 
 ## Komponenty k opětovnému použití
 
-`title-slide`, `cards`, `chart-panel`, `metric-value`, `source-note`, `econ-layout` a iframe živé mapy jsou hotové v `public/prezentace/`. Nový slide je nová konfigurace nebo malý renderer, ne kopie celého webu.
+`title-slide`, `cards`, `chart-panel`, `metric-value`, `source-note`, `econ-layout` a iframe živé mapy jsou hotové v `public/prezentace/`. Nový slide může být samostatná speciální scéna, animované srovnání nebo vlastní renderer. Stávající komponenty recykluj, pokud pomáhají; nepodřizuj jim příběh.
 
 Pro diagrams použij tři čitelné bloky vstup → rozhodnutí → výstup; tok energie odliš od peněz. Pro video použij stejné tokeny, úvodní a závěrečný snímek. Nenavrhovat nové logo. Text „Tým Trampolín“ je označení týmu, nikoli náhrada schválené značky.
 
