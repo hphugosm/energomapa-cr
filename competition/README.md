@@ -17,6 +17,7 @@ Podklady pro práci přes Codex. Žádný chatbot v aplikaci, serverový AI back
 | Video a offline záloha | `VIDEO_GUIDE.md` |
 | Co zachováváme z Děčína | `DECIN_PARITY.md` |
 | Ověření před publikací | `QA_CHECKLIST.md` |
+| Přínos, skutečný uživatel a úplné odevzdání | **`REALITY_CHECK.md`** |
 
 ## Spuštění
 
@@ -45,7 +46,7 @@ Oficiální stránka ENOL uvádí finále 12.–13. 11. 2026, práci na tématec
 
 Zdroj ověřený 7. 11. 2026: https://www.energeticka-gramotnost.cz/olympi%C3%A1da
 
-Šablona plánuje 285 sekund řeči + 15 sekund rezervy, pouze jako výchozí příklad. Pro **modelový pětihodinový limit**: 0–30 min volba velké vize a odsouhlasení, 30–210 min intenzivní stavba nejtěžšího jádra, 210–255 min stabilizace a škrty, 255–300 min pitch, kontrola a záloha. **Když je první verze hotová dřív, navazuje kritika a další iterace.** Skutečný limit má vždy přednost. Podrobně `MOONSHOT_STRATEGY.md`.
+Šablona plánuje 285 sekund řeči + 15 sekund rezervy, pouze jako výchozí příklad. Pro **modelový pětihodinový limit**: 0–30 min volba velké vize a odsouhlasení, 30–100 min experiment proti silné baseline a test nejcitlivějšího předpokladu, 100–210 min intenzivní stavba nejtěžšího jádra, 210–255 min stabilizace a škrty, 255–300 min pitch, shodné finální exporty a rozbalení/spuštění odevzdání v čistém prostředí. První třetina se počítá od startu včetně diskuse; milník nikdy nenahrazuje souhlas uživatele. **Když je první verze hotová dřív, navazuje kritika a další iterace.** Skutečný limit má vždy přednost. Podrobně `MOONSHOT_STRATEGY.md` a `REALITY_CHECK.md`.
 
 ## Vědomé hranice první sady
 

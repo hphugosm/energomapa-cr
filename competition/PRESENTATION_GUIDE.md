@@ -6,7 +6,7 @@
 
 Po pěti minutách musí porota přesně vědět:
 1. **Jakou skutečnou bolest řešíme?** Kdo na ni doplácí a proč současný stav nestačí?
-2. **V čem je náš vlastní technický průlom?** Jak mechanismus funguje a proč je lepší než jednoduchá baseline?
+2. **V čem je náš vlastní technický průlom?** Jak mechanismus funguje a jak obstál proti silné férové baseline?
 3. **Co jsme opravdu postavili a ověřili?** Živá demonstrace, čísla, ekonomická logika, hlavní rizika a podmínky pilotu.
 
 Jestli prezentace jen ukazuje data, mapu, kalkulačku a použité knihovny, přepiš **příběh**, ne pouze CSS.

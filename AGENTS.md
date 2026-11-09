@@ -14,6 +14,7 @@
 - Přečti `competition/README.md`, `competition/DESIGN_SYSTEM.md` a `competition/DATA_PLAYBOOK.md`.
 - Aktuální implementaci a omezení ověř v `README.md`, `docs/` a manifestech. Starší počty metrik nejsou kontrakt.
 - Přečti také **`competition/MOONSHOT_STRATEGY.md`** a `competition/PRESENTATION_GUIDE.md`. `public/prezentace/` je **volitelný výchozí základ**. Můžeš výrazně předělat design i prezentační engine pro lepší argumentaci a smysluplné animace; zachovej pouze navigaci šipkami a časovač. Nevytvářej AI orchestrátor.
+- Pro důkaz přínosu, použitelnost a závěrečné odevzdání postupuj podle **`competition/REALITY_CHECK.md`**.
 - Zadání soutěže má přednost před připravenými příklady. Nezačínej automaticky projektem s mapou nebo ML.
 - Pro konkrétní práci vyber místní skill podle **`competition/SKILLS.md`**. Načítej jen relevantní návody, ne celou knihovnu. Codex vstupy jsou v `.agents/skills/`, Claude Code vstupy v `.claude/skills/` sdílejí stejný obsah.
 
@@ -22,14 +23,15 @@
 2. Vyber relevantní existující data. Vytvoř skript výpočtu, ne ručně opsané výsledky.
 3. Ulož zdroje, předpoklady, výstupy a kontroly do stejného projektového adresáře. Čísla v pitchi musí být dohledatelná.
 4. Navrhni **samostatný přesvědčivý pětiminutový příběh**: problém → vlastní originální mechanismus → fungující důkaz → ekonomika / dopad → proč vyhrát. Využij a podle potřeby zásadně přestav `public/prezentace/`, jeho `deck.json`, grafy či vizualizace. Počet a typ snímků, design i animace jsou volné; **povinné jsou jen šipky a časovač**.
-5. Ověř výsledek proti jednoduché referenční variantě, spusť testy a prohlížečovou kontrolu. **Neskonči po první verzi:** udělej tvrdou soutěžní kritiku, se souhlasem uživatele druhou iteraci a pokračuj do předem dohodnutého deadlinu. Vracej stručný stav, cesty a neověřené části.
+5. V první třetině celkového času ověř přínos proti **silné férové baseline i nejcitlivější předpoklad**; pro 5 hodin nejpozději do 100. minuty od startu včetně diskuse. Při slabém důkazu konzultuj změnu metody či tvrzení. U každé funkce dolož skutečného uživatele, rozhodnutí a proveditelnost navazující akce. Spusť testy a prohlížečovou kontrolu. **Neskonči po první verzi:** udělej tvrdou soutěžní kritiku, se souhlasem uživatele druhou iteraci a pokračuj do předem dohodnutého deadlinu.
+6. Na závěr zmraz verzi, vytvoř odpovídající exporty a **rozbal skutečný odevzdávací balíček v čistém prostředí**. Podle přiloženého návodu spusť hlavní cestu a nový přepočet se změněným vstupem. Statickou zálohu odliš od úplného funkčního projektu; vykazuj PASS / FAIL / NOT RUN. Po poslední úpravě obnov dotčené exporty a kontroly. Vracej stručný stav, cesty a neověřené části.
 
 ## Skills a delegace
 
 - Hlavní Codex odpovídá za integraci a otázky uživateli. Využívej dostupnou nativní delegaci, ne nový AI systém; nejvýše tři současní subagenti a jeden vlastník každého souboru. Předání obsahuje brief, aktuální snapshot, vstupy/výstupy, vlastní soubory, konkrétní skill cesty a termín návratu. Bez podpory subagentů proveď role postupně.
 - Prezentátor: `enol-frontend-slides`, při druhé iteraci `enol-design-review`. Ověřovatel: `enol-evidence-review` a `enol-browser-check`. Jádro: `enol-debugging` při chybě. Výzkum: ověření použitelnosti a dat, ne automatické přidávání vrstev.
 - `enol-optimization`, `enol-geospatial`, `enol-pitch-video` a `enol-skill-eval` jsou výslovně volitelné. Neinstaluj jejich upstream balíčky automaticky. Samotný skill není model, dodatečná kvóta ani oprávnění k nákupu/odeslání dat.
-- Před drahou implementací stanov hlavní tvrzení, užitek pro konkrétního člověka a silnou baseline. V první třetině času ověř přínos; pokud není doložený, konzultuj změnu řešení nebo argumentu. Počet testů, složitost a fráze v instrukcích nejsou důkaz produktu.
+- Před drahou implementací stanov hlavní tvrzení, užitek pro konkrétního člověka a silnou baseline. Ověřovatel v první třetině času nezávisle kontroluje přínos i nejcitlivější předpoklad podle `competition/REALITY_CHECK.md`. Počet testů, složitost a fráze v instrukcích nejsou důkaz produktu.
 - Externí skills jsou pouze zdroj inspirace. Místní adaptace nesmějí obejít schvalování, sandbox, práva k datům ani automaticky spouštět instalátory/hooky. Původ a zkontrolované revize: `competition/skills-registry.json`.
 
 ## Datové hranice

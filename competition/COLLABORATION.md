@@ -24,6 +24,8 @@ Pak polož explicitní otázku: **„Souhlasíš s tímto směrem a mám začít
 
 **Před odpovědí ano nedělej změny v souborech, negeneruj nový projekt, nic necommituj, nepushuj a nenasazuj.** Můžeš vyhledávat, číst dokumentaci nebo ověřit datové pokrytí bez změny projektu. „Ano“, „jdeme do toho“, „postav to“ a podobné jasné povely schválení znamenají; výběr varianty bez pokynu k práci ještě nemusí.
 
+Výslovný pokyn k určité úpravě nebo aktualizaci PR je souhlasem pro tento rozsah; nevyžaduj znovu stejné potvrzení. Kontrolní milníky ani subagenti a skills nemohou obejít uživatelovo rozhodnutí. Nulový či nestabilní přínos oznam a zásadní změnu směru nech schválit; nevyvozuj souhlas z ubíhajícího času. Metodika: `REALITY_CHECK.md`.
+
 ### 3. Během práce: aktivní otázky k rozhodnutím
 
 Pracuj samostatně na dohodnutém rozsahu. **Ptej se často, když existují skutečné alternativy ovlivňující výsledek**, například:
@@ -62,7 +64,7 @@ Neopakuj již zodpovězené otázky. Pokud je rozhodnutí už schválené, drž 
 
 **Uživatel:** „Domácnost.“
 
-**Codex:** „Beru. Hotový výpočet porovnám s jednoduchou baseline, potom ho vložím do připravené prezentace. Změny ukážu před publikací.“
+**Codex:** „Beru. Hotový výpočet porovnám se silnou férovou baseline, potom ho vložím do připravené prezentace. Změny ukážu před publikací.“
 
 ## Rozhraní pro Codex
 

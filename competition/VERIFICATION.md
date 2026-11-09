@@ -1,5 +1,16 @@
 # Ověření soutěžní sady
 
+## Aktualizace instrukcí po třech nácvicích · 9. 11. 2026
+
+- `npm test`: **141/141** testů prošlo, včetně pěti nových dokumentačních kontraktů v `tests/competition-workflow.test.mjs`.
+- `node --test tests/competition-workflow.test.mjs tests/skills.test.mjs`: **16/16** kontrol prošlo (podmnožina celkové sady).
+- `node tools/competition.mjs check`: platná výchozí prezentace, 6 snímků, 285/300 sekund a 22 metrik. Počet snímků není požadavek nových projektů.
+- `git diff --check`: bez chyb. Mění se instrukce, šablona, checklist, metodika a kontrolní scénáře; aplikační kód, data a workflow zůstávají stejné.
+- Čtyři nové behaviorální scénáře v `skills-evals.json` mají stav **`not_run`**. Tyto kontroly neprokazují chování modelu, zlepšení proti minulým nácvikům ani funkčnost odevzdání nového soutěžního projektu. Čisté rozbalení je povinnost pro jeho skutečný finální balíček, nikoli tvrzení o provedeném testu zde.
+- Python pipeline ani prohlížečové testy se při této dokumentační změně lokálně znovu nespouštěly. Celý PR ověřuje konkrétní GitHub Actions běh; jeho výsledek je nutné zkontrolovat po aktualizaci větve. PR se nemerguje a main se nemění.
+
+## Původní ověření první sady
+
 Výchozí aplikace: EnergoMapa 0.6.1, commit `94d30a807f307c67afd1c1bcc3a3c5a56ea59545`. Testování podkladů 7. 11. 2026.
 
 ## Provedeno lokálně

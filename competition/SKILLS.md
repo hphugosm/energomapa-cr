@@ -23,9 +23,9 @@ Použití v místním Codexu: `$enol-frontend-slides`; v místním Claude Code: 
 Hlavní Codex komunikuje s uživatelem, odpovídá za výsledek a podle možností běžného klienta deleguje **nejvýše třem současně pracujícím subagentům**. Tento soubor nespouští žádné procesy ani neimplementuje agentní síť. Když delegace není dostupná, proveď role postupně a přiznej to.
 
 - **Před schválením:** výzkum a evidence pouze čtou. Hlavní agent nabídne možnosti, doporučí jednu a položí jednu otázku. Žádné skills nesmějí obejít schválení implementace.
-- **Po schválení:** jádro staví; prezentátor současně připravuje příběh a demo; nezávislý ověřovatel připraví silnou baseline a ověří nejriskantnější tvrzení v první třetině času. Průzkumníka zapoj místo některé role, když chybí podstatná data.
+- **Po schválení:** jádro staví; prezentátor současně připravuje příběh a demo; nezávislý ověřovatel v první třetině celkového času otestuje přínos proti silné férové baseline **i nejcitlivější předpoklad**, podle `REALITY_CHECK.md`. Hlídá stejné informace, omezení a rozpočet obou metod. Průzkumníka zapoj místo některé role, když chybí podstatná data.
 - **Druhá iterace:** evidence review řeší užitek, design review čitelnost/příběh, browser check skutečné chování. Nejsou zaměnitelné.
-- **Finále:** hlavní agent integruje a ořezává; nikdo už bez dohody nerozšiřuje rozsah. Web a exporty ze stejné verze.
+- **Finále:** hlavní agent integruje a ořezává; nikdo už bez dohody nerozšiřuje rozsah. Ověřovatel kontroluje skutečného uživatele, rozhodnutí a proveditelnost každé funkce. Web a exporty mají stejnou zmrazenou verzi; skutečný odevzdávací archiv se rozbalí v čistém prostředí a musí zvládnout i nový přepočet. Statická záloha a úplný projekt jsou odlišné výstupy, kontroly PASS / FAIL / NOT RUN podle `REALITY_CHECK.md`.
 
 Každé delegaci dej: schválený brief + snapshot/commit, konkrétní cíl, vstupy, 1–2 relevantní skill cesty, vlastněné soubory, rozhraní výstupu, termín návratu, důkaz dokončení a hranici oprávnění. Jeden soubor má jednoho vlastníka; při společném worktree se nepřekrývat, při oddělených worktrees integruje vedoucí. Ověřovatel nemění vývojářův model ani dodatečně nepřepisuje metriky úspěchu. Subagenti se sami dále nemnoží a otázky jdou přes vedoucího.
 
