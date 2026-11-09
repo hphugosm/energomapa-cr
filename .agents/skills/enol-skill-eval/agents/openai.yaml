@@ -1,0 +1,5 @@
+interface:
+  display_name: "ENOL · testování instrukcí"
+  short_description: "Volitelné porovnání chování agentů"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-09",
+  "integration": "authored-enol-adaptations",
+  "upstreamPackagesInstalled": false,
+  "notes": "Self-contained ENOL guidance informed by reviewed upstream documentation. No upstream code, scripts, templates, fonts, hooks or binaries are vendored. Blob SHAs identify reviewed documents, not installed software versions. Re-review upstream licensing before any later code/asset import.",
+  "skills": [
+    {"id":"enol-frontend-slides","roles":["presentation"],"invocation":"contextual","source":{"repository":"zarazhangrui/frontend-slides","path":"SKILL.md","blobSha":"9b8374bf128db6d5c18921d170bdc6a230808f82"}},
+    {"id":"enol-design-review","roles":["presentation","verifier"],"invocation":"contextual","source":{"repository":"pbakaus/impeccable","path":".agents/skills/impeccable/SKILL.md","blobSha":"4e30d4c63c648012e46002ec15507ba37e52b65d"}},
+    {"id":"enol-browser-check","roles":["verifier","presentation"],"invocation":"contextual","source":{"repository":"openai/skills","path":"skills/.curated/playwright/SKILL.md","blobSha":"77c01afb31aa602d0b002ae2438c2b67f0335fcb"}},
+    {"id":"enol-evidence-review","roles":["lead","research","verifier"],"invocation":"contextual","source":{"repository":"K-Dense-AI/scientific-agent-skills","path":"skills/scientific-critical-thinking/SKILL.md","blobSha":"2a2fc151b5b13e4e11ece7410f21a14d5b25e30d"}},
+    {"id":"enol-debugging","roles":["core"],"invocation":"contextual","source":{"repository":"obra/superpowers","path":"skills/systematic-debugging/SKILL.md","blobSha":"62fc752aaef59a8bbed5d305f4cadc60f8ae07ed"}},
+    {"id":"enol-optimization","roles":["core"],"invocation":"explicit","source":{"repository":"K-Dense-AI/scientific-agent-skills","path":"skills/pymoo/SKILL.md","blobSha":"d9ed51c8b5f129393c43383b03ba993ec96ea2c4"}},
+    {"id":"enol-geospatial","roles":["research","core"],"invocation":"explicit","source":{"repository":"K-Dense-AI/scientific-agent-skills","path":"skills/geopandas/SKILL.md","blobSha":"c8f1aa3a3912306b8df89805c6d63c697f27f827"}},
+    {"id":"enol-pitch-video","roles":["presentation"],"invocation":"explicit","source":{"repository":"remotion-dev/skills","path":"skills/remotion-best-practices/SKILL.md","blobSha":"6ba9dfc6b839938d5efa3a4fad5fc3273fdac5e7"}},
+    {"id":"enol-skill-eval","roles":["lead"],"invocation":"explicit","source":{"repository":"anthropics/skills","path":"skills/skill-creator/SKILL.md","blobSha":"65b3a402dbd09b8e83f9d637c6b553875189085c"}}
+  ]
+}

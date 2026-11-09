@@ -1,0 +1,5 @@
+interface:
+  display_name: "ENOL · webový pitch"
+  short_description: "Příběh, animace, šipky a stopky"
+policy:
+  allow_implicit_invocation: true

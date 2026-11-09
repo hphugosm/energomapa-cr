@@ -1,0 +1,5 @@
+interface:
+  display_name: "ENOL · vizuální kritika"
+  short_description: "Cílená revize dema a prezentace"
+policy:
+  allow_implicit_invocation: true

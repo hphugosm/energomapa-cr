@@ -1,0 +1,5 @@
+interface:
+  display_name: "ENOL · optimalizace"
+  short_description: "Volitelná optimalizace s omezeními"
+policy:
+  allow_implicit_invocation: false

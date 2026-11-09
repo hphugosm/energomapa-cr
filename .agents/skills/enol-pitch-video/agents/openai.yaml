@@ -1,0 +1,5 @@
+interface:
+  display_name: "ENOL · pitch video"
+  short_description: "Volitelné video ze stejné finální verze"
+policy:
+  allow_implicit_invocation: false
