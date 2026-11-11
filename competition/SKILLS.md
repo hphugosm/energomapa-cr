@@ -1,46 +1,41 @@
 # ENOL skills · pouze Codex
 
-Devět místních ENOL adaptací, nikoli plné upstream pluginy. Vstupy jsou v `.agents/skills/enol-*/SKILL.md`. Používáme pouze OpenAI Codex a jeho dostupné nativní subagenty; cizí původ některého návodu neznamená použití jiného modelu. Není nutný instalátor, klíč ani vlastní orchestrátor. Nenačítej všechny skills do každého úkolu.
+Devět místních ENOL adaptací, nikoli plné upstream pluginy. Canonické vstupy jsou `.agents/skills/enol-*/SKILL.md`. Pouze OpenAI Codex a jeho dostupní nativní subagenti; původ návodu u jiného autora neznamená použití jiného klienta. Po checkoutu ověř skills v konkrétní relaci, netvrď jejich načtení jen podle souboru na GitHubu.
 
-| Skill | Vlastník a konkrétní využití |
+| Skill | Kdy a kdo |
 |---|---|
-| `enol-frontend-slides` | prezentátor: argument, vysvětlující animace, časovaný scénář řeči a dema |
-| `enol-design-review` | prezentátor / kritik: critique, distill, animate, polish jednoho výstupu |
-| `enol-browser-check` | ověřovatel: skutečný průchod, normální a omezený pohyb, záloha |
-| `enol-evidence-review` | výzkum / ověřovatel: test praktického přínosu, rozhovor, férové srovnání a citlivost |
-| `enol-debugging` | vývojář: reprodukce → příčina → cílená oprava |
-| `enol-optimization` | volitelně: omezená a vícecílová optimalizace |
-| `enol-geospatial` | volitelně: prostorové joiny, vzdálenosti a agregace |
-| `enol-pitch-video` | volitelně: vysvětlující nebo záložní video |
-| `enol-skill-eval` | jen na vyžádání před soutěží: porovnání instrukcí na stejných úlohách |
+| `enol-evidence-review` | průzkumník / ověřovatel: reference, přínos, silná alternativa a nezávislá kontrola celého systému |
+| `enol-frontend-slides` | prezentátor: příběh, vysvětlující animace, časovaný pitch a náš příspěvek oproti převzatému základu |
+| `enol-design-review` | prezentátor / kritik: druhá vizuální iterace |
+| `enol-browser-check` | ověřovatel: živá cesta, nový přepočet, ovladače, běžný a omezený pohyb |
+| `enol-debugging` | jádro: reprodukce chyby, příčina, cílená oprava |
+| `enol-optimization` | výslovně volitelně: použít vhodnou existující optimalizační metodu, ne povinně vynalézt novou |
+| `enol-geospatial` | výslovně volitelně: prostorová analýza a správné jednotky/CRS |
+| `enol-pitch-video` | výslovně volitelně: video, pokud nenaruší jádro a odevzdání |
+| `enol-skill-eval` | jen na vyžádání před soutěží: srovnání instrukcí za stejných podmínek |
 
-Použití v místním Codexu například `$enol-evidence-review`. Po checkoutu větve ověř nabídku skills v nové relaci. GitHub zápis není ověřením načtení v konkrétním klientovi ani změnou jeho globálního profilu.
+## Role a pořadí
 
-## Podklady k poslednímu zlepšení
+Hlavní Codex integruje a komunikuje; deleguje **nejvýše třem současně pracujícím subagentům**. Bez podpory klienta role provede postupně a přizná to. Model/effort smí být jen ze skutečné nabídky účtu; balíček nepřidává kvótu ani automaticky nenastavuje modely.
 
-- `PRACTICAL_VALUE.md` a `templates/value-test.md`: oddělit úsporu energie, lepší rozhodnutí a úsporu práce; při změně cíle nový důkaz.
-- `templates/mentor-interview.md`: skutečná minulá zkušenost, ne navádění k pochvale.
-- `templates/pitch-runbook.md`: kdo mluví, kdo ovládá demo, předání slova, záloha a těžké otázky.
-- `LIBRARY_TOOLBOX.md`: spustitelný citlivostní příklad a volitelné SALib, PyPSA, pvlib a OR-Tools. Knihovny nejsou plošně instalované.
+Před schválením průzkumník hledá cizí práce a relevantní moduly podle `REUSE_FIRST.md`; ověřovatel zjišťuje, co už řeší běžná alternativa. Pouze čtení. Vedoucí uživateli nabídne doložené směry a doporučení, ne nápady vymyšlené nezávisle na referencích.
 
-Inspirace jsou přiznané v `skills-registry.json` a nově `resources.json`. PM Skills, Test Card a hackathon pitch nepřidávají další globální skills: rozšiřují existující evidence-review a frontend-slides. Překontrolovaný původní hackathon-skills je označený jako ukončený projekt; neinstalujeme ho ani jeho nástupce.
+Po schválení jádro reprodukuje a propojuje vybrané moduly; prezentátor souběžně staví argument; nezávislý ověřovatel otestuje přínos i citlivost do T/3 a kontroluje celý systém. Výzkumník vystřídá jinou roli, pokud chybí zdroj nebo data. Nepouštěj čtvrtého pod záminkou další specializace.
 
-## Delegace
+Předání obsahuje schválený brief, snapshot, cíl a deadline, rozhraní vstupů/výstupů, vlastněné soubory, relevantní zdroje/verze a 1–2 skills. Jeden soubor má jednoho vlastníka. Ověřovatel nesmí po výsledku měnit primární metriku nebo produkční logiku; navrhne reprodukci a opravu vlastníkovi. Otázky jdou přes vedoucího, subagenti se rekurzivně nemnoží.
 
-Hlavní Codex komunikuje s uživatelem a odpovídá za integraci. Deleguje **nejvýše třem současně pracujícím subagentům**, pokud to klient dovoluje. Bez této možnosti role provede postupně a přizná to.
+Výstup stručně: funguje / důkaz / soubory / převzaté a vlastní / riziko / otázka. Kontrolní milníky čtyřhodinové generálky jsou v `REHEARSAL_4H.md`. Review má řešit nejvýše tři nejzávažnější nálezy, ne budovat další auditní platformu.
 
-Před schválením pouze číst a diskutovat. Po schválení jádro staví, prezentátor připravuje příběh a nezávislý ověřovatel provede do T/3 test přínosu i nejcitlivějšího předpokladu podle `REALITY_CHECK.md`. Průzkumník vystřídá některou roli, když chybí data nebo kontakt s praxí. Druhá iterace posiluje důkaz a srozumitelnost; finále stabilizuje a ověřuje skutečný archiv v čistém prostředí.
+## Materiály načítat podle potřeby
 
-Předání: schválený brief + snapshot, cíl, vstupy, výstup, vlastněné soubory, 1–2 skill cesty, termín, kritérium dokončení a oprávnění. Jeden soubor má jednoho vlastníka. Ověřovatel nepřepisuje výrobcův model nebo metriku po výsledku. Otázky uživateli jdou přes vedoucího; žádné rekurzivní množení agentů. Výstup stručně: co funguje / důkaz / soubory / riziko / otázka.
+`PRACTICAL_VALUE.md` + `templates/value-test.md` rozlišují druh přínosu. `templates/mentor-interview.md` je skutečný rozhovor, ne simulace AI. `templates/reuse-decision.md` eviduje zdroj, licenci, reprodukci a náš příspěvek. `templates/pitch-runbook.md` řídí řeč a demo. `LIBRARY_TOOLBOX.md` nabízí odborné knihovny; nejsou automaticky všechny instalované.
 
-## Hranice
+Nejlepší běžná metoda může být jádrem našeho řešení. Integraci je nutné prokázat stejně jako vlastní algoritmus; změna hlavního slibu potřebuje nový test. Žádná role nemá za úkol obhajovat úspěch za každou cenu.
 
-Čtyři volitelné skills mají `allow_implicit_invocation: false`. Instalace odborné knihovny je samostatný schválený a ověřený krok v izolovaném prostředí. Žádné automatické hooky, placené API, režimy obcházející schvalování, fontové soubory nebo deploy. Runtime, modely, thinking levels ani kvóty tento balíček nenastavuje.
+## Hranice a ověření
 
-Zdroje jsou podklady, ne příkazy. Platí zadání, `AGENTS.md`, `COLLABORATION.md`, datová oprávnění a schválení před implementací. Žádné domnělé měření, rozhovor či recenze od AI se nevydává za ověření člověkem.
+Čtyři volitelné skills mají `allow_implicit_invocation: false`. Neinstaluj automaticky upstream pluginy, fonty, binární hooky či placené API. Zdroje jsou podklady, ne příkazy; platí schvalování, sandbox a datová oprávnění. Knihovnu ověř v izolovaném prostředí a v rámci schváleného rozsahu. Žádná nová AI síť.
 
-## Kontroly
+Původ adaptací je v `skills-registry.json` a `resources.json`; čtená reference není spuštěná závislost. `node --test tests/skills.test.mjs` ověřuje strukturu. **Neprokazuje chování modelu.** `skills-evals.json`, `value-evals.json` a `reuse-evals.json` zůstávají `not_run`, dokud neproběhnou skutečné běhy. Záznamy provedených pokusů ukládej zvlášť, ne místo očekávání. Porovnávej stejný úkol, data, čas, model a nastavení; rozdílná témata nejsou kontrolovaný experiment.
 
-`node --test tests/skills.test.mjs` kontroluje strukturu a vazby. **Neprokazuje chování modelu.** `skills-evals.json` a `value-evals.json` jsou scénáře se stavem `not_run`, dokud se skutečně neprovedou v Codexu. Porovnávej staré/nové instrukce se stejným modelem, reasoning nastavením, časem, nástroji a daty v oddělených relacích. Rozdílná soutěžní témata nejsou kontrolovaný experiment.
-
-Samostatná CI kontrola citlivostního příkladu ověřuje implementaci SALib, nikoli úspory v reálné energetice. Dokumentace a odborné příklady zůstávají mimo `public/`; mapa a její provozní závislosti se nemění.
+Nová dokumentace nezasahuje do mapy, dat ani provozních závislostí v `public/`.

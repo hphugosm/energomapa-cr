@@ -1,50 +1,32 @@
-# Prezentace: přesvědčit porotu, ne obcházet web
+# Prezentace: přínos a důkaz, ne prohlídka programu
 
-**Povinné převzaté funkce z Děčína jsou pouze:** šipky pro navigaci (klávesnice i viditelná tlačítka) a čitelný ručně ovladatelný časovač. **Všechno ostatní je volné**: vlastní vizuální styl, animace, interaktivní prototyp, 3D, diagramy, přechody, pořadí a počet snímků. Dodržuj přístupnost a identitu týmu. Snímky není nutné skládat ze šesti předem nadefinovaných typů.
+**Povinné převzaté funkce z Děčína jsou pouze šipky a časovač** (viditelný, spuštění/pauza/reset). **Všechno ostatní je volné**: vzhled, animace, struktura, počet a typ scén. Zachovej čitelnost, přístupnost a dohodnutou identitu týmu, nikoli povinný starý layout.
 
-## Hlavní otázka
+## Co má porota pochopit
 
-Po pěti minutách musí porota přesně vědět:
-1. **Jakou skutečnou bolest řešíme?** Kdo na ni doplácí a proč současný stav nestačí?
-2. **V čem je náš vlastní technický průlom?** Jak mechanismus funguje a jak obstál proti silné férové baseline?
-3. **Co jsme opravdu postavili a ověřili?** Živá demonstrace, čísla, ekonomická logika, hlavní rizika a podmínky pilotu.
+Kdo má problém, jak jej řeší dnes, co jsme zpřístupnili nebo zlepšili, jaký je důkaz a kde končí platnost výsledku. Není nutné mít nový algoritmus. Uveď převzatou metodu a náš příspěvek: propojení, data, rozhodovací postup, rozhraní nebo vlastní výpočet. Nepřisvojuj cizí práci a neskrývej, že baseline používá stejnou knihovnu.
 
-Jestli prezentace jen ukazuje data, mapu, kalkulačku a použité knihovny, přepiš **příběh**, ne pouze CSS.
+Příběh postav kolem jedné skutečné situace: **stejné podmínky → jiné rozhodnutí / méně lidské práce → doložený důsledek**. Pokud se rozhodnutí nezmění, ukaž jiný skutečně změřený přínos; nevymýšlej jej. Nezaměňuj negativní výzkumný výsledek za ověřenou úsporu uživatele.
 
-## Vlastní dramaturgie
+## Dramaturgie a animace
 
-Nejde o povinných šest slidů ani o pevný čas pro mapu. Připrav nejsilnější posloupnost podle vybraného nápadu, například:
-- **Šok / konflikt:** konkrétní problém, překvapivé srovnání, přímý důsledek.
-- **Proč dnes selhává řešení:** co neumí běžný postup.
-- **Náš mechanismus:** nejtěžší technický nápad s názornou animací nebo interaktivním scénářem.
-- **Důkaz:** funkční demo, validace proti baseline, přínos a ekonomika, i když výsledek není pozitivní.
-- **Dopad / pilot:** co už funguje, co je předpoklad, co ověříme dál a proč má koncept cenu.
+Problém a jeho náklad → dosavadní metoda a mezera → naše řešení → živý nebo označený záložní důkaz → dopad a další ověření. Není předepsaný počet slidů, čas pro mapu ani šest původních typů. Pracovní formulář není hlavní projekční slide.
 
-Každý slide/scéna má diváka posunout v argumentu. Vyhoď opakované KPI, dlouhé formuláře, generické „naše řešení“ a zbytečné podrobnosti. Promítací slidy mají být čitelné na dálku; pracovní formuláře patří do dema, nikoli na hlavní projekci.
+Použij **více smysluplných vizuálních odhalení**, pokud pomáhají: nejprve předpověď, pak výsledek; změna jedné proměnné; tok energie; překročení limitu; přechod z nedostatečných dat k odůvodněnému rozhodnutí. Přílet všech karet sám příběh nevysvětluje. Zachovej jednotky, rok, zdroj, baseline a rozlišení modelu/měření.
 
-## Animace jsou nástroj dokazování
+Dynamika musí mít definované chování při návratu, opakování a rychlém přepnutí. Běžný pohyb otestuj samostatně od `prefers-reduced-motion`. Statické PDF neumí dokázat, že animace fungují; musí obsahovat čitelné konečné stavy, nikoli poloprůhlednou rozběhnutou scénu.
 
-Použij **více smysluplných vizuálních odhalení**, kdykoli pomáhají pochopit mechanismus nebo rozdíl: postupná stavba modelu, pohyb energie sítí, přiblížení mapy, změna jediné proměnné, průchod optimalizací, kumulovaný ekonomický dopad, hypotéza → naměřený výsledek. Nekopíruj konkrétní děčínské animační triky, převeď **jejich příběhovou funkci** do nového tématu.
+## Realizace
 
-- Animace musí fungovat v běžném režimu; **samostatně** ověř `prefers-reduced-motion`.
-- Při rychlém přepínání, návratu a změně rozlišení nesmí vznikat rozbité stavy.
-- Grafy nesmějí vizuálně přikrášlovat výsledky. Jednotky, období, baseline a zdroj jsou součástí důkazu.
-- Nedělej slideshow plnou animací bez obsahu; náročnější animace mají tvořit přímo pochopení průlomu.
+`public/prezentace/` je startovní komponenta. Renderer, CSS i `deck.json` lze přestavět nebo nahradit. Recykluj co pomáhá; nevynucuj framework, 3D ani živou mapu. Navigace nekrade klávesy aktivním vstupům/dialogům; stopky zůstávají dostupné i při demu.
 
-## Technické možnosti
+Použij `templates/pitch-runbook.md`: kdo mluví, kdo kliká, předání slova a náhrada při výpadku. Chybějící měření nedoplňuj marketingovým tvrzením. Podrobné zdroje a metodiku dej do evidence, nejdůležitější omezení musí zaznít i v pitchi.
 
-Základ `public/prezentace/` funguje, ale je jen **startovní komponenta**. `deck.json`, `app.mjs`, `math.mjs` a CSS můžeš **zásadně rozšířit, nahradit nebo reorganizovat** podle příběhu. Dosavadní typy `title/chart/map/steps/economics/conclusion` nejsou seznam povinných ani maximálních typů. Pokud pro funkční simulaci potřebuješ vlastní renderer, přidej jej a změň testy odpovídajícím způsobem; nepodřizuj nápad jedné šabloně.
+## Před odevzdáním
 
-Živou EnergoMapu vlož jen tam, kde něco dokazuje; pokud potřebuješ samostatné interaktivní demo, udělej samostatnou scénu. S mapou a formulářem musí fungovat šipky (mimo aktivní textové vstupy a widgety), stopky musí zůstat přístupné. Ostatní volby, včetně rozcestníku a fullscreen, jsou volitelné.
-
-## Povinné ověření před odevzdáním
-
-- Je jasná vlastní technická novost, ne jen obecná výhoda technologie?
-- Funguje klíčová demonstrace v živém prohlížeči a lze ji zopakovat? Existuje záložní video/screenshot?
-- Rozumí divák grafu za 3 sekundy? Je definovaný zdroj, jednotka, rok a baseline?
-- Prošel celý příběh nahlas do **300 sekund**, včetně animací a dema?
-- Šipky a časovač fungují i na 1280×720. Test běžného pohybu a reduced-motion byl proveden **odděleně**.
-- Poslední video, PDF a web vycházejí z **téže finální verze**. Nezaměňuj export bez animací za důkaz jejich absence v živé verzi.
-- Před „hotovo“ proveď soutěžní kritiku: *čím přesvědčíme porotu, že jde o něco mimořádného?* Oprav největší slabinu, pokud čas zbývá.
-
-Výchozí rozpočet 285 sekund + 15 sekund rezervy lze změnit podle obsahu; limit 5 minut ale platí pro celý pitch.
+- Ukaž uživatelův výsledek, ne jen technické testy; odliš převzatý základ od naší práce.
+- Projdi celé demo od vstupu po rozhodnutí, včetně změny vstupu a jednoho nepříznivého případu.
+- Ověř šipky a časovač, normální i omezený pohyb, cílovou projekci a 1280×720. Základní funkce nesmějí zmizet při zmenšení.
+- Nacvič celý příběh do skutečného limitu, pro generálku do 300 sekund včetně dema. 285 sekund + 15 sekund rezervy je doporučení, ne povinný formát.
+- Otevři PDF/screenshoty a přehraj případné video ze stejné finální verze. Vypnutí sítě, potřeba serveru a statická záloha musí odpovídat skutečnosti.
+- Kritická revize se ptá „Proč na tom uživateli záleží a co to dokazuje?“, nikoli „Je algoritmus dost nový?“.

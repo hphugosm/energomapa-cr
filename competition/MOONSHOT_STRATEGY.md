@@ -1,60 +1,47 @@
-# MOONSHOT · Soutěžní strategie Codexu (5 hodin)
+# Ambiciózní přínos · velká vize → funkční jádro → řízené škrtání
 
-## Poslání
+**Cílem je mimořádně užitečný výsledek, ne povinný vynález algoritmu.** Neoptimalizuj na nejrychlejší dokončení ani na množství kódu. Najdi důležitý problém, opři se o existující práce a sestav nejlepší dosažitelné řešení. Náročná integrace, ověřené rozhodování i zpřístupnění odborné metody jsou legitimní vlastní přínos. Pouhé spojení modulů bez doložené hodnoty ale nestačí.
 
-**Nehledej nejjednodušší dokončitelné řešení. Hledej nejambicióznější užitečné řešení, jehož nejdůležitější část umíme přesvědčivě předvést a obhájit v soutěžním limitu.** Projekt má být nápaditý, technicky hluboký a založený na reálném problému. Ne pouhá kalkulačka, mapa s barevnými obcemi nebo hezká prezentace bez vlastního přínosu. Složitost je prostředek, ne bodový cíl.
+## Pořadí
 
-- Nejdřív se s uživatelem krátce dohodni na směřování podle `COLLABORATION.md`. **Dokud nedá souhlas, neupravuj soubory.**
-- U každé varianty ukaž *velkou vizi* (i kdyby její úplné provedení trvalo týdny) a *ověřitelný klíčový průlom* pro zhruba pět hodin.
-- Najdi skutečného uživatele, konkrétní obtížný problém, proč dosavadní stav nestačí, vlastní mechanismus řešení a důkaz účinku. Povinné srovnání se **silnou férovou baseline**; jednoduchá reference může být doplňková kontrola. U každé funkce dolož rozhodnutí uživatele a proveditelnost akce podle `REALITY_CHECK.md`.
-- Preferuj systém, který **něco nově umožní**: modeluje vazby, predikuje, optimalizuje při omezeních, automaticky doporučuje, přepočítá reálný scénář nebo ukáže nečekaný trade-off. Samotný výpočet ročních úspor je pomocná funkce, nikoli automaticky jádro projektu.
-- Využij stávající atlas, 22 ověřených metrik, databanku, grafy, analytiku a offline podklady, pokud jsou pro řešení relevantní. Nevynucuj mapu, ML nebo scénář jen pro demonstraci složitosti. Nezakládej nový agentní workflow.
-- Výsledek má být **funkční a poctivě ohraničený**: žádný falešný dataset, smyšlené úspory, předstírané AI, nereálné síťové limity, nepodložené kauzální sliby nebo nesplněný „průlom“.
+Zadání → krátká rešerše (`REUSE_FIRST.md`) → 2–3 možnosti → uživatelův souhlas → reprodukce vybraného základu → důkaz přínosu → integrovaný produkt → kritika → obhajoba a čisté odevzdání. Před souhlasem žádné úpravy nebo instalace. Starší cvičení nejsou závazná architektura.
 
-## Strategie: velká vize → funkční jádro → řízené škrtání
+## Časový plán
 
-**Časy jsou orientační pro 300 minut od skutečného startu.** Čas do konkrétního deadline vždy spočítej z aktuálního omezení; je-li kratší, přeskup fáze. Neodhaduj, že práce běží sama na pozadí.
+Čtyřhodinová generálka má skutečných **240 minut** od startu včetně rešerše a diskuse. Pětihodinová varianta je alternativa, ne prodloužení čtyřhodinového deadlinu. Strojově kontrolovatelný rozpočet je v `run-plan.json` (pouze plán, žádný orchestrátor).
 
-| Fáze | Orientačně | Co musí vzniknout |
-|---|---|---|
-| 0–30 min · volba problému | společná diskuse | 2–3 ambiciózní varianty, doporučení, výběr uživatelem, výslovné schválení |
-| 30–100 min · důkaz přínosu | první třetina času včetně diskuse | rozlišující experiment proti silné baseline, nejcitlivější předpoklad a technický spike; výsledek pro rozhodnutí uživatele |
-| 100–210 min · intenzivní stavba | po kontrole důkazu | pracující nejtěžší jádro a nejvýraznější demonstrace, data, výpočty a testy |
-| 210–255 min · škrtání | před finále | odstranit druhotné či nestabilní funkce; stabilizovat jeden působivý end-to-end případ |
-| 255–300 min · pitch a odevzdání | závěr | jasný silný příběh, nácvik, zmrazení verze, shodné exporty a test skutečného archivu v čistém prostředí |
+| Fáze | 4 hodiny | 5 hodin | Výstup |
+|---|---|---|---|
+| Reference a dohoda | 0–25 min | 0–30 min | omezená rešerše, možnosti, souhlas; orientačně prvních 15 min zdroje |
+| Reprodukce a první důkaz | 25–80 min | 30–100 min | zvolený modul funguje na malém příkladu; férové srovnání a citlivost |
+| Integrace a užitek | 80–165 min | 100–210 min | fungující celá cesta, relevantní uživatelský nebo provozní test |
+| Kritika a škrty | 165–195 min | 210–255 min | druhá iterace, stabilizovaný produkt a příběh |
+| Zmrazení a odevzdání | 195–240 min | 255–300 min | kontrola výstupů, čistý archiv, nácvik a záloha |
 
-**Mezikroky:**
-- Nejpozději do **T/3** (100. minuty z 300, od skutečného startu včetně diskuse) skutečně otestuj **přínos proti silné férové baseline i nejcitlivější předpoklad**. Proveď také malý technický spike. Citlivost hlavního tvrzení není totéž co obtížnost implementace. Slabý nebo nestabilní přínos ihned konzultuj; zásadní změnu metody či tvrzení schvaluje uživatel. Důkaz neodkládej až za stavbu celého produktu; podrobně `REALITY_CHECK.md`.
-- Do ~210 min musí existovat jedna funkční „vertikální cesta“ vstup → mechanismus → výsledek → porovnání, ne 10 nehotových modulů.
-- Kolem ~210 min si nech odsouhlasit seznam škrtů. Od ~255 min neotvírej nové velké funkce. Poslední čas patří předvedení a obhajobě.
-- Pokud je **první verze hotová výrazně před koncem, neodevzdávej**. Udělej tvrdou revizi jako porota, navrhni 2–3 zásadní zlepšení a se souhlasem uživatele proveď další iteraci. Volný čas je prostor pro větší kvalitu, nikoli důvod zastavit.
-- Dvě iterace jsou výchozí cíl: funkční prototyp → kritika a posílení přínosu/pitche. Neodkládej revizi do posledních minut.
+Příběh a exportní cesta vznikají průběžně, ne až v posledním bloku. První propojená ukázka má být do T/3; další ukázka nejpozději při konci integrace. Výzkumník, jádro a prezentátor se střídají s ověřovatelem tak, aby běželi nejvýše tři subagenti. Hlavní Codex sám řídí integraci a krátké konzultace.
 
-## Co škrtat a co nikdy neztratit
+## Rozhodnutí v T/3
 
-1. **Chraň:** konkrétní problém, vlastní originální mechanismus, funkční demonstraci, kontrolovatelnou baseline, pravdivé výsledky, bezpečné zdroje a pětiminutový pitch.
-2. **Škrtej jako první:** další příklady, dekorativní doplňky, vedlejší dashboardy, nesouvisející vrstvy, přebytečné obrazovky, fakultativní video.
-3. **Zachovej technickou hloubku v malém důkazu:** raději jeden propracovaný optimalizační průchod se skutečnými daty a omezeními než mnoho nepodložených funkcí.
-4. Škrty oznam krátce: „Máme X hotové; Y nestíháme. Doporučuji vypustit Y a vyladit X. Souhlas?“
-5. **Ořezávej rozsah, nikoli kvalitu a poctivost.** Pokud jádro nefunguje, přiznej omezení, zmenši scénář a skutečně jej otestuj.
+Do 80. minuty ze 240 (nebo 100. minuty z 300) proveď první rozlišující test proti silné férové baseline a nejcitlivější předpoklad. Není to automaticky definitivní validace. Dolož stejná data, dostupné informace, omezení, rozpočet a všechny neúspěchy; podrobně `REALITY_CHECK.md` a `PRACTICAL_VALUE.md`.
 
-## Technická a prezentační kvalita
+- Přínos se potvrzuje: integruj a otestuj celý uživatelský průchod.
+- Baseline je lepší: může se stát výpočetním základem produktu. Nehledej povinně nový algoritmus. Zachovej původní neúspěch a pro jiný slib navrhni nový test.
+- Data nebo klíčový předpoklad nestačí: sděl přesně co chybí, navrhni uživateli zúžení nebo jiný směr. Nepokračuj slepě v drahé implementaci.
+- Podstatný výsledek je modelový nebo negativní: poctivě jej ohranič. Negativní výsledek se bez dalšího důkazu nepřejmenuje na úspěšný produkt.
 
-- Změřit přírůstek hodnoty oproti silné baseline za stejných podmínek a zdrojů a ověřit nejcitlivější předpoklad v doloženém rozsahu. Oddělit měření, model a předpoklady; procenta doplnit absolutním důsledkem pro uživatele.
-- Připravit průkazný, pro porotu srozumitelný demo průchod. Nemusí být celá vize implementovaná; přesně říct, co je funkční a co je plán.
-- Prezentace **prodává problém a výjimečnost řešení**, ne seznam použitých knihoven ani příběh vývoje.
-- **Z Děčína jsou povinné jen šipky pro navigaci a viditelný, pozastavitelný časovač.** Vizuální styl, animace, dramaturgie, grafy i počet snímků navrhni svobodně podle problému; respektuj pouze dohodnutou identitu týmu a přístupnost. `public/prezentace/` je volitelný základ, ne vězení.
-- Animace mají vysvětlovat *mechanismus, změnu, překvapení, důkaz*; při užitečné dynamice je nepřeskoč. Video či screenshot export musí odpovídat finální verzi. Ověř běžný motion i reduced-motion variantu odděleně.
-- Pětiminutové vystoupení musí odpovědět: **Proč právě tento problém? Co naše řešení dělá výjimečně? Kde je důkaz a proč se má vyplatit?**
-- Před odevzdáním udělej **red-team review**: „Proč to není jen kalkulačka? Co opravdu funguje? Jaká je nejtěžší technická námitka? Jakou částku/metriku si porota zapamatuje?“ Slabé body oprav, neschovávej.
+## Další iterace a konec
 
-## Jak se ptát
+Když je **první verze hotová výrazně před koncem**, společně ji zkritizuj a využij rezervu k největšímu zlepšení. Nevytvářej zbytečné funkce ani nečekej nečinně do deadlinu. Pokud už není smysluplná práce, oznam stav; uživatel může test ukončit dřív.
 
-Po souhlasu uživatele buď samostatný v rutinní implementaci, ale **aktivně a stručně se doptávej** při výběru cílového uživatele, rozhodovacích hranic, hlavních datových předpokladů, ambiciózních kompromisů, dělení rozsahu a pitch příběhu. Jedna relevantní otázka najednou a tvoje doporučení v téže zprávě. Ve finální fázi už nezdržuj zbytečnými otázkami, které nemění hodnotu výsledku.
+Chraň užitek, správnost, ověřitelnost, srozumitelné demo a úplné odevzdání. Škrtej další scénáře, zbytečné obrazovky a dekorace dřív než nezávislou kontrolu mezí. Od začátku závěrečné fáze nepřidávej velké závislosti; změna nutná kvůli chybě zneplatní dotčené exporty a kontroly.
 
-## Stupně dokončení
+## Kvalita není jeden checkbox
 
-- **Funguje:** prototyp projde testem end-to-end, čísla se dají reprodukovat.
-- **Přesvědčuje:** příběh vysvětluje problém, novost, výsledek a omezení; nejméně jedna hodnotná demonstrace.
-- **Připraveno k odevzdání:** stopky, šipky, prezentační nácvik, validované zdroje a společná zmrazená verze webu/slidů/videa. Skutečný archiv byl rozbalen a spuštěn v čistém prostředí podle přiloženého návodu, včetně nového přepočtu po změně vstupu; kontroly mají doložené PASS / FAIL / NOT RUN. Statická záloha se nevydává za funkční projekt. Po poslední úpravě se dotčené exporty i kontroly opakují podle `REALITY_CHECK.md`.
-- **Odevzdáno:** pouze skutečně provedený a doložený krok. Nenazývej lokální build veřejným nasazením.
+1. **Funguje:** testovaná celá cesta a nový přepočet, ne jen sada jednotkových testů.
+2. **Je proveditelné:** nezávisle sedí omezení celého systému, včetně vstupního stavu a hranic.
+3. **Pomáhá:** odpovídající test energie/nákladů, rozhodnutí nebo lidské práce; druh důkazu nezaměňuj.
+4. **Lze odevzdat:** finální archiv se spustil v čistém prostředí a exporty patří téže verzi.
+
+Prezentace vysvětluje problém, převzatý základ, naši přidanou hodnotu a důkaz. Design je volný, povinné jsou pouze šipky a časovač. Animace vysvětlují mechanismus a rozdíl; neskrývají slabý výsledek. Převzaté práce označ včetně licencí a odliš je od práce během soutěže.
+
+`QA_CHECKLIST.md` shrnuje závěr. Neprovedené kontroly jsou NOT RUN, nikoli PASS. Nepřidávej další agentní framework ani meta-evaluace během soutěžního zadání.

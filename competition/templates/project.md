@@ -1,106 +1,67 @@
 # Název projektu
 
-## Přesné zadání
-[Doslovné zadání, původ, datum, povinné výstupy, limit prezentace a potvrzená pravidla.]
+Udržuj stručně; existující záznamy odkazuj, nekopíruj do více šablon.
 
-## Dohoda před implementací
-- Diskutované směry (A/B/C), výhody a rizika:
-- Zvolený směr a důvod:
-- Potvrzení uživatele k zahájení implementace (přesné vyjádření, případně odkaz na chat):
-- Hranice schváleného rozsahu:
+## Zadání a dohoda před implementací
+- Přesné zadání, původ, pravidla (včetně převzetí práce/AI), povinné výstupy a limit pitch:
+- Skutečný start a deadline, časový plán 4h / 5h / jiný:
+- Diskutované směry, doporučení a vybraný uživatel/problém:
+- Potvrzení uživatele k zahájení implementace:
+- Schválený rozsah a předem dohodnuté škrty:
 
-## Průběžná rozhodnutí
-| Otázka / změna | Doporučení Codexu | Rozhodnutí uživatele | Dopad do projektu |
-|---|---|---|---|
-| | | | |
+## Existující práce a náš přínos
+- Původní reference / již existující produkty a jejich mezera pro náš případ:
+- Tabulka zdroj → verze/commit → licence → převzít/upravit/napsat → riziko (nebo `reuse-decision.md`):
+- Nejmenší reprodukovaný příklad vybraného modulu: příkaz, očekávání, výsledek:
+- Převzatý základ, naše změny a jejich měřitelná hodnota:
+- Ambiciózní vize a skutečně odevzdatelné funkční jádro:
 
-## Ambiciózní vize a pětihodinové jádro
-- **Velká vize:** Co by byl skutečný průlom, i kdyby celý systém zabral týdny?
-- **Originální mechanismus:** Co nově umíme oproti současnému stavu / běžné kalkulačce?
-- **Pracující důkaz:** Jakou technicky nejtěžší část musíme opravdu zprovoznit?
-- **Silná férová baseline:** Nejlepší dostupný běžný postup / vyladěná heuristika, proč je poctivým soupeřem? Jednoduchá reference jen jako doplněk.
-- **Závažná rizika:** Kritické neznámé, data, fyzika, ceny, legislativa.
+## Jedna věta a test přínosu
+Pomáháme [komu] při [konkrétním rozhodnutí] pomocí [řešení]; přínos ověříme [testem].
 
-## Milníky (reálný start a deadline)
-- Start, skutečný deadline, čas zbývající:
-- Do ~30 min schválení konceptu:
-- Do T/3 (100. minuty z 300, včetně diskuse) experiment proti silné baseline, test nejcitlivějšího předpokladu a technický spike; uložený výsledek a rozhodnutí uživatele:
-- Do ~210 min funkční end-to-end jádro:
-- Do ~255 min stabilizace a odsouhlasené škrty:
-- Do ~300 min prezentace, shodné finální exporty a rozbalení/spuštění skutečného archivu v čistém prostředí:
-- **Pokud skončíme dříve:** co významného zlepšíme?
+- Hlavní druh přínosu: energie/náklady / rozhodnutí / lidská práce:
+- Silná férová baseline a proč je relevantní; smí se stát jádrem našeho produktu:
+- Stejné případy, vstupy/informace, služba, hranice, omezení a rozpočet obou variant:
+- Metrika, minimální užitečné zlepšení a kritérium vyvrácení určené před výsledkem:
+- Oddělení ladění/testu, neúspěšné a nevyřešené případy, náklady setupu:
+- Nejcitlivější předpoklad, zdroj rozsahu, nízká / základní / vysoká hodnota:
+- Výsledek do T/3 (80/100 min), absolutní dopad, příkaz a rozhodnutí uživatele:
+- Změna slibu: původní výsledek zachován, nová karta/test nebo přiznané neověření:
 
-## Prioritizace
-| MUST · jádro a důkaz | SHOULD · posílení | CUT FIRST · volitelné |
-|---|---|---|
-| | | |
+## Každá funkce → uživatel → rozhodnutí → proveditelnost
+| Funkce | Uživatel / role | Rozhodnutí a akce | Oprávnění, vybavení, čas, náklady, limity | Důkaz / neověřené podmínky |
+|---|---|---|---|---|
+| | | | | |
 
-## Kritika po první funkční verzi
-- Není to jen kalkulačka nebo mapa? Co je opravdu nové?
-- Která skutečně hotová funkce působí jako průlom?
-- Kde by porota projekt rozebrala? Co opravíme v iteraci 2?
-- Rozhodnutí uživatele a provedené zlepšení:
+## Nezávislá kontrola celého systému
+- Vstupní stav, společné i dílčí meze, všechny časové kroky:
+- Bilance, ztráty, rezervy, povinné služby a konec horizontu:
+- Neproveditelný vstup i bez řízené zátěže; přesná hranice a tolerance:
+- Chybějící/neplatné vstupy a kontrola ve výpočtu/API:
+- Nezávislý výpočet z veřejných vstupů/výstupů (ne stejný validační helper):
 
-## Jedna věta
-Pomáháme [komu] vyřešit [problém] pomocí [mechanismu]; úspěch měříme [ukazatelem].
+## Data, předpoklady a ekonomika
+- Dataset/verze, rok/území, jednotky, pokrytí, oprávnění a známé mezery:
+- Co je měřené, simulované, předpokládané nebo nedostupné:
+- CAPEX/OPEX, měna, ceny, horizont, diskont a citlivost, pokud jsou relevantní:
+- Skript/reprodukční příkaz a soubor výsledků pro demo/grafy:
 
-## Co je fakt a co předpoklad
-| Tvrzení / vstup | Typ: měření, model, předpoklad | Hodnota + jednotka | Rok/území | Zdroj/cesta | Nejistota |
-|---|---|---|---|---|---|
+## Kritika po první funkční verzi a rozhodnutí
+- Co konkrétně je užitečnější než dosavadní postup? Co stále není prokázané?
+- Největší námitka ověřovatele, levný rozlišující test a provedená oprava:
+- Čas milníků, skutečně použité role/modely, dostupná evidence delegace:
+- Schválené změny a škrty; další iterace pro hodnotu, ne počet funkcí:
 
-## Baseline a varianta
-- Výchozí postup:
-- Navržená změna:
-- Stejné případy, vstupy/informace, funkce, hranice systému, omezení a rozpočet včetně měření a provedení:
-- Hlavní tvrzení, metrika, minimální užitečné zlepšení a kritérium vyvrácení stanovené před výsledkem:
-- Oddělení ladění a testu, neúspěšné/nevyřešené případy:
-- Nejcitlivější předpoklad: jak byl vybrán, zdroj rozsahu, nízká / základní / vysoká hodnota a bod ztráty výhody:
-- Výsledek v první třetině, absolutní dopad vedle procent, příkaz a evidence; při slabém přínosu konzultace a schválená změna:
+## Mentor, pilot a pitch
+- Skutečné odpovědi/zdroje, ne simulovaný rozhovor; neověřené podmínky pilotu:
+- Jeden demo průchod: stejné podmínky → rozhodnutí → důsledek:
+- Převzaté práce a náš příspěvek, 300 sekund v generálce:
+- Řečníci, ovládání, předání slova, záloha a tři těžké otázky (`pitch-runbook.md`):
 
-## Funkce → skutečný uživatel → rozhodnutí → proveditelnost
-| Funkce | Skutečný uživatel / role | Vstup a rozhodnutí | Navazující akce | Oprávnění, vybavení, čas, náklady, limity | Důkaz / neověřená podmínka pilotu |
-|---|---|---|---|---|---|
-| | | | | | |
-
-Podpůrnou funkci bez přímého rozhodnutí zdůvodni hlavní cestou. Nevymýšlej souhlas provozovatele. Kde je to relevantní, ověř povinné služby, rezervy a pokračování za plánovací horizont.
-
-## Data a výpočet
-- ID datasetů a připnuté verze:
-- Relevantní známé mezery:
-- Skript a příkaz pro reprodukci:
-- Test / kontrolní součet:
-- Soubor výstupů pro grafy a slidy:
-
-## Ekonomika a dopady
-- CAPEX, OPEX, horizont, měna, cenová báze, diskont (každý se zdrojem):
-- Nízká / základní / vysoká varianta:
-- Energie, emise, omezení sítě (jen co umíme doložit):
-
-## Mentor
-- Otázky: technická proveditelnost, největší chybějící vstup, ekonomická logika.
-- Odpověď / datum / co jsme změnili:
-- Nevyřešené námitky:
-
-## Pilot
-- Uživatel/provozovatel, místo, rozsah, postup ověření:
-- Podmínky realizace a hlavní riziko:
-
-## Pitch
-- Jedna hlavní věta pro každý slide:
-- Demo krok po kroku:
-- Rozpočet do 300 sekund:
-- Záložní screenshot/video:
-- Tři otázky poroty a odpovědi:
-
-## Ověření
-[Příkazy a skutečné výsledky. Neprovedené testy a omezení. Commit, branch; deployment pouze po kontrole.]
-
-## Finální verze, exporty a čisté odevzdání
-- Release ID, zdrojový commit/otisk změn, datový snapshot, konfigurace a hlavní výsledky:
-- Manifest cest a SHA-256 webu/PDF/screenshotů/videa; kontrola otevřených exportů, čísel a odstranění testovacích hlášek:
-- Odevzdávaný archiv a jeho SHA-256; úplný projekt versus označená statická záloha:
-- Přiložené zdroje, povolená data, připnuté závislosti/lockfile a přesný návod spuštění i přepočtu:
-- Čisté prostředí po rozbalení skutečného archivu: nová složka, závislosti a profil, bez původního checkoutu a zahřáté cache:
-- Hlavní cesta, změněný vstup a **nový přepočet**, referenční očekávání versus získaný výsledek; offline/služby podle slibu:
-- Skutečné stavy PASS / FAIL / NOT RUN, prostředí, příkazy a evidence:
-- Poslední úprava a opakované dotčené exporty, balení a kontroly podle `competition/REALITY_CHECK.md` od kořene repozitáře:
+## Finální verze a čisté odevzdání
+- Release/commit, datový snapshot, scénář a hlavní výsledky:
+- Manifest cest a SHA-256; otevření PDF/screenshotů a přehrání případného videa:
+- Úplný archiv vs. označená statická záloha; zdroje, licence, závislosti, návod:
+- Čisté prostředí po rozbalení bez původního checkoutu/cache; hlavní cesta i nový přepočet:
+- Očekávané/získané výsledky, PASS / FAIL / NOT RUN, příkazy a hash archivu:
+- Poslední změna a opakované dotčené exporty/testy podle `competition/REALITY_CHECK.md`:

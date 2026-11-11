@@ -1,21 +1,15 @@
-# Rychlý start pro Codex
+# Start pro Codex
 
-Nejdřív přečti [AGENTS.md](AGENTS.md), [competition/COLLABORATION.md](competition/COLLABORATION.md) a **[competition/MOONSHOT_STRATEGY.md](competition/MOONSHOT_STRATEGY.md)**.
+Otevři ověřenou verzi soutěžní větve, nezasahuj do cizí rozpracované práce. Začni `AGENTS.md`; postup dohody je v `competition/COLLABORATION.md`, časový plán v `competition/MOONSHOT_STRATEGY.md`.
 
-Tři kontroly po nácvicích Teplo, HELIOS a OSTROV 72: **[přínos, použitelnost a odevzdání](competition/REALITY_CHECK.md)**.
+## Krátký zadávací prompt
 
-## Prompt k vložení na soutěži
+> Zadání: [vložit přesné znění]. Čas: [skutečný limit / deadline v Europe/Prague]. Použij aktuální podklady tohoto repozitáře a pouze Codex.
+>
+> **Nejdřív vyhledej existující práce, referenční řešení a použitelné moduly podle `competition/REUSE_FIRST.md`.** Z nich navrhni 2–3 ambiciózní projekty s konkrétním přínosem. Řekni, co převezmeme a co bude naše práce. Doporuč jeden a polož mi jednu otázku. **Teď nic neupravuj ani neprogramuj.**
+>
+> Po mém schválení použij nejlepší dostupné metody, nemusíš vymýšlet nový algoritmus. S dostupnými subagenty postav funkční celek, do T/3 ověř přínos a hlavní předpoklad podle `competition/REALITY_CHECK.md`. Když běžná metoda vyhraje, lze ji převzít; změna slibovaného přínosu potřebuje nový test.
+>
+> **První funkční verze není konec.** Průběžně ukaž výsledky, ptej se na zásadní volby, zlepšuj doloženou hodnotu. Ověř fyzikální omezení celého systému a skutečné odevzdání v čistém prostředí. Prezentace má mít silný argument a vysvětlující animace; povinné jsou jen šipky a stopky. Piš stručně česky.
 
-> Tady je přesné zadání: [vložit]. **Nejdřív se mnou krátce prober 2–3 ambiciózní možné průlomové projekty**: konkrétní problém, originální technický mechanismus, velkou vizi a funkční jádro, které během limitu skutečně předvedeme. Doporuč nejlepší variantu a polož mi jednu otázku. **Teď nic neupravuj ani neprogramuj.** Po společné domluvě se výslovně zeptej, jestli můžeš začít.
->
-> Po mém souhlasu **nesměřuj k nejrychlejšímu dokončení ani k pouhé kalkulačce**. Postav náročné, ověřitelné jádro využívající naše data a nástroje, pokud dávají smysl. Průběžně se mě doptávej na důležitá rozhodnutí, piš krátké zprávy a kontroluj čas do [vlož přesný deadline]. Pracuj v režimu **velká vize → funkční průlom → kritika → další iterace → chytré škrty → silná pětiminutová obhajoba**.
->
-> **První funkční verze není konec.** Máme-li rezervu, navrhni a proveď po mém odsouhlasení zásadní zlepšení. Jak se blíží deadline, odstraň vedlejší funkce, ale zachovej technicky nejsilnější důkaz, pravdivá čísla a důvěryhodnost.
->
-> Do první třetiny celkového času (do 100. minuty z 5 hodin, včetně diskuse) skutečně otestuj přínos proti **silné férové baseline a nejcitlivější předpoklad** podle `competition/REALITY_CHECK.md`. U každé funkce ukaž skutečného uživatele, jeho rozhodnutí a proveditelnost akce. Slabý výsledek přiznej a zásadní změnu se mnou prober. Využívej dostupné subagenty a relevantní ENOL skills podle `competition/SKILLS.md`.
->
-> Na závěr zmraz finální verzi a z ní vytvoř všechny exporty. Skutečný odevzdávací archiv rozbal v čistém prostředí a podle přiloženého návodu ověř spuštění i nový přepočet se změněným vstupem. Statickou zálohu označ samostatně, výsledky kontrol uváděj PASS / FAIL / NOT RUN. Po další změně obnov dotčené exporty a ověření.
->
-> Prezentace má přesvědčit porotu, že řešíme důležitý problém mimořádným řešením, nikoli předvést seznam funkcí. Máš **úplnou svobodu v designu, animacích, vizualizacích, struktuře i počtu slidů**. Z Děčína jsou povinné pouze **šipky a časovač**. Použij nebo přestav `public/prezentace/` podle potřeby. Nevytvářej vlastní AI workflow. Neuváděj modelované výsledky jako naměřené.
-
-První odpověď Codexu má být krátká diskuse s doporučením a jednou otázkou, **ne implementace**. Cíl práce je vysoká hodnota, ověřitelné funkční jádro a odevzdané kvalitní demo do skutečného deadlinu.
+Čtyřhodinová generálka: `competition/REHEARSAL_4H.md`. Praktický přínos: `competition/PRACTICAL_VALUE.md`. Neprodlužuj zadávací prompt kopírováním celého manuálu. Na začátku zaznamenej skutečný start a deadline; chybějící čas nebo schválení neodhaduj jako hotovou věc.

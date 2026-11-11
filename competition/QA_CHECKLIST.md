@@ -1,52 +1,38 @@
-# Kontrola před pitch a publikací
+# Kontrola před odevzdáním
 
-## Spolupráce s uživatelem
-- Před první úpravou proběhla krátká diskuse o alternativách a uživatel výslovně schválil zvolený směr i zahájení práce.
-- Větší obsahová, ekonomická a vizuální rozhodnutí byla průběžně probrána, nikoli mlčky vymyšlena; drobnosti nevyžadovaly zbytečné otázky.
-- Projektový brief zachycuje schválený rozsah a změny, které uživatel později rozhodl.
-- Před případným zveřejněním nebo sloučením proběhla odpovídající kontrola a schválení.
+Zaškrtnutí vyžaduje důkaz, ne pouhý výskyt pravidla. Záznam PASS / FAIL / NOT RUN a odkaz na výsledek ukládej do projektového ověření.
 
-## Ambice, využití času a soutěžní síla
-- Projekt má **výrazný vlastní mechanismus**, ne pouze výpočet úspor, přebarvení mapy nebo katalog dat.
-- Existuje velká vize i funkční technicky silné jádro, které porota skutečně uvidí.
-- Už v první třetině celkového času (T/3, do 100. minuty z 300 včetně diskuse) proběhl experiment proti **silné férové baseline i test nejcitlivějšího předpokladu** podle `REALITY_CHECK.md`. Uložené jsou vstupy, příkazy, srovnání za stejných omezení a rozpočtu i nepříznivé výsledky. Slabý důkaz vedl ke konzultaci s uživatelem, nikoli oslabení baseline.
-- Ukazujeme absolutní přínos pro uživatele vedle procent a technická omezení; neslibujeme neimplementované funkce.
-- Milníky, včasné škrtání a využití rezervy času jsou doložené; první verze prošla **kritikou a další iterací**, pokud to čas dovolil.
-- Pětiminutová prezentace je argument pro hodnotu řešení, nikoliv seznam technologií nebo prohlídka UI.
-- **Šipky a stopky** fungují. Ostatní design, dramaturgie a počet slidů nejsou předepsané; animační důkazy jsou promyšlené tam, kde přidávají hodnotu.
-- Pokud existuje video, PDF nebo screenshoty, všechny odpovídají stejné finální verzi a neztratily animace kvůli režimu reduced motion.
+## Dohoda, reference a přínos
+- Proběhla krátká rešerše před volbou architektury a uživatel výslovně schválil směr i práci. Zásadní změny a škrty jsou zaznamenané.
+- Jsou otevřené relevantní původní zdroje; převzaté moduly mají konkrétní verzi, ověřená oprávnění, attribution a malý reprodukovaný příklad. Neověřená knihovna není prezentovaná jako funkční integrace.
+- Projekt smí používat nejlepší běžnou metodu. Náš přínos je konkrétní a testovaný, ne automaticky nový algoritmus ani automaticky užitečný obal.
+- Do T/3 proběhl test proti silné férové baseline i test nejcitlivějšího předpokladu: 80. minuta ze 240 / 100. minuta z 300 včetně diskuse. Stejné případy, data, dostupné informace, omezení a rozpočet; neúspěchy se neztratily.
+- **Každá funkce** má uživatele/roli, rozhodnutí a proveditelnou akci: oprávnění, vybavení, čas, náklady a limity. Neověřený provoz či rozhovor zůstává neověřený.
+- Druh důkazu odpovídá slibu (energie/náklady, rozhodnutí, lidská práce). Změna slibu má novou kartu a nový test; nulový výsledek není přejmenovaný úspěch.
+- Milníky jsou doložené; první verze prošla **kritikou a další iterací**, pokud byl čas. Rezerva nevedla ke zbytečným funkcím.
 
-## Obsah
-- Zadání odpovídá oficiálně přidělenému tématu. Žádný ukázkový text nezůstal jako finální tvrzení.
-- Je jasný uživatel, problém, baseline, mechanismus, výsledek a pilot. **Každá funkce** má v briefu skutečného uživatele/roli, rozhodnutí a proveditelnou akci: oprávnění, vybavení, čas, náklady a provozní limity; neověřené podmínky jsou přiznané.
-- Každé významné číslo má zdroj nebo označený předpoklad a reprodukovatelný výpočet.
-- Rok, jednotka, území a pokrytí se neztratily při převodu do slidu.
-- Připravena odpověď na tři největší slabiny návrhu; souhlas mentora nevydávat za certifikaci.
+## Správnost celého systému
+- Nezávislý přepočet kontroluje vstupní stav i celkový výsledek, ne pouze řízený přírůstek. Nepřebírá jen boolean solveru nebo produkční validační helper.
+- Kontrolovány společné i dílčí limity, každý časový krok, bilance, účinnosti, povinné služby, rezervy a konec horizontu podle konkrétního modelu.
+- Výchozí stav už za limitem nesmí bez modelovaného a povoleného zásahu dostat verdikt „proveditelné“, ani když je řízený odběr nulový.
+- Testy pokrývají přesnou hranici, překročení dílčího limitu, null, chybnou jednotku, záporný/NaN vstup a nedostupná data. Validace je i ve výpočtu/API, ne pouze ve formuláři.
+- MW/MWh, Kč/EUR, procenta/procentní body, byty/domácnosti a časové základny jsou správně. Žádné null → 0 nebo vymyšlená historie.
+- Baseline a varianta dodávají stejnou službu v týchž hranicích. ML nemá únik testovacích dat; solver timeout není optimalita. Citlivost nenahrazuje validaci vstupů.
+- Hlavní výsledek má reprodukovatelný příkaz, zdroje, období, absolutní dopad vedle procent a jasné hranice platnosti.
 
-## Výpočty
-- MW versus MWh, Kč versus EUR, procenta versus procentní body, domácnosti versus byty.
-- Žádné null → 0; žádná falešná historie; žádné sčítání klimatických výnosů.
-- Stejná energetická funkce a hranice systému pro baseline a variantu.
-- Návratnost versus NPV; ceny/účinnosti zdrojované; citlivost alespoň na hlavní nejistoty.
-- ML má časově oddělený test a silnou férovou baseline, jednoduchou referenci případně navíc; mapa/scoring nejsou automaticky AI.
+## Aplikace a obhajoba
+- **Šipky a stopky** fungují; design a počet scén jsou volné. Je-li použit fullscreen, Esc nebo iframe, zkontroluj je také; nejsou povinnými novými funkcemi.
+- Celý průchod od problému k užitečnému výsledku je čitelný, připravená je odpověď na nejslabší místo. Nácvik včetně animací a dema se vešel do limitu.
+- Normální pohyb a reduced-motion se ověřily zvlášť; rychlý návrat a cílové rozlišení neporuší ovládání. Během statického exportu se zachytily konečné stavy.
+- Testy aplikace, dat a prohlížeče prošly nebo jsou přesně označeny jako NOT RUN. Test fráze v dokumentaci neprokazuje chování modelu.
 
 ## Skutečný odevzdávací balíček
-- Finální verze je zmrazená: release ID, zdrojová revize, datový snapshot, scénář a výsledky. Manifest obsahuje cesty a SHA-256 exportů; PDF/screenshoty byly otevřeny a video přehráno. Žádné staré výsledky ani testovací hlášky ve finálních exportech.
-- Archiv obsahuje úplný zdrojový kód, potřebná povolená data, připnuté závislosti a návod se spuštěním i přepočtem. Statická záloha je výslovně odlišena od funkčního projektu.
-- **Právě odevzdávaný archiv** byl rozbalen v čistém prostředí: nová prázdná složka, čisté závislosti a profil prohlížeče, bez původního checkoutu nebo zahřáté cache. Podle návodu prošla hlavní cesta i **nový přepočet po změně vstupu**. Ověřen je offline režim, pokud se slibuje, a chování při nedostupné službě.
-- Report má hash archivu, prostředí, příkazy a skutečné **PASS / FAIL / NOT RUN**. Neprovedená kontrola neznamená úspěch. Po poslední změně byly obnoveny dotčené exporty, balíček a ověření; podrobně `REALITY_CHECK.md`.
-
-## Aplikace a prezentace
-- `node tools/competition.mjs check` a nové unit testy prošly.
-- Existující JS/Python testy, determinismus a balení prošly, nebo report výslovně uvádí neprovedené kroky.
-- Šipky, Esc, fullscreen, časovač; formuláře a mapové posuvníky si drží ovládání.
-- Mapový iframe se při návratu nenačítá znovu; skryté přehrávání stojí.
-- 1280×720 a 1440×900: žádné překrytí ovladačů, data a legenda čitelné.
-- Prezentace funguje na lokálním HTTP serveru bez internetu. Nezaměňovat to s garancí cache GitHub Pages.
-- Záloha: screenshots, zdroje a krátké video; print mapový slide nesmí zůstat prázdný.
+- Zmrazená finální verze: release/commit, datový snapshot, konfigurace, výsledky a SHA-256 exportů. Video je volitelné, ale pokud existuje, patří téže verzi jako web/PDF/screenshoty.
+- Otevřeny skutečné exporty a přehráno video: žádná stará čísla, testovací hlášky, placeholdery nebo prázdné demo. Nejde jen o kontrolu jejich existence.
+- Archiv má zdroje, povolená data, licence/NOTICE, připnuté závislosti, návod na spuštění a nový přepočet; žádné klíče ani závislost na tajném autorově prostředí.
+- **Právě odevzdávaný archiv** byl rozbalen v čistém prostředí bez původního checkoutu a zahřáté cache. Hlavní cesta i nový přepočet po změně vstupu fungují. Offline provoz ověřen jen, pokud se slibuje; potřebný server nebo služby jsou přiznané.
+- Report uvádí hash archivu, prostředí, příkazy, očekávané/získané výsledky a PASS / FAIL / NOT RUN. Po poslední změně byly obnoveny dotčené exporty, balíček a kontroly podle `REALITY_CHECK.md`.
 
 ## Publikace
-- Pouze vlastní/schválená média; žádné klíče, osobní údaje ani neveřejná komunikace.
-- Respektovat skutečné oprávnění každého zdroje; OTE automaticky nepublikovat.
-- Žádné fontové soubory ani překreslené „originální“ logo.
-- Pull request není deployment. Ověřit skutečný stav CI a Pages, než se označí nasazení za hotové.
+- Datová oprávnění, pravidla soutěže a cizí autorství jsou zachované; žádné osobní poznámky, klíče, neoprávněná média ani fontové soubory v kitu.
+- Připraveno, commitnuto, sloučeno a nasazeno jsou různé stavy. Nasazení se tvrdí až po kontrole a merge se bez pokynu neprovádí. Žádná z kontrol nezaručuje stoprocentní výsledek soutěže.
