@@ -1,0 +1,3 @@
+# Optional isolated analysis environment. Not part of the application/Pages build.
+# Lock the complete resolved environment in the project using it.
+SALib==1.5.2

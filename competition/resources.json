@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-11",
+  "runtime": "codex-only",
+  "integration": "original-local-guidance-and-optional-examples",
+  "upstreamPackagesInstalled": false,
+  "notes": "Primary sources were read. No upstream skill package, framework, executable, font or template is copied or automatically installed. These are our scoped adaptations. Field benefit and agent behavior remain to be tested.",
+  "sources": [
+    {"id":"pm-interview","repository":"phuryn/pm-skills","path":"pm-product-discovery/skills/interview-script/SKILL.md","blobSha":"7ec574e0d107507cb6c1926d2620e2ac822c00b6","url":"https://github.com/phuryn/pm-skills/blob/main/pm-product-discovery/skills/interview-script/SKILL.md","use":"Short non-leading interview about actual past behavior; no copied long questionnaire."},
+    {"id":"pm-experiments","repository":"phuryn/pm-skills","path":"pm-product-discovery/skills/brainstorm-experiments-new/SKILL.md","blobSha":"8c946a51839c85b7ffb666c268ca4b06513166ed","url":"https://github.com/phuryn/pm-skills/blob/main/pm-product-discovery/skills/brainstorm-experiments-new/SKILL.md","use":"Define claim, cheap experiment and threshold before building. No automatic mail campaigns or preorders."},
+    {"id":"test-card","url":"https://www.strategyzer.com/library/validate-your-ideas-with-the-test-card","use":"Four questions: hypothesis, experiment, metric and threshold. Original ENOL Markdown, not a copy of the graphical Test Card."},
+    {"id":"yc-interview","url":"https://www.ycombinator.com/blog/startup-school-week-1-recap-kevin-hale-and-eric-migicovsky/","use":"Ask about the last real case and existing alternatives, not compliments."},
+    {"id":"pitch-timebox","repository":"zghanw/hackathon-skills","path":"skills/pitch-timebox/SKILL.md","blobSha":"807182a8aa608d027c71385f0c6beb2f11f1a706","url":"https://github.com/zghanw/hackathon-skills/blob/main/skills/pitch-timebox/SKILL.md","use":"Speaker/time/demo handoff, backup and Q&A; actual ENOL rubric only.","maintenance":"The upstream README marks this project retired; treated as a reviewed reference, not an installed or maintained dependency."},
+    {"id":"devpost-demo","url":"https://help.devpost.com/article/84-video-making-best-practices","use":"Show the actual working product and rehearse; use video only if relevant to handoff."},
+    {"id":"openai-evals","url":"https://developers.openai.com/blog/eval-skills","use":"Compare actual behavior and artifacts on matched tasks, not just Markdown assertions."},
+    {"id":"openai-context","url":"https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra","use":"Keep guidance scoped and avoid accumulating duplicate global rules; no model ID is configured from this source."},
+    {"id":"salib-sample","url":"https://salib.readthedocs.io/en/stable/api/SALib.sample.html","use":"Optional Sobol sampler; paired inputs for candidate and comparator."},
+    {"id":"salib-analyze","url":"https://salib.readthedocs.io/en/stable/api/SALib.analyze.html","use":"Optional Sobol analyzer of benefit with sampling assumptions and uncertainty."},
+    {"id":"salib-version","url":"https://github.com/SALib/SALib/releases/tag/v1.5.2","use":"Pin direct optional dependency to reviewed release 1.5.2; a complete environment lock is still project-specific."},
+    {"id":"pypsa","url":"https://docs.pypsa.org/latest/examples/power-to-heat-water-tank/","repository":"PyPSA/PyPSA","use":"Optional energy-system and heat-storage modeling; reference only, not installed."},
+    {"id":"pvlib","url":"https://pvpmc.sandia.gov/tools/pv_lib-toolbox/","repository":"pvlib/pvlib-python","use":"Optional PV production reference model; reference only, not installed."},
+    {"id":"ortools","url":"https://developers.google.com/optimization","repository":"google/or-tools","use":"Optional constrained planning and baseline; reference only, not installed."}
+  ]
+}

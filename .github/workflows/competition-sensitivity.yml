@@ -1,0 +1,36 @@
+name: Validate optional sensitivity example
+on:
+  pull_request:
+    paths:
+      - 'competition/examples/**'
+      - 'tests/test_competition_sensitivity.py'
+      - '.github/workflows/competition-sensitivity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sensitivity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Install isolated optional dependencies
+        run: python -m pip install -r competition/examples/requirements-sensitivity.txt
+      - name: Run numerical oracle tests including SALib
+        env:
+          ENOL_REQUIRE_SALIB: '1'
+        run: python -m unittest discover -s tests -p 'test_competition_sensitivity.py' -v
+      - name: Exercise both CLI modes and record environment
+        run: |
+          mkdir -p artifacts/sensitivity
+          python competition/examples/sensitivity.py --method oat --output artifacts/sensitivity/oat.json
+          python competition/examples/sensitivity.py --method sobol --output artifacts/sensitivity/sobol.json
+          python -m pip freeze > artifacts/sensitivity/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sensitivity-example-evidence
+          path: artifacts/sensitivity

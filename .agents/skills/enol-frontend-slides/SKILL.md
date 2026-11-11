@@ -1,26 +1,21 @@
 ---
 name: enol-frontend-slides
-description: "Build or revise an approved ENOL web pitch with a strong argument, explanatory animations, arrow navigation and timer. Use for presentation work, not for inventing the project before user approval."
+description: "Build or revise an approved ENOL pitch with a strong argument, explanatory animations, speaker handoffs, demo fallback, arrow navigation and timer. Use for presentation work, not for inventing the project before user approval."
 ---
 
 # ENOL · přesvědčivá webová prezentace
 
-Repo-local ENOL adaptation informed by Frontend Slides, not the upstream package. Paths below are repository-relative. Read `AGENTS.md`, `competition/SKILLS.md` and the approved project brief first; follow the discussion/approval gate. Before approval, discuss only; do not create preview files.
+Repo-local adaptation informed by Frontend Slides, pitch-timebox and Devpost, not installed upstream packages. Read `AGENTS.md`, `competition/SKILLS.md` and the approved brief. Before approval discuss only; do not create preview files.
 
-## Postup
+1. Extract the actual user, problem, mechanism, comparator, strongest supported benefit and limitations. Read the project's value-test card; do not turn a failed energy hypothesis into untested time savings.
+2. Propose two visual directions using the same truthful content. After approval build one representative animated scene; do not spend the deadline on alternate decks.
+3. Tell problem → mechanism → live evidence → practical consequence. Number, order and renderers are free. `public/prezentace/` is reusable, not mandatory. No forced six-slide structure, map or 3D.
+4. Fill `competition/templates/pitch-runbook.md`: confirmed limit, speaker blocks, exact demo actions, handoffs, same-release fallback and hard Q&A. Use existing team information, ask only unresolved decisions. Official rubric weights come from the actual rules, never invented. Adapt timing to measured rehearsal, not an assumed universal speaking rate.
+5. Preserve visible and keyboard arrows plus start/pause/reset timer. Inputs, sliders and dialogs retain keys. Rapid navigation and return must not duplicate handlers or show stale results.
+6. For each important animation define initial state → trigger → explanation → final state → backward/reset. Animate a mechanism or comparison, not just an entrance. Never manipulate axes or add fictional data for effect.
+7. Separate operating UI from projection. The slide shows one supported claim; a large form belongs in the demo. Keep source, units, period and evidence type readable.
+8. Run `enol-browser-check` sequentially in ordinary motion, then reduced motion separately. Rehearse with both speakers within the actual limit, including demo and handoffs. Check 1280×720 and actual display; do not hide controls to pass overflow checks.
 
-1. Extract the user, problem, own mechanism, strongest verified result, comparator and limitations from the brief. Write one sentence explaining why the audience should care. Do not begin with a tour of the app.
-2. Propose two genuinely different visual directions using the same truthful content, not different promises. After the direction is approved, build one representative animated scene first. Do not spend the whole budget producing alternate decks.
-3. Build the argument around problem → mechanism → live evidence → consequence for the user. Choose the number and order of scenes freely. Existing `public/prezentace/` is reusable, not mandatory. Do not impose six slides, a fixed renderer, a map, 3D or a framework.
-4. Preserve keyboard and visible arrows plus a visible start/pause/reset timer. Inputs, sliders and open dialogs retain their own keys. Handle rapid forward/back navigation and repeated visits without duplicated handlers or stale state.
-5. Specify each important animation as: initial state → trigger → explanation/reveal → final state → backward/reset behavior. Animate causal mechanisms, energy flows, changing constraints and comparisons, not just decorative entrances. Never animate a false data point or misleading axis change.
-6. Separate operating UI from projection: the pitch shows one claim and its proof; a large parameter form belongs in a demo. Keep units, period, source and model/measurement status legible. Use the design manual as a starting point, not a layout prison.
-7. Verify a full sequential run with `enol-browser-check`, including normal motion and a separate reduced-motion run. Rehearse within the actual pitch limit. Check 1280×720 and the actual presentation screen; adapt layout as necessary, not by hiding controls or shrinking everything.
+Return presentation path, main argument, proof links, timed runbook and strongest demo path. Record actual rehearsal times or NOT RUN. Provide static fallback with final chart states; video/export/web use the same source revision. Show one changed input causing a new computation when a functional demo is promised. Label recorded footage as recorded.
 
-## Delivery
-
-Return the presentation path, the main argument in one sentence, changed scenes, evidence links, and the replay path for the strongest demonstration. Provide a static fallback that includes final chart/reveal states. Video, static export and web must use the same source revision.
-
-## Local differences from upstream
-
-No mandatory online fonts, copied font files, Vercel deploy, single-file architecture, 1920×1080 stage or automatic inline editing. No repeated questionnaire about facts already in the brief: communicate briefly in Czech, one real decision at a time through the lead. This skill does not generate narration or install any packages. Provenance: `competition/skills-registry.json`.
+No mandatory online fonts, font files, Vercel deployment, single-file architecture, fixed canvas, inline editor or paid narration. No new questionnaires about known facts. Source identities and scope: `competition/skills-registry.json`, `competition/resources.json`.

@@ -1,27 +1,31 @@
 ---
 name: enol-evidence-review
-description: "Challenge an ENOL project's claimed benefit, experiment, benchmark or economics. Use before costly implementation, at the first working demo and before pitch approval; review independently rather than adding features."
+description: "Test an ENOL project's practical benefit, user decision, critical assumption or benchmark. Use before costly implementation, after a pivot and before pitch; do not substitute technical complexity or code tests for user value."
 ---
 
-# ENOL · důkaz přínosu, ne důkaz složitosti
+# ENOL · důkaz přínosu
 
-Authored ENOL adaptation informed by Scientific Critical Thinking. Read `AGENTS.md`, `competition/SKILLS.md` and the approved brief. This is a bounded engineering review, not a clinical GRADE assessment or an invitation to build a new research platform. Review is read-only except for assigned review artifacts and independent tests.
+Read `AGENTS.md`, `competition/SKILLS.md`, `competition/REALITY_CHECK.md` and the approved brief. This is a bounded engineering/product review, not a new research platform. Before approval, read and discuss only. Afterwards write only assigned evidence/test artifacts, not production changes outside ownership.
 
-## Before building the expensive part
+## Select the right claim
 
-Write the primary claim, intended user/action, strongest fair simple comparator, success measure and a result that would falsify the claim. Agree these before inspecting final test outcomes. Identify the cost of failure, measurement and implementation. In the first third of the available time, test the riskiest assumption; if the benefit is absent, report it to the lead and propose a change of method or claim. Do not silently change the benchmark.
+Use `competition/PRACTICAL_VALUE.md` and the compact `competition/templates/value-test.md`. Select one primary benefit: energy/cost savings, better decisions/lower risk, or saved human work. Specify intended user/action, a strong fair comparator, metric, useful threshold and falsifying outcome before inspecting final results. Do not force a universal percentage or equate solver speed with saved user time.
 
-## Review
+When a user/mentor is available, use `competition/templates/mentor-interview.md` to ask about their last real case and current workaround. No leading praise, invented interviews or external contact without permission. A teammate pilot is not independent professional validation. Keep raw personal notes private.
 
-- Trace the headline result to actual data, source period, units, denominator and reproducible command. Separate measured, simulated, assumed, proposed and unavailable evidence.
-- Compare methods on the same cases, information access, constraints and resource budget. Include unresolved/abstained and excluded cases with reasons. Avoid test leakage, cherry-picked subgroups and tuning on the held-out sample.
-- Check whether added complexity actually improves the result. If a simple fixed procedure performs equally well, say so. An ablation can locate the useful part; it must not redefine success after seeing results.
-- Ask who can perform every recommended action, with which equipment, permissions, time and cost. A credit is not a minute or a koruna. Require documented conversion or keep it as a limitation.
-- Check energy balance and economic boundaries. A count of homes is not demand; nameplate MW are not produced MWh; correlation or a model fit is not a causal effect.
-- Distinguish lack of reporting from proof that something was not done. Reject invented savings, fabricated physical validation and claims that exceed the actual end-to-end test.
+Test benefit and the most sensitive assumption by T/3. Compare the same cases, information, constraints and resources; include setup, measurements, execution costs and unresolved/excluded cases. Prevent leakage and post-hoc success thresholds. For a task test, record correct completion, time and errors; account for practice/order effects and report the small sample honestly.
 
-## Timebox and deliverable
+**A pivot needs a new test.** Preserve the failed claim. If the new story is saved design effort rather than saved energy, agree a new card with the user and measure that benefit. Until tested, call it an unverified benefit of a working prototype.
 
-Return the three most consequential issues: claim → evidence/location → why it matters → cheapest discriminating check/fix. End with a recommendation: continue, narrow the claim, change method, or ask the user to choose a pivot. The lead decides with the user. Do not write the developer's winning benchmark for them, rewrite production code without ownership, spawn auditors recursively or consume the whole deadline with verification machinery.
+## Trace and challenge
 
-Keep detailed evidence in the project directory and the chat update short. Provenance: `competition/skills-registry.json`. No OpenRouter, paid schematic generator or external submission is part of this adaptation.
+- Tie headline numbers to source, period, units, denominator and reproduction command. Separate field measurements, simulation, assumptions, opinions and unavailable evidence.
+- Compare added complexity with the strongest reasonable alternative; keep unfavorable outcomes. Ablation may locate a useful component, not rewrite the primary test.
+- Name who can perform every proposed action, using what equipment, permission, time and money. A model credit is not a minute or koruna.
+- Use `competition/LIBRARY_TOOLBOX.md` for optional sensitivity/modeling tools. OAT screening misses interactions; Sobol indices depend on input distributions. Neither validates the inputs or proves field benefit.
+- Check physical/economic boundaries: MW are not MWh, counts of homes are not demand, fit is not causality, a deployable program is not an independently validated product.
+- Missing reporting is not proof a step was not done. Do not inflate critiques beyond inspected evidence.
+
+## Return and stop
+
+Return at most three consequential issues: claim → evidence/location → consequence → cheapest discriminating test. Recommend continue, narrow, change method or discuss pivot; the lead and user decide. No recursive auditors or benchmark platform that consumes the deadline. Keep details in project files and chat brief. Provenance: `competition/skills-registry.json` and `competition/resources.json`. No upstream plugin or paid API is invoked.
