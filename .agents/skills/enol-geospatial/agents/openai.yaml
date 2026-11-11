@@ -1,0 +1,5 @@
+interface:
+  display_name: "ENOL · prostorová analýza"
+  short_description: "Volitelné prostorové joiny a agregace"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,5 @@
+interface:
+  display_name: "ENOL · prohlížečová kontrola"
+  short_description: "Skutečný průchod, motion a zálohy"
+policy:
+  allow_implicit_invocation: true

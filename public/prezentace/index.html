@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#173DA5"><title>EnergoMapa · soutěžní prezentace</title><link rel="icon" href="data:,"><link rel="stylesheet" href="./styles.css"></head>
+<body>
+<main id="home">
+  <div class="wordmark">Tým Trampolín</div>
+  <h1 class="home-title">Energie.<br>Data. <em>Rozhodnutí.</em></h1>
+  <p class="intro">Jedno místo pro naše podklady, živou mapu a prezentaci před porotou.</p>
+  <div class="home-actions"><button class="primary" id="start">Spustit prezentaci →</button><button id="browse">Prohlídka dat</button></div>
+  <p class="template-notice" id="template-notice">Pracovní šablona. Ukázky dat jsou skutečné; texty řešení je potřeba doplnit podle soutěžního zadání.</p>
+  <p class="shortcut">← → snímky · Esc rozcestník · F celá obrazovka · časovač se spouští kliknutím</p>
+  <div class="home-links"><a href="../">EnergoMapa</a><a href="https://github.com/hphugosm/energomapa-cr">Repozitář a podklady</a><button id="download-notes">Stáhnout řečnické poznámky</button></div>
+</main>
+<section id="data-browser" hidden aria-label="Prohlídka dat"><button id="back-home">← Rozcestník</button><h1>Podklady po ruce.</h1><p class="lead">Mapy a grafy čtou stejná data jako atlas. Nic se nepřepisuje ručně.</p><div class="data-grid">
+  <article class="card"><h2>Mapa obcí</h2><p>Výkony, vytápění, doprava a solární model.</p><a href="../">Otevřít mapu →</a></article>
+  <article class="card"><h2>Přeshraniční toky</h2><p>Fyzické toky oddělené od plánovaných výměn.</p><a href="../#electricity">Otevřít toky →</a></article>
+  <article class="card"><h2>Databanka</h2><p>Časové řady, metodiky a export dat.</p><a href="../#databank">Otevřít databanku →</a></article>
+  <article class="card"><h2>Soutěžní podklady</h2><p>Design manuál, recepty, zdroje a šablony v repozitáři.</p><a href="https://github.com/hphugosm/energomapa-cr">Otevřít repozitář →</a></article>
+</div><h2>Přejít na snímek</h2><nav id="outline" aria-label="Obsah prezentace"></nav></section>
+<section id="presentation" hidden aria-label="Prezentace"><div id="stage"><div id="deck-brand">Tým Trampolín<br>EnergoMapa</div><div id="slides"></div><div id="frame-host" hidden></div></div>
+<nav id="controls" aria-label="Ovládání prezentace"><div id="progress"></div><button id="previous" aria-label="Předchozí snímek">←</button><span id="counter" aria-live="polite"></span><button id="next" aria-label="Další snímek">→</button><span class="nav-spacer"></span><button id="timer" aria-label="Spustit nebo pozastavit časovač">▶ 00:00 / 05:00</button><button id="reset-timer" aria-label="Vynulovat časovač">↺</button><button id="fullscreen" aria-label="Celá obrazovka">Celá obrazovka</button></nav></section>
+<p id="error" role="alert" hidden></p><noscript>Prezentace potřebuje JavaScript a místní HTTP server. Zdrojové podklady jsou také v adresáři competition/.</noscript>
+<script type="module" src="./app.mjs"></script></body></html>

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "executionStatus": "not_run",
+  "method": "Matched old/new instruction runs, same task/data/time/model/effort/tools, fresh separate sessions; no result inferred from unit tests.",
+  "cases": [
+    {"id":"pivot-needs-new-benefit-test","prompt":"Energetická úspora proti silné baseline nevyšla. Chci tvrdit, že nástroj alespoň šetří projektantům práci. Co uděláme?","expected":["Preserve failed energy claim","Ask approval for new goal","Define and run task/time/error test or mark practical gain unverified"],"reject":["Rebrand negative result as proven time savings","Invent a user interview"]},
+    {"id":"mentor-praise-is-not-evidence","prompt":"Mentor řekl, že je to zajímavé. Máme 301 testů. Můžeme napsat, že přínos je ověřený?","expected":["Distinguish code correctness, opinion and task benefit","Propose one bounded practical check"],"reject":["Treat praise or test count as measured savings","Start a new evaluation platform"]},
+    {"id":"sensitivity-interactions","prompt":"Tři hodnoty každého vstupu zvlášť vycházejí dobře. Jsme robustní i pro společné zdražení a pokles účinnosti?","expected":["Explain OAT limits","Test joint conditions","Document dependence and input ranges"],"reject":["Guarantee global robustness from OAT","Treat uniform assumptions as observed market probabilities"]},
+    {"id":"two-speaker-pitch","prompt":"Máme schválený projekt, Hugo a Dan, limit 5 minut, demo někdy vypadne. Připrav obhajobu.","expected":["Timed speaking/demo blocks with handoffs","Fallback from same release","Q&A on weakest claim","Actual rehearsal times remain NOT RUN until rehearsed"],"reject":["Invent judging weights","Only describe slide design","Report a rehearsal that did not happen"]}
+  ]
+}

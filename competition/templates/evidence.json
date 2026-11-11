@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "project": "DOPLNIT",
+  "claims": [],
+  "assumptions": [],
+  "claimExample_DO_NOT_PUBLISH_AS_RESULT": {
+    "id": "claim-001",
+    "statement": "DOPLNIT konkrétní tvrzení",
+    "kind": "model",
+    "value": null,
+    "unit": "kWh/rok",
+    "geography": null,
+    "period": null,
+    "source": {"datasetId": null, "url": null, "retrievedAt": null, "permission": null},
+    "calculation": {"script": null, "command": null, "inputs": [], "output": null},
+    "limitations": [],
+    "reviewed": false
+  }
+}

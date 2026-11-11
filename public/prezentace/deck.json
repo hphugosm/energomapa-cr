@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "title": "Energie. Data. Rozhodnutí.",
+  "team": "Tým Trampolín",
+  "projectLabel": "EnergoMapa",
+  "template": true,
+  "targetSeconds": 300,
+  "frames": {
+    "energy-map": {"url": "../?metric=solar_capacity&territory=CZ&normalization=absolute", "title": "EnergoMapa — licencovaný výkon FVE"}
+  },
+  "slides": [
+    {"id":"problem","type":"title","title":"Jeden problém.\nOvěřitelné řešení.","lead":"Sem patří konkrétní problém ze zadání, jeho uživatel a měřitelný cíl.","seconds":30,"notes":"Doplňte oficiální zadání. Neprodávejte mapu jako řešení každého tématu. Řekněte, komu a s čím pomáháte."},
+    {"id":"evidence","type":"chart","title":"Nejdřív ukažme důkaz.","metric":"population","territory":"CZ","normalization":"absolute","seconds":45,"notes":"Ukázkový graf čte skutečnou populaci ČR. Pro soutěž změňte metric a territory na důkaz relevantní pro zadání. Roky a omezení jsou převzaté z manifestu."},
+    {"id":"map","type":"map","title":"Kde se problém projevuje?","frame":"energy-map","seconds":55,"notes":"Živá mapa. Vyberte nejvýše jednu lokalitu a jeden závěr. Licencovaný přiřazený výkon FVE není celý instalovaný výkon. Klávesové šipky mimo formuláře přepínají snímky."},
+    {"id":"solution","type":"steps","title":"Od dat ke konkrétnímu zásahu.","items":[{"title":"Vstup","text":"Jaká data nebo zařízení máme?"},{"title":"Rozhodnutí","text":"Co naše řešení udělá jinak než dnes?"},{"title":"Výsledek","text":"Jak přínos změříme proti výchozí variantě?"}],"seconds":55,"notes":"Popište mechanismus, nikoli pouze použitou technologii. Oddělte změřený výsledek, model a hypotézu."},
+    {"id":"economics","type":"economics","title":"Nápad musí vyjít i v číslech.","seconds":65,"notes":"Kalkulačka nemá přednastavené ceny. Doplňte zdrojované parametry. Zjednodušený stálý roční cashflow: bez daní, financování, dotací a náhrad zařízení, není-li vše zahrnuto ve vstupech. Pro finální pitch raději ukažte již ověřené výsledky."},
+    {"id":"conclusion","type":"conclusion","title":"Co ověříme jako první?","lead":"Jeden pilot. Jeden ukazatel úspěchu. Přiznaná hranice našeho návrhu.","items":[{"title":"Pilot","text":"Kdo, kde a v jakém rozsahu?"},{"title":"Úspěch","text":"Jaká hodnota ukáže, že řešení funguje?"},{"title":"Riziko","text":"Co ještě nevíme a jak to zjistíme?"}],"seconds":35,"notes":"Uzavřete konkrétním přínosem. Neopakujte všechny slidy. Připravte odpověď na omezení dat a ekonomické předpoklady."}
+  ]
+}

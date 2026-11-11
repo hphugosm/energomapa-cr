@@ -1,0 +1,5 @@
+interface:
+  display_name: "ENOL · důkaz přínosu"
+  short_description: "Nezávislá kontrola proti baseline"
+policy:
+  allow_implicit_invocation: true

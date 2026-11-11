@@ -1,0 +1,5 @@
+interface:
+  display_name: "ENOL · debugging"
+  short_description: "Reprodukce, příčina a ověření opravy"
+policy:
+  allow_implicit_invocation: true

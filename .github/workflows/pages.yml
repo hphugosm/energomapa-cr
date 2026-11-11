@@ -32,12 +32,21 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_*.py'
       - name: Verify deterministic offline data
         run: python pipeline/check_determinism.py
+      - name: Validate competition kit
+        run: node tools/competition.mjs check
       - name: Package static site
         run: python pipeline/package.py
       - name: Install test browser
         run: node node_modules/playwright-core/cli.js install --with-deps chromium
       - name: Test Eurostat exports, contrast, mobile and isolated offline scopes
         run: npm run test:browser
+      - name: Test competition presentation
+        run: node tests/browser-competition.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: competition-browser-evidence
+          path: artifacts/competition
       - uses: actions/upload-artifact@v4
         if: always()
         with:

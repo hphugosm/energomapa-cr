@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "kind": "planning-reference-not-orchestrator",
+  "clock": "elapsed-wall-time-including-research-discussion-and-approved-waits",
+  "maxConcurrentSubagents": 3,
+  "profiles": [
+    {
+      "id": "rehearsal-4h",
+      "durationMinutes": 240,
+      "researchTargetMinutes": 15,
+      "evidenceDueMinute": 80,
+      "freezeMinute": 195,
+      "phases": [
+        {"id": "research-and-approval", "start": 0, "end": 25},
+        {"id": "reproduce-and-test", "start": 25, "end": 80},
+        {"id": "integrate-and-test-user-value", "start": 80, "end": 165},
+        {"id": "review-and-cut", "start": 165, "end": 195},
+        {"id": "freeze-package-rehearse", "start": 195, "end": 240}
+      ]
+    },
+    {
+      "id": "reference-5h",
+      "durationMinutes": 300,
+      "researchTargetMinutes": 15,
+      "evidenceDueMinute": 100,
+      "freezeMinute": 255,
+      "phases": [
+        {"id": "research-and-approval", "start": 0, "end": 30},
+        {"id": "reproduce-and-test", "start": 30, "end": 100},
+        {"id": "integrate-and-test-user-value", "start": 100, "end": 210},
+        {"id": "review-and-cut", "start": 210, "end": 255},
+        {"id": "freeze-package-rehearse", "start": 255, "end": 300}
+      ]
+    }
+  ]
+}

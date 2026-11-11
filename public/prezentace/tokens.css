@@ -1,0 +1,2 @@
+/* Shared design tokens: TT-Decin data style, adapted to energy without migration semantics. */
+:root{--brand:#173DA5;--ink:#1D2940;--muted:#596A82;--paper:#F7F9FC;--surface:#FFFFFF;--line:#DFE5EE;--accent:#DE7524;--good:#23715D;--bad:#A52B45;--radius:14px;--slide-heading-size:clamp(30px,3.35vw,58px);--font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--space:clamp(24px,4vw,72px)}
